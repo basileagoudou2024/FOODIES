@@ -1,0 +1,13 @@
+{
+    "welcomeMessage": "Bienvenue sur notre application",
+    "languageLabel": "Langue",
+    "homePage": {
+      "title": "Page d'accueil",
+      "description": "Ceci est la page d'accueil."
+    },
+    "button": {
+      "save": "Sauvegarder",
+      "cancel": "Annuler"
+    }
+  }
+  
