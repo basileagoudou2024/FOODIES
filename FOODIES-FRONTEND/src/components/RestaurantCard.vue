@@ -39,7 +39,8 @@ export default {
         <strong>Adresse:</strong> {{ restaurant.adress }}<br /> <!-- Correction ici -->
         <strong>Téléphone:</strong> {{ restaurant.phone }}<br />
         <strong>Cuisine:</strong> {{ restaurant.cuisine }}<br />
-        <strong>Évaluation:</strong> {{ restaurant.stars }} {{  }}
+        <strong>Étoiles:</strong> {{ restaurant.stars }}<br/>
+        <strong>Heures d'ouverture:</strong> {{ restaurant.openingHours }}
       </p>
 
       <!-- Description du restaurant -->

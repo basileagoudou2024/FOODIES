@@ -9,5 +9,5 @@ export  interface Restaurant {
     cuisine: string;    // Type de cuisine (ex : Italien, Chinois, etc.)
     stars: number;      // Note de l'évaluation sur 5 étoiles
     image: string;      // URL de l'image du restaurant
-    description: string; // Description textuelle du restaurant
+    openingHours: string; // Description textuelle du restaurant
   }

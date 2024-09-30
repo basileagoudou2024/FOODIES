@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import restaurantRoutes from './router/restaurantRoutes';  // Assurez-vous que le chemin est correct
+import userRoutes from './router/userRoutes';
+import evaluationRoutes from './router/evaluationRoutes';
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.get('/', (req, res) => {
 
 // Utilisation des routes
 app.use('/api/restaurants', restaurantRoutes);  // S'assurer que la route est correctement définie ici
+//app.use('/api/users', userRoutes);
+app.use('/api/evaluations', evaluationRoutes);
 
 // Connexion à MongoDB
 mongoose.connect('mongodb://localhost:27017/foodies')

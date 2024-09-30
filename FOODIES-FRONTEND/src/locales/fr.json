@@ -1,13 +1,23 @@
 {
-    "welcomeMessage": "Bienvenue sur notre application",
-    "languageLabel": "Langue",
-    "homePage": {
-      "title": "Page d'accueil",
-      "description": "Ceci est la page d'accueil."
-    },
-    "button": {
-      "save": "Sauvegarder",
-      "cancel": "Annuler"
-    }
-  }
   
+  
+  "cuisineFilter": {
+    "label": "Cuisine",
+    "italienne": "Italienne",
+    "grecque": "Grecque",
+    "africaine": "Africaine",
+    "asiatique": "Asiatique",
+    "chinoise": "Chinoise"
+  },
+
+  "locationFilter":{
+    "label": "Rayon",
+    "1 km": "1 km",
+    "5 km": "5 km",
+    "10 km": "10 km",
+    "15 km": "15 km",
+    "20 km": "20 km",
+    "25 km": "25 km"
+
+  }
+}

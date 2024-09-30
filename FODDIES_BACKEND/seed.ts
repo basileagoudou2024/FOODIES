@@ -1,32 +1,42 @@
+// seed.ts
 import mongoose from 'mongoose';
-import Restaurant from './src/database/models/RestaurantModel';  // Importez votre modèle de restaurant
+import User from './src/database/models/UserModel';
+import Restaurant from './src/database/models/RestaurantModel';
+import Evaluation from './src/database/models/EvaluationModel';
+import { restaurantsData, usersData, evaluationsData } from './seedData';
 
-// Connexion à MongoDB
-async function connectToMongoDB() {
+const MONGO_URI = 'mongodb://localhost:27017/foodies';
+
+async function seedDatabase() {
   try {
-    //await mongoose.connect('mongodb://localhost:27017/restaurant-db');
-   
-    console.log('Connected to MongoDB');
+    // Connexion à MongoDB
+    await mongoose.connect(MONGO_URI);
+    console.log('MongoDB connecté.');
 
-    // Définir les données de démonstration pour les restaurants
-    const seedData = [
-      { name: 'Le Gourmet', adress: 'Paris', phone: '(438)-287-5148', cuisine: 'Française', stars: 5, image: '/images/image1.jpg'},
-      { name: 'Pizza Paradise', adress: 'Rome', phone: '(514)-516-0000', cuisine: 'Italienne', stars: 4, image: '/images/image3.jpg'},
-      { name: 'Sushi Master', adress: 'Tokyo', phone: '(519)-400-0101', cuisine: 'Japonaise', stars: 5, image: '/images/image4.jpg'}
-    ];
+    // Nettoyage de la base de données existante
+    await User.deleteMany({});
+    await Restaurant.deleteMany({});
+    await Evaluation.deleteMany({});
 
     // Insérer les restaurants dans la base de données
-    await Restaurant.insertMany(seedData);
+    await Restaurant.insertMany(restaurantsData);
     console.log('Les restaurants ont été ajoutés avec succès dans la base de données.');
 
-  } catch (err) {
-    console.error('Erreur lors de l\'ajout des restaurants : ', err);
+    // Insérer les utilisateurs dans la base de données
+    await User.insertMany(usersData);
+    console.log('Les utilisateurs ont été ajoutés avec succès dans la base de données.');
+
+    // Insérer les évaluations dans la base de données
+    await Evaluation.insertMany(evaluationsData);
+    console.log('Les évaluations ont été ajoutées avec succès dans la base de données.');
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout des données : ', error);
   } finally {
-   // mongoose.disconnect();
-    console.log('Déconnexion de MongoDB');
+    // Déconnexion de MongoDB
+    await mongoose.disconnect();
+    console.log('Déconnexion de MongoDB.');
   }
 }
 
-export default  connectToMongoDB;
-
-
+// Exécuter le script
+seedDatabase();

@@ -3,10 +3,10 @@ import { useNavigatorStore } from '../stores/navigatorStore';
 import { storeToRefs } from 'pinia';
 import LogoComponent from '../components/LogoComponent.vue';
 import SearchTextComponent from '../components/SearchTextComponent.vue';
-import LocationFilterComponent from '../components/LocationFilterComponent.vue';
+import LocationFilterComponent from '../components/LocationFilter.vue';
 import StarsFilterComponent from '../components/StarsFilterComponent.vue';
-import KitchenFilterComponent from "../components/KitchenFilterComponent.vue";
-import LanguageComponent from '../components/LanguageComponent.vue';
+import KitchenFilterComponent from "../components/CuisineFilter.vue";
+import LanguageComponent from '../components/LanguageSelect.vue';
 import UserProfileComponent from "../components/UserProfileComponent.vue";
 
 const navigatorStore = useNavigatorStore();

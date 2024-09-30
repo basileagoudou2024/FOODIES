@@ -1,26 +1,25 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-// Définition de l'interface TypeScript
 export interface IRestaurant extends Document {
-  name: string;
-  adress: string;
-  phone: string;
+  nom: string;
+  adresse: string;
+  telephone: string;
   cuisine: string;
-  stars: number;
+  heuresOuverture: string;
+  etoiles: number;
   image: string;
-  description: string;
+  utilisateurs: mongoose.Types.ObjectId[]; // Référence vers les Utilisateurs
 }
 
-// Définition du schéma Mongoose
-const RestaurantSchema: Schema = new Schema({
-  name: { type: String, required: true },
-  adress: { type: String, required: true },
-  phone: { type: String, required: true },
+const restaurantSchema: Schema = new Schema({
+  nom: { type: String, required: true },
+  adresse: { type: String, required: true },
+  telephone: { type: String, required: true },
   cuisine: { type: String, required: true },
-  stars: { type: Number, min: 1, max: 5 },
-  image: { type: String, required: false },
-  description: { type: String, required: false },
+  heuresOuverture: { type: String, required: true },
+  etoiles: { type: Number, required: true },
+  image: { type: String, required: true },
+  utilisateurs: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
-// Exporter le modèle avec l'interface associée
-export default mongoose.model<IRestaurant>('Restaurant', RestaurantSchema);
+export default mongoose.model<IRestaurant>('Restaurant', restaurantSchema);
