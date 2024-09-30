@@ -1,47 +1,47 @@
-<script lang="ts">
-import { defineComponent, onMounted } from 'vue';
+
+<script setup lang="ts">
 import { useRestaurantStore } from '../stores/restaurantStore';
-import RestaurantCard from '../components/RestaurantCard.vue'; // Importer le composant RestaurantCard
+import { onMounted } from 'vue';
+import RestaurantCard from '../components/RestaurantCard.vue';
 
-export default defineComponent({
-  name: 'RestaurantList',
-  components: { RestaurantCard }, // Déclaration du composant dans RestaurantList
-  setup() {
-    const restaurantStore = useRestaurantStore();
+const restaurantStore = useRestaurantStore();
 
-    // Récupérer les restaurants lors du montage du composant
-    onMounted(() => {
-      restaurantStore.fetchRestaurants();
-    });
-
-    return { restaurantStore };
-  },
+// Lors du montage du composant, récupérer les restaurants
+onMounted(() => {
+  restaurantStore.fetchRestaurants();
 });
+
+// Accéder aux restaurants récupérés via le store
+const restaurants = restaurantStore.restaurants;
 </script>
 
+
+
 <template>
-  <div>
-    <!-- Affichage de la liste des restaurants sous forme de cartes -->
-    <div class="restaurant-list">
+  <div class="restaurant-list">
+    <h1>Liste des Restaurants</h1>
+    <div class="restaurant-cards">
       <RestaurantCard
-        v-for="restaurant in restaurantStore.restaurants"
+        v-for="restaurant in restaurants"
         :key="restaurant._id"
         :restaurant="restaurant"
       />
     </div>
-
-    <!-- Message si aucun restaurant n'est disponible -->
-    <div v-if="restaurantStore.restaurants.length === 0">
-      Aucun restaurant disponible.
-    </div>
   </div>
 </template>
 
+
+
 <style scoped>
-/* Styles pour la liste de restaurants */
 .restaurant-list {
   display: flex;
-  flex-wrap: wrap; /* Les cartes s'afficheront sur plusieurs lignes si nécessaire */
-  gap: 16px; /* Espacement entre chaque carte */
+  flex-direction: column;
+  align-items: center;
+}
+
+.restaurant-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 </style>

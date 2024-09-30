@@ -1,31 +1,36 @@
+
+
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { Restaurant } from '../shared/interfaces/restaurantInterface';
+import { ref } from 'vue';
 
-// Définir l'URL de base pour votre API
-const BASE_URL = 'http://localhost:5000/api/restaurants';
+// Interface représentant la structure d'un restaurant
+interface Restaurant {
+  _id: string;
+  nom: string;
+  adresse: string;
+  telephone: string;
+  cuisine: string;
+  image: string;
+  heuresOuverture: string;
+  description: string;
+  evaluations?: any[]; // On peut inclure les évaluations si elles sont récupérées.
+  etoiles?: number; // La moyenne des étoiles calculée
+  meilleurCommentaire?: string; // Meilleur commentaire calculé
+}
 
-export const useRestaurantStore = defineStore('restaurantStore', {
-  state: () => ({
-    restaurants: [] as Restaurant[], // Liste des restaurants
-  }),
+export const useRestaurantStore = defineStore('restaurantStore', () => {
+  const restaurants = ref<Restaurant[]>([]);
 
-  getters: {
-    // Getter pour récupérer le nombre total de restaurants
-    totalRestaurants: (state) => state.restaurants.length,
-  },
+  // Action pour récupérer tous les restaurants depuis l'API
+  const fetchRestaurants = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/restaurants'); // Mets l'URL correcte de ton API.
+      restaurants.value = response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des restaurants :', error);
+    }
+  };
 
-  actions: {
-    // Action pour récupérer les restaurants depuis l'API
-    async fetchRestaurants() {
-      try {
-        console.log('Envoi de la requête vers:', BASE_URL); // Log de l'URL de la requête
-        const response = await axios.get(BASE_URL);
-        console.log('Réponse reçue:', response.data); // Log des données reçues
-        this.restaurants = response.data; // Mise à jour de la liste des restaurants
-      } catch (error) {
-        console.error('Erreur lors de la récupération des restaurants:', error);
-      }
-    },
-  },
+  return { restaurants, fetchRestaurants };
 });
