@@ -1,17 +1,21 @@
-import { Router } from 'express';
+import express from 'express';
 import * as restaurantController from '../controllers/RestaurantController';
 
-const router = Router();
+const router = express.Router();
 
 // Route pour récupérer tous les restaurants avec leurs évaluations (y compris ceux sans évaluations)
 router.get('/', restaurantController.getAllRestaurantsWithEvaluations);
 
-// Route pour créer un nouveau restaurant
+// Route pour créer un nouveau restaurant (peut être activée si nécessaire)
 //router.post('/', restaurantController.createRestaurant);
 
-// Autres routes pour gérer les restaurants peuvent être ajoutées ici
-// Par exemple : router.get('/:id', restaurantController.getRestaurantById);
-//              router.put('/:id', restaurantController.updateRestaurant);
-//              router.delete('/:id', restaurantController.deleteRestaurant);
+// Exemple : Route pour récupérer un restaurant par son ID
+// router.get('/:id', restaurantController.getRestaurantById);
+
+// Exemple : Route pour mettre à jour un restaurant
+// router.put('/:id', restaurantController.updateRestaurant);
+
+// Exemple : Route pour supprimer un restaurant
+// router.delete('/:id', restaurantController.deleteRestaurant);
 
 export default router;

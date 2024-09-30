@@ -4,6 +4,8 @@ import { PropType } from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
 
 // Définir les propriétés attendues par le composant
+
+
 defineProps({
   restaurant: {
     type: Object as PropType<Restaurant>,
@@ -14,22 +16,22 @@ defineProps({
 
 
 
-
-
 <template>
   <div class="restaurant-card">
     <img :src="restaurant.image" alt="Image du Restaurant" class="restaurant-image" />
     <div class="restaurant-info">
-      <h2>{{ restaurant.nom }}</h2>
+      <h2>{{ restaurant.nom }}</h2>  
       <p><strong>Adresse:</strong> {{ restaurant.adresse }}</p>
       <p><strong>Téléphone:</strong> {{ restaurant.telephone }}</p>
       <p><strong>Cuisine:</strong> {{ restaurant.cuisine }}</p>
-      <p><strong>Étoiles:</strong> {{ restaurant.etoiles || 'Pas encore évalué' }}</p>
+      <p><strong>Étoiles:</strong> {{ restaurant.averageStars || 'Pas encore évalué' }}</p>
       <p><strong>Heures d'ouverture:</strong> {{ restaurant.heuresOuverture }}</p>
-      <p><strong>Meilleur commentaire:</strong> {{ restaurant.meilleurCommentaire || 'Aucun commentaire' }}</p>
+      <p><strong>Meilleur commentaire:</strong> {{ restaurant.bestComment || 'Aucun commentaire' }}</p>
     </div>
   </div>
 </template>
+
+
 
 
 
