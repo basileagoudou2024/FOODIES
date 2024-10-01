@@ -1,3 +1,13 @@
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'CuisineFilter'
+});
+</script>
+
+
 <template>
   <div class="cusine-filter">
     <span><i class="fa fa-map-marker"></i> {{ $t('cuisineFilter.label') }}:</span>
@@ -11,13 +21,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'CuisineFilter'
-});
-</script>
 
 <style scoped>
 .cuisine-filter {

@@ -1,28 +1,42 @@
-
-
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { ref } from 'vue';
-import {Restaurant} from '../shared/interfaces/restaurantInterface';
-
+import { ref, computed } from 'vue';
+import { Restaurant } from '../shared/interfaces/restaurantInterface'; // Assurez-vous que cette interface est bien définie.
 
 export const useRestaurantStore = defineStore('restaurantStore', () => {
+  // Liste des restaurants récupérés depuis l'API
   const restaurants = ref<Restaurant[]>([]);
+
+  // Texte de recherche
+  const searchText = ref('');
+
+  // Liste filtrée en fonction du texte de recherche
+  const searchResults = computed(() => {
+    if (!searchText.value) return restaurants.value;
+    const searchTextLower = searchText.value.toLowerCase();
+    return restaurants.value.filter((restaurant) =>
+      restaurant.nom.toLowerCase().includes(searchTextLower)
+        || restaurant.cuisine.toLowerCase().includes(searchTextLower)
+        || restaurant.adresse.toLowerCase().includes(searchTextLower)
+        || restaurant.averageStars
+       
+    );
+  });
+
+  // Méthode pour mettre à jour le texte de recherche
+  function updateSearchText(text: string) {
+    searchText.value = text;
+  }
 
   // Action pour récupérer tous les restaurants depuis l'API
   const fetchRestaurants = async () => {
     try {
-      console.log('Fetching restaurants...'); // Ajout du log
-    
-      const response = await axios.get('http://localhost:5000/api/restaurants'); // Mets l'URL correcte de ton API. (ici, consommation de l'api du backend)
-      
-      console.log('Restaurants fetched:', response.data); // Vérifie les données
-
+      console.log('Fetching restaurants...');
+      const response = await axios.get('http://localhost:5000/api/restaurants'); // Adapter l'URL si nécessaire
+      console.log('Restaurants fetched:', response.data);
       restaurants.value = response.data;
     } catch (error: any) {
       console.error('Erreur lors de la récupération des restaurants :', error);
-    
-      // Vérifie si l'erreur a une réponse détaillée (souvent le cas avec Axios)
       if (error.response) {
         console.error('Réponse de l\'API :', error.response.data);
         console.error('Statut de la réponse :', error.response.status);
@@ -32,11 +46,16 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
         console.error('Erreur de configuration de la requête :', error.message);
       }
     }
-    
   };
 
-  return { restaurants, fetchRestaurants };
+  
+
+  return {
+    restaurants,
+    searchText,
+    searchResults,
+    updateSearchText,
+    fetchRestaurants,
+
+  };
 });
-
-
-

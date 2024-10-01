@@ -1,10 +1,9 @@
-
 <script setup lang="ts">
 import { useRestaurantStore } from '../stores/restaurantStore';
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import RestaurantCard from '../components/RestaurantCard.vue';
 
-
+// Récupérer l'instance du store
 const restaurantStore = useRestaurantStore();
 
 // Lors du montage du composant, récupérer les restaurants
@@ -14,31 +13,25 @@ onMounted(() => {
   });
 });
 
-// Accéder aux restaurants récupérés via le store
-const restaurants = restaurantStore.restaurants;
+// Accéder à la liste filtrée des restaurants en fonction du texte de recherche
+const filteredRestaurants = computed(() => restaurantStore.searchResults);
 </script>
-
-
 
 <template>
   <div class="restaurant-list">
     <h1>Liste des Restaurants</h1>
-    <div class="restaurant-cards">
+    <div v-if="filteredRestaurants && filteredRestaurants.length > 0" class="restaurant-cards">
       <RestaurantCard
-        v-for="restaurant in restaurants" 
+        v-for="restaurant in filteredRestaurants"
         :key="restaurant._id"
         :restaurant="restaurant"
-        
       />
-      
+    </div>
+    <div v-else>
+      <p>Aucun restaurant à afficher.</p>
     </div>
   </div>
-
- 
-
 </template>
-
-
 
 <style scoped>
 .restaurant-list {

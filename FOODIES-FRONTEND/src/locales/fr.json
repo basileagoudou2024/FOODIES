@@ -19,5 +19,32 @@
     "20 km": "20 km",
     "25 km": "25 km"
 
-  }
+  },
+
+ "restaurant": {
+
+"Adresse": "Adresse",
+
+"Téléphone": "Téléphone",
+
+"Cuisine": "Cuisine",
+
+"Étoiles": "Étoile",
+
+"Heures Ouverture": "Heures Ouverture",
+
+"Meilleur commentaire": "Meilleur commentaire",
+
+" non évalué": "non évalué",
+
+" pas de commentaire": " pas de commentaire"
+
+
+  },
+
+    "search": {
+      "placeholder": "Recherche de restaurant, cuisine, etc."
+    }
+  
+  
 }
