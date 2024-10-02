@@ -1,12 +1,19 @@
 {
-  "cuisineFilter": {
+  "cuisine": {
     "label": "Kitchen",
-    "italienne": "Italian",
-    "grecque": "Greek",
-    "africaine": "African",
-    "asiatique": "Asian",
-    "chinoise": "Chinese",
-    "générale": "anyone"
+    "italienne": "italian",
+    "grecque": "greek",
+    "africaine": "african",
+    "asiatique": "asian",
+    "chinoise": "chineese",
+    "québécoise": "quebecker",
+    "française": "french",
+    "japonaise": "japanese",
+    "coréenne": "corean",
+    "mexicaine": "mexican",
+    "végétarienne": "vegan",
+    "antillaise":"antiyan",
+    "mixte": "mixture"
   },
   
   "locationFilter": {

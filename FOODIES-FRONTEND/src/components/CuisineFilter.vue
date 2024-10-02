@@ -6,13 +6,13 @@
 
 <template>
   <div class="cusine-filter">
-    <span><i class="fa fa-map-marker"></i> {{ $t('cuisineFilter.label') }}:</span>
+    <span><i class="fa fa-map-marker"></i> {{ $t('cuisine.label') }}:</span>
     <select>
-      <option>{{ $t('cuisineFilter.italienne') }}</option>
-      <option>{{ $t('cuisineFilter.grecque') }}</option>
-      <option>{{ $t('cuisineFilter.africaine') }}</option>
-      <option>{{ $t('cuisineFilter.asiatique') }}</option>
-      <option>{{ $t('cuisineFilter.chinoise') }}</option>
+      <option>{{ $t('cuisine.italienne') }}</option>
+      <option>{{ $t('cuisine.grecque') }}</option>
+      <option>{{ $t('cuisine.africaine') }}</option>
+      <option>{{ $t('cuisine.asiatique') }}</option>
+      <option>{{ $t('cuisine.chinoise') }}</option>
     </select>
   </div>
 </template>

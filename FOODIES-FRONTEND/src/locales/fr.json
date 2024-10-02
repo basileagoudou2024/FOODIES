@@ -1,12 +1,19 @@
 {
-  "cuisineFilter": {
+  "cuisine": {
     "label": "Cuisine",
     "italienne": "Italienne",
     "grecque": "Grecque",
     "africaine": "Africaine",
     "asiatique": "Asiatique",
     "chinoise": "Chinoise",
-    "générale": "générale"
+    "québécoise": "Québécoise",
+    "française": "Française",
+    "japonaise": "japonaise",
+    "coréenne": "coréenne",
+    "mexicaine": "mexicaine",
+    "végétarienne": "végétarienne",
+    "antillaise":"antillaise",
+    "mixte": "mixte"
   },
   
   "locationFilter": {
@@ -51,4 +58,6 @@
 
     "message": "Bienvenu sur Foodie's, la plateforme N°1 de réservation de restaurant en ligne!"
   }
+
+
 }

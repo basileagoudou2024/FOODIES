@@ -40,8 +40,9 @@ defineProps({
       <p>
         <strong>{{ t('restaurant.Cuisine') }}:</strong>
         <!-- Utilisation de `t` pour traduire le type de cuisine -->
-        <span class="value">{{ t(`cuisineFilter.${restaurant.cuisine}`) }}</span>
+        <span class="value">{{ t(`cuisine.${restaurant.cuisine.toLowerCase()}`) }}</span>
       </p>
+
       <p>
         <strong>{{ t('restaurant.Étoiles') }}:</strong>
         <!-- Affichage de la valeur par défaut si `averageStars` est null -->
@@ -116,4 +117,10 @@ defineProps({
   color: brown;
 }
 </style>
+
+
+
+
+
+
 
