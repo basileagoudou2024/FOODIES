@@ -26,18 +26,40 @@ defineProps({
     <img :src="restaurant.image" alt="Image du Restaurant" class="restaurant-image" />
     <div class="restaurant-info">
       <!-- Le nom du restaurant reste le même dans toutes les langues -->
-      <h2>{{ restaurant.nom }}</h2>  
-      
+      <h2>{{ restaurant.nom }}</h2>
+
       <!-- Traduction des libellés uniquement -->
-      <p><strong>{{ t('restaurant.Adresse') }}:</strong> <span class="value">{{ restaurant.adresse }}</span></p>
-      <p><strong>{{ t('restaurant.Téléphone') }}:</strong> <span class="value">{{ restaurant.telephone }}</span></p>
-      <p><strong>{{ t('restaurant.Cuisine') }}:</strong> <span class="value">{{ restaurant.cuisine }}</span></p>
-      <p><strong>{{ t('restaurant.Étoiles') }}:</strong> <span class="value">{{ restaurant.averageStars || $t('restaurant.non évalué') }}</span></p>
-      <p><strong>{{ t('restaurant.Heures Ouverture') }}:</strong> <span class="value">{{ restaurant.heuresOuverture }}</span></p>
-      <p><strong>{{ t('restaurant.Meilleur commentaire') }}:</strong> <span class="value">{{ restaurant.bestComment || $t('restaurant.sans commentaire') }}</span></p>
+      <p>
+        <strong>{{ t('restaurant.Adresse') }}:</strong>
+        <span class="value">{{ restaurant.adresse }}</span>
+      </p>
+      <p>
+        <strong>{{ t('restaurant.Téléphone') }}:</strong>
+        <span class="value">{{ restaurant.telephone }}</span>
+      </p>
+      <p>
+        <strong>{{ t('restaurant.Cuisine') }}:</strong>
+        <!-- Utilisation de `t` pour traduire le type de cuisine -->
+        <span class="value">{{ t(`cuisineFilter.${restaurant.cuisine}`) }}</span>
+      </p>
+      <p>
+        <strong>{{ t('restaurant.Étoiles') }}:</strong>
+        <!-- Affichage de la valeur par défaut si `averageStars` est null -->
+        <span class="value">{{ restaurant.averageStars || t('restaurant.non évalué') }}</span>
+      </p>
+      <p>
+        <strong>{{ t('restaurant.Heures Ouverture') }}:</strong>
+        <span class="value">{{ restaurant.heuresOuverture }}</span>
+      </p>
+      <p>
+        <strong>{{ t('restaurant.Meilleur commentaire') }}:</strong>
+        <!-- Affichage de la valeur par défaut si `bestComment` est null -->
+        <span class="value">{{ restaurant.bestComment || t('restaurant.pas de commentaire') }}</span>
+      </p>
     </div>
   </div>
 </template>
+
 
 
 

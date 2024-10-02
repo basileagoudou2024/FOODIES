@@ -2,6 +2,11 @@
 import { useRestaurantStore } from '../stores/restaurantStore';
 import { onMounted, computed } from 'vue';
 import RestaurantCard from '../components/RestaurantCard.vue';
+import { useI18n } from 'vue-i18n'; // Importation de useI18n pour la 
+
+
+// Utilisation de `useI18n` dans le composant pour accéder à `$t`
+const { t } = useI18n()
 
 // Récupérer l'instance du store
 const restaurantStore = useRestaurantStore();
@@ -19,7 +24,7 @@ const filteredRestaurants = computed(() => restaurantStore.searchResults);
 
 <template>
   <div class="restaurant-list">
-    <h1>Liste des Restaurants</h1>
+    {{ t('restaurantList.title') }}
     <div v-if="filteredRestaurants && filteredRestaurants.length > 0" class="restaurant-cards">
       <RestaurantCard
         v-for="restaurant in filteredRestaurants"

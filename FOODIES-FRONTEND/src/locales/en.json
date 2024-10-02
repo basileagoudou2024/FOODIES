@@ -5,10 +5,11 @@
     "grecque": "Greek",
     "africaine": "African",
     "asiatique": "Asian",
-    "chinoise": "Chinese"
+    "chinoise": "Chinese",
+    "générale": "anyone"
   },
-
-  "locationFilter":{
+  
+  "locationFilter": {
     "label": "Radius",
     "1 km": "1 km",
     "5 km": "5 km",
@@ -17,33 +18,37 @@
     "20 km": "20 km",
     "25 km": "25 km"
   },
-
-  "restaurant":{
-
-"Adresse": "Adress",
-
-"Téléphone": "Phone number",
-
-"Cuisine": "Kitchen",
-
-"Étoiles": "Stars",
-
-"Heures Ouverture": "Opening Hours",
-
-"Meilleur commentaire": "Best comment",
-
-" non évalué": "no rating",
-
-" pas de commentaire": " no comment"
+  
+  "restaurant": {
+    "Adresse": "Adress",
+    "Téléphone": "Phone number",
+    "Cuisine": "Kitchen",
+    "Étoiles": "Stars",
+    "Heures Ouverture": "Opening Hours",
+    "Meilleur commentaire": "Best comment",
+    "non évalué": "no rating",
+    "pas de commentaire": "no comment"
+  },
+  
+  "placeholder": {
+    "recherche": "Search"
   },
 
-    "search": {
-      "placeholder": "Search for restaurant, cuisine, etc."
-    
+  "StarFilter": {
+    "label": "Stars",
+    "1 étoile": "1 star",
+    "2 étoiles": "2 stars",
+    "3 étoiles": "3 stars",
+    "4 étoiles": "4 stars",
+    "5 étoiles": "5 stars"
+  },
+
+  "restaurantList": {
+    "title": "Restaurant List"
+  },
+
+  "scrollingText":{
+
+    "message": "Welcome on Foodie's, the N°1 platform for online restaurant reservation!"
   }
-  
-
-  }
-
-
-
+}

@@ -1,6 +1,12 @@
-<script lang="ts" setup>
+<script language="ts" setup>
 import { ref } from 'vue';
 import { useRestaurantStore } from '../stores/restaurantStore';
+import { useI18n } from 'vue-i18n';
+
+
+// Utilisation de `useI18n` dans le composant pour accéder à `$t`
+const { t } = useI18n();
+
 
 // Texte de recherche saisi par l'utilisateur
 const searchText = ref('');
@@ -16,18 +22,15 @@ function performSearch() {
 
 <template>
   <div class="search-bar">
-    <!-- Conteneur pour le champ de saisie -->
+    <!-- Conteneur pour le champ de saisie avec l'icône intégrée -->
     <div class="input-wrapper">
       <input 
         type="text" 
         v-model="searchText" 
-        placeholder="Recherche"
+        :placeholder="t('placeholder.recherche')"       
         @keyup.enter="performSearch"
       />
-    </div>
-
-    <!-- Bouton de recherche avec icône -->
-    <div class="searchIcon">
+      <!-- Icône de recherche placée à l'intérieur du champ -->
       <button @click="performSearch" class="search-button">
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
           <g fill="none">
@@ -43,24 +46,35 @@ function performSearch() {
 <style scoped>
 .search-bar {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .input-wrapper {
-  flex-grow: 1;
+  position: relative; /* Position relative pour le conteneur */
+  width: 300px; /* Largeur du champ de recherche */
 }
 
-.searchIcon {
-  margin-left: 10px;
+input[type="text"] {
+  width: 100%;
+  padding: 10px 40px 10px 10px; /* Ajoute de l'espace pour l'icône à droite */
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 25px; /* Bordure arrondie pour le champ */
 }
 
 .search-button {
+  position: absolute; /* Position absolue pour l'icône */
+  top: 50%;
+  right: 10px; /* Positionner l'icône à droite du champ */
+  transform: translateY(-50%); /* Centre verticalement l'icône */
   background-color: transparent;
   border: none;
   cursor: pointer;
 }
 
-.search-button img {
+.search-button svg {
   width: 24px;
   height: 24px;
 }

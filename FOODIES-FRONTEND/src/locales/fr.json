@@ -1,16 +1,15 @@
 {
-  
-  
   "cuisineFilter": {
     "label": "Cuisine",
     "italienne": "Italienne",
     "grecque": "Grecque",
     "africaine": "Africaine",
     "asiatique": "Asiatique",
-    "chinoise": "Chinoise"
+    "chinoise": "Chinoise",
+    "générale": "générale"
   },
-
-  "locationFilter":{
+  
+  "locationFilter": {
     "label": "Rayon",
     "1 km": "1 km",
     "5 km": "5 km",
@@ -18,33 +17,38 @@
     "15 km": "15 km",
     "20 km": "20 km",
     "25 km": "25 km"
-
+  },
+  
+  "restaurant": {
+    "Adresse": "Adresse",
+    "Téléphone": "Téléphone",
+    "Cuisine": "Cuisine",
+    "Étoiles": "Étoiles",
+    "Heures Ouverture": "Heures Ouverture",
+    "Meilleur commentaire": "Meilleur commentaire",
+    "non évalué": "non évalué",
+    "pas de commentaire": "pas de commentaire"
+  },
+  
+  "placeholder": {
+    "recherche": "Recherche"
   },
 
- "restaurant": {
-
-"Adresse": "Adresse",
-
-"Téléphone": "Téléphone",
-
-"Cuisine": "Cuisine",
-
-"Étoiles": "Étoile",
-
-"Heures Ouverture": "Heures Ouverture",
-
-"Meilleur commentaire": "Meilleur commentaire",
-
-" non évalué": "non évalué",
-
-" pas de commentaire": " pas de commentaire"
-
-
+  "StarFilter": {
+    "label": "Étoiles",
+    "1 étoile": "1 étoile",
+    "2 étoiles": "2 étoiles",
+    "3 étoiles": "3 étoiles",
+    "4 étoiles": "4 étoiles",
+    "5 étoiles": "5 étoiles"
   },
 
-    "search": {
-      "placeholder": "Recherche de restaurant, cuisine, etc."
-    }
-  
-  
+  "restaurantList": {
+    "title": "Liste des Restaurants"
+  },
+
+  "scrollingText":{
+
+    "message": "Bienvenu sur Foodie's, la plateforme N°1 de réservation de restaurant en ligne!"
+  }
 }

@@ -1,16 +1,20 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'; // Importation de useI18n pour la 
 
-export default defineComponent({})
+
+// Utilisation de `useI18n` dans le composant pour accéder à `$t`
+const { t } = useI18n();
+
+
 </script>
 
 <template>
   <div class="scrolling-text-container">
     <!-- Le texte est dupliqué deux fois -->
     <div class="scrolling-text">
-      <span>Bienvenu sur Foodie's, la plateforme N°1 de réservation de restaurant en ligne! </span>
-      <span>Bienvenu sur Foodie's, la plateforme N°1 de réservation de restaurant en ligne! </span>
-      <span>Bienvenu sur Foodie's, la plateforme N°1 de réservation de restaurant en ligne! </span>
+      <span>{{t('scrollingText.message') }}</span>
+      <span>{{t('scrollingText.message') }}</span>
+      <span>{{t('scrollingText.message') }}</span>
     </div>
   </div>
 </template>

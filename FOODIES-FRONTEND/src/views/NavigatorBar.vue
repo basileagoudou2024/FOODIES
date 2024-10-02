@@ -1,33 +1,42 @@
-<script setup lang="ts">
+<script setup lang="ts"> 
 import { useNavigatorStore } from '../stores/navigatorStore';
 import { storeToRefs } from 'pinia';
 import LogoComponent from '../components/LogoComponent.vue';
 import SearchTextComponent from '../components/SearchTextComponent.vue';
-import LocationFilterComponent from '../components/LocationFilter.vue';
-import StarsFilterComponent from '../components/StarsFilterComponent.vue';
-import KitchenFilterComponent from "../components/CuisineFilter.vue";
-import LanguageComponent from '../components/LanguageSelect.vue';
-import UserProfileComponent from "../components/UserProfileComponent.vue";
+import LocationFilter from '../components/LocationFilter.vue';
+import StarsFilter from '../components/StarsFilter.vue';
+import CuisineFilter  from "../components/CuisineFilter.vue";
+import LanguageSelect from '../components/LanguageSelect.vue';
+import UserProfile from '../components/UserProfile.vue';
+import { ref } from 'vue';
 
 const navigatorStore = useNavigatorStore();
 const { searchQuery } = storeToRefs(navigatorStore); // Récupération de l'état réactif
 
-// Vous pouvez appeler des actions ici si nécessaire
+const isMenuOpen = ref(true); // Initialisation de l'état du menu pour ordinateur
+
+// Fonction pour basculer l'affichage du menu
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
 </script>
 
 <template>
   <div class="navigator-bar">
     <LogoComponent class="logo" />
-    <div class="left-section">
+    <button class="mobile-menu-button" @click="toggleMenu">☰</button> <!-- Bouton pour le menu sur mobile -->
+    <div class="left-section" :class="{ 'mobile-hidden': !isMenuOpen }"> <!-- Appliquer la classe mobile-hidden si le menu est masqué -->
       <SearchTextComponent :query="searchQuery" @updateQuery="navigatorStore.updateSearchQuery" />
-      <LocationFilterComponent :selectedLocation="navigatorStore.selectedLocation" @updateLocation="navigatorStore.updateSelectedLocation" />
-      <StarsFilterComponent :selectedStars="navigatorStore.selectedStars" @updateStars="navigatorStore.updateSelectedStars" />
-      <KitchenFilterComponent :selectedKitchen="navigatorStore.selectedKitchen" @updateKitchen="navigatorStore.updateSelectedKitchen" />
-      <LanguageComponent :selectedLanguage="navigatorStore.selectedLanguage" @updateLanguage="navigatorStore.updateSelectedLanguage" />
+      <LocationFilter :selectedLocation="navigatorStore.selectedLocation" @updateLocation="navigatorStore.updateSelectedLocation" />
+      <StarsFilter :selectedStars="navigatorStore.selectedStars" @updateStars="navigatorStore.updateSelectedStars" />
+      <CuisineFilter :selectedKitchen="navigatorStore.selectedKitchen" @updateKitchen="navigatorStore.updateSelectedKitchen" />
+      <LanguageSelect :selectedLanguage="navigatorStore.selectedLanguage" @updateLanguage="navigatorStore.updateSelectedLanguage" />
     </div>
-    <UserProfileComponent class="user-profile" />
+    <UserProfile class="user-profile" />
   </div>
 </template>
+
+
 
 <style scoped>
 .navigator-bar {
@@ -42,6 +51,7 @@ const { searchQuery } = storeToRefs(navigatorStore); // Récupération de l'éta
 
 .logo {
   margin-right: auto; /* Garde le logo à gauche */
+  width: 120px; /* Largeur par défaut */
 }
 
 .left-section {
@@ -52,5 +62,53 @@ const { searchQuery } = storeToRefs(navigatorStore); // Récupération de l'éta
 
 .user-profile {
   margin-left: 15px; /* Garde le profil utilisateur à droite */
+}
+
+/* Bouton menu pour mobile */
+.mobile-menu-button {
+  display: none; /* Masqué par défaut */
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Ajustements sur les écrans de petite taille */
+@media (max-width: 768px) {
+  .navigator-bar {
+    height: auto; /* Ajuster la hauteur pour mobile */
+    flex-wrap: wrap; /* Permettre aux éléments de se réorganiser */
+  }
+
+  .logo {
+    width: 80px; /* Réduire la taille du logo */
+  }
+
+  /* Afficher le bouton du menu sur mobile */
+  .mobile-menu-button {
+    display: block; /* Affiché uniquement sur mobile */
+  }
+
+  .left-section {
+    flex-direction: column; /* Empiler verticalement */
+    gap: 15px; /* Réduire l'espacement */
+    padding: 10px;
+    width: 100%; /* Prendre toute la largeur */
+  }
+
+  /* Afficher le menu seulement quand isMenuOpen est vrai */
+  .left-section.mobile-hidden {
+    display: none; /* Masquer sur mobile si menu non ouvert */
+  }
+
+  /* Ajustement de la taille du champ de recherche */
+  .search-input {
+    width: 100%; /* Occupe toute la largeur */
+  }
+
+  .user-profile {
+    margin: 0; /* Réinitialiser le margin */
+  }
 }
 </style>

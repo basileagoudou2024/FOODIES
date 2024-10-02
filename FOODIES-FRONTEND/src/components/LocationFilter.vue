@@ -1,5 +1,10 @@
 
 
+<script setup lang="ts">
+
+
+</script>
+
 
 <template>
   <div class="location-filter">
@@ -14,13 +19,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'CuisineFilter'
-});
-</script>
 
 <style scoped>
 .cuisine-filter {
