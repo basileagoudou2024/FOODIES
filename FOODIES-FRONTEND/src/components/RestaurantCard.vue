@@ -72,6 +72,7 @@ defineProps({
   margin: 16px;
   width: 300px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color:#8d99ae;
 }
 
 .restaurant-image {
