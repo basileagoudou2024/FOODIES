@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 
 interface NavigatorState {
-  searchQuery: string;
+  searchText: string;
   selectedLocation: string;
   selectedStars: string;
   selectedKitchen: string;
@@ -11,16 +11,17 @@ interface NavigatorState {
 
 export const useNavigatorStore = defineStore('navigator', {
   state: (): NavigatorState => ({
-    searchQuery: '',
+    searchText: '',
     selectedLocation:'',
     selectedStars:'',
     selectedKitchen: '',
     selectedLanguage: 'fr', // langue par défaut
   }),
+
   getters: {
     // Ajoutez des getters si nécessaire
-    getSearchQuery(state: NavigatorState) {
-      return state.searchQuery;
+    getSearchText(state: NavigatorState) {
+      return state.searchText;
     },
     getSelectedLocation(state: NavigatorState) {
       return state.selectedLocation;
@@ -37,8 +38,8 @@ export const useNavigatorStore = defineStore('navigator', {
   },
   actions: {
     // Ajoutez des actions pour modifier l'état
-    updateSearchQuery(query: string) {
-      this.searchQuery = query;
+    updateSearchText(text: string) {
+      this.searchText = text;
     },
     updateSelectedLocation(location: string) {
       this.selectedLocation = location;
@@ -53,4 +54,4 @@ export const useNavigatorStore = defineStore('navigator', {
       this.selectedLanguage = language;
     },
   },
-});
+});   

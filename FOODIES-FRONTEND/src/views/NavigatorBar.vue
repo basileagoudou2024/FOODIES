@@ -11,7 +11,7 @@ import UserProfile from '../components/UserProfile.vue';
 import { ref } from 'vue';
 
 const navigatorStore = useNavigatorStore();
-const { searchQuery } = storeToRefs(navigatorStore); // Récupération de l'état réactif
+const { searchText } = storeToRefs(navigatorStore); // Récupération de l'état réactif
 
 const isMenuOpen = ref(true); // Initialisation de l'état du menu pour ordinateur
 
@@ -26,7 +26,7 @@ const toggleMenu = () => {
     <LogoComponent class="logo" />
     <button class="mobile-menu-button" @click="toggleMenu">☰</button> <!-- Bouton pour le menu sur mobile -->
     <div class="left-section" :class="{ 'mobile-hidden': !isMenuOpen }"> <!-- Appliquer la classe mobile-hidden si le menu est masqué -->
-      <SearchTextComponent :query="searchQuery" @updateQuery="navigatorStore.updateSearchQuery" />
+      <SearchTextComponent :query="searchText" @updateQuery="navigatorStore.updateSearchText" />
       <LocationFilter :selectedLocation="navigatorStore.selectedLocation" @updateLocation="navigatorStore.updateSelectedLocation" />
       <StarsFilter :selectedStars="navigatorStore.selectedStars" @updateStars="navigatorStore.updateSelectedStars" />
       <CuisineFilter :selectedKitchen="navigatorStore.selectedKitchen" @updateKitchen="navigatorStore.updateSelectedKitchen" />
