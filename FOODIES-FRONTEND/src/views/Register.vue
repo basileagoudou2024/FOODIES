@@ -1,0 +1,23 @@
+
+
+
+
+<script setup lang="ts">
+import NavigatorBarForAuth from '@/components/NavigatorBarForAuth.vue';
+import Carousel from '@/components/BootstrapCarousel.vue';
+import MessageDisplay from '@/components/MessageDisplay.vue';
+import CreateAccountForm from '@/components/CreateAccountForm.vue';
+
+
+</script>
+
+<template>
+  <NavigatorBarForAuth/>
+  <Carousel/>
+  <MessageDisplay/>
+  <CreateAccountForm/>
+</template>
+
+<style scoped>
+
+</style>

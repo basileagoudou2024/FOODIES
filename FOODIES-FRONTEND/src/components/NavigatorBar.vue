@@ -1,13 +1,13 @@
 <script setup lang="ts"> 
 import { useNavigatorStore } from '../stores/navigatorStore';
 import { storeToRefs } from 'pinia';
-import LogoComponent from '../components/LogoComponent.vue';
+import LogoComponent from './LogoComponent.vue';
 import SearchTextComponent from '../components/SearchTextComponent.vue';
-import LocationFilter from '../components/LocationFilter.vue';
-import StarsFilter from '../components/StarsFilter.vue';
-import CuisineFilter  from "../components/CuisineFilter.vue";
-import LanguageSelect from '../components/LanguageSelect.vue';
-import UserProfile from '../components/UserProfile.vue';
+import LocationFilter from './LocationFilter.vue';
+import StarsFilter from './StarsFilter.vue';
+import CuisineFilter  from "./CuisineFilter.vue";
+import LanguageSelect from './LanguageSelect.vue';
+import UserProfile from './UserProfile.vue';
 import { ref } from 'vue';
 
 const navigatorStore = useNavigatorStore();

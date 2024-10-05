@@ -1,21 +1,12 @@
 <script setup lang="ts">
-//import { RouterLink, RouterView } from 'vue-router';
-import  NavigatorBar from './views/NavigatorBar.vue';
-import Carousel from './views/BootstrapCarousel.vue';
-import MessageDisplay from './components/MessageDisplay.vue';
-import RestaurantList from './views/RestaurantList.vue';
+import { RouterLink, RouterView } from 'vue-router';
+
 
 </script>
 
 <template>
-
   <div>
-  
-  <NavigatorBar/>
-  <Carousel/>
-  <MessageDisplay/>
-  <RestaurantList />
-
+    <RouterView/>
   </div>
   
 </template>
