@@ -1,10 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export type UserType = 'client' | 'owner' | 'admin';
+
 export interface IUser extends Document {
   nom: string;
   prenom: string;
   email: string;
-  motDePasse: string;
+  password: string;
+  type: UserType;
   adresse: string;
   langueParlee: string;
   dateInscription: Date;
