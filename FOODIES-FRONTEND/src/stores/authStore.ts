@@ -1,62 +1,154 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { User } from '../shared/interfaces/userInterface'; // Importe le type User
-
-interface AuthState {
-  users: User[];
-  currentUser: User | null;
-  isAuthenticated: boolean;
-}
 
 export const useAuthStore = defineStore('authStore', {
-  state: (): AuthState => ({
-    users: [], // Stocke la liste des utilisateurs
-    currentUser: null, // Utilisateur actuellement connecté
-    isAuthenticated: false, // Indique si l'utilisateur est authentifié ou non
+  state: () => ({
+    nom: '',
+    prenom: '',
+    email: '',
+    password: '',
+    telephone: '',
+    adresseString: '', // Nouvelle propriété pour stocker l'adresse sous forme de chaîne
+    adresse: {
+      numeroCivique: '',
+      rue: '',
+      ville: '',
+      province: '',
+      pays: '',
+      codePostal: '',
+    },
+    typeDeCompte: 'Client', // Par défaut 'Client', peut être 'Propriétaire' ou 'Admin'
+    servicePremium: false, // Booléen
+    forfait: '', // string
+    dateDebutForfait: null as Date | null,
+    dateFinForfait: null as Date | null,
+    isAuthenticated: false, // Indicateur d'authentification
   }),
 
   actions: {
-    // Action de création de compte
-    async createAccount(user: User) {
+    // Mettre à jour l'adresseString en fusionnant tous les champs d'adresse
+    updateAdresseString() {
+      this.adresseString = `${this.adresse.numeroCivique} ${this.adresse.rue}, ${this.adresse.ville}, ${this.adresse.province}, ${this.adresse.pays} ${this.adresse.codePostal}`;
+    },
+
+    // Action pour réinitialiser le formulaire
+    resetForm() {
+      this.nom = '';
+      this.prenom = '';
+      this.email = '';
+      this.password = '';
+      this.telephone = '';
+      this.adresseString = '';
+      this.adresse = {
+        numeroCivique: '',
+        rue: '',
+        ville: '',
+        province: '',
+        pays: '',
+        codePostal: '',
+      };
+      this.typeDeCompte = 'Client';
+      this.servicePremium = false;
+      this.forfait = '';
+      this.dateDebutForfait = null;
+      this.dateFinForfait = null;
+      this.isAuthenticated = false;
+    },
+
+    // Nouvelle action pour envoyer les informations d'inscription au backend
+async registerUser() {
+  try {
+    // Construire l'objet utilisateur avec les données actuelles du store
+    const newUser = {
+      nom: this.nom,
+      prenom: this.prenom,
+      email: this.email,
+      password: this.password,
+      telephone: this.telephone,
+      adresse: this.adresseString, // Utilisez la chaîne d'adresse formatée
+      typeDeCompte: this.typeDeCompte,
+      servicePremium: this.servicePremium,
+      forfait: this.forfait,
+      dateDebutForfait: this.dateDebutForfait,
+      dateFinForfait: this.dateFinForfait,
+    };
+
+    // Log de l'objet avant l'envoi
+    console.log('Objet à envoyer au backend :', newUser);
+
+    // Envoyer la requête POST vers le backend
+    const response = await axios.post('http://localhost:5000/api/users', newUser);
+
+    // Log de la réponse reçue
+    console.log('Réponse reçue du backend :', response.data);
+
+    // Afficher le succès dans la console
+    console.log('Utilisateur créé avec succès :', response.data);
+
+    // Réinitialiser le formulaire après la création de l'utilisateur
+    this.resetForm();
+  } catch (error: any) {
+    // Log des erreurs éventuelles
+    if (error.response) {
+      console.error("Erreur lors de la création de l'utilisateur :", error.response.data);
+      console.error("Statut de l'erreur :", error.response.status);
+    } else {
+      console.error("Erreur lors de la création de l'utilisateur :", error.message);
+    }
+  }
+},
+
+    // Nouvelle action pour authentifier l'utilisateur
+    async login(credentials: { email: string; password: string }) {
       try {
-        // Envoie les données de l'utilisateur au backend
-        const response = await axios.post('http://localhost:5000/api/users', user);
-
-        // Une fois l'utilisateur créé avec succès, on envoie un email de confirmation
-        await axios.post('http://localhost:5000/api/send-confirmation-email', {
-          email: user.email,
-          password: user.password,
-          type: user.type,
-        });
-
-        console.log('User account created and confirmation email sent.');
-        return response.data; // Retourne les données de l'utilisateur créé
-      } catch (error) {
-        console.error('Erreur lors de la création du compte:', error);
-        throw error;
+        // Envoyer la requête POST pour vérifier les identifiants
+        const response = await axios.post('http://localhost:5000/api/Users/login', credentials);
+    
+        // Si la réponse est positive, récupérer les informations de l'utilisateur
+        if (response.data) {
+          const userData = response.data;
+    
+          // Mettre à jour le store avec les informations de l'utilisateur
+          this.nom = userData.nom;
+          this.prenom = userData.prenom;
+          this.email = userData.email;
+          this.telephone = userData.telephone;
+          this.adresseString = userData.adresse;
+          this.typeDeCompte = userData.typeDeCompte;
+          this.servicePremium = userData.servicePremium;
+          this.forfait = userData.forfait;
+          this.dateDebutForfait = new Date(userData.dateDebutForfait);
+          this.dateFinForfait = new Date(userData.dateFinForfait);
+    
+          // Indiquer que l'utilisateur est authentifié
+          this.isAuthenticated = true;
+          console.log('Connexion réussie:', userData);
+        }
+      } catch (error: any) {
+        // Gestion spécifique des erreurs de connexion
+        if (error.response) {
+          if (error.response.status === 404) {
+            // Cas où l'utilisateur n'existe pas dans la base de données
+            console.error('Erreur : Utilisateur non trouvé. Veuillez vous inscrire.');
+            throw new Error("Utilisateur non trouvé. Veuillez vous inscrire.");
+          } else if (error.response.status === 401) {
+            // Cas où le mot de passe ou l'email est incorrect
+            console.error('Erreur : Email ou mot de passe incorrect.');
+            throw new Error("Email ou mot de passe incorrect.");
+          }
+        } else {
+          // Autres erreurs (exemple : problème de réseau, serveur hors ligne)
+          console.error('Erreur de connexion :', error.message);
+          throw new Error("Erreur de connexion. Veuillez réessayer plus tard.");
+        }
       }
     },
-
-    // Action de connexion avec vérification du type
-    login({ email, password }: { email: string; password: string }) {
-      if (!email || !password) {
-        console.error('Email and password are required');
-        return;
-      }
-
-      const user = this.users.find((u) => u.email === email && u.password === password);
-      if (user) {
-        this.currentUser = user;
-        this.isAuthenticated = true; // L'utilisateur est connecté
-      } else {
-        throw new Error('Invalid login credentials');
-      }
-    },
-
-    // Action de déconnexion
+    
+    // Action pour déconnecter l'utilisateur
     logout() {
-      this.isAuthenticated = false; // Met à jour l'état de l'authentification
-      this.currentUser = null; // Réinitialise l'utilisateur courant
+      this.resetForm(); // Réinitialiser les informations utilisateur
+      this.isAuthenticated = false; // Désactiver l'état d'authentification
+      console.log('Déconnexion réussie.');
     },
   },
 });

@@ -1,7 +1,4 @@
 
-
-
-
 <script setup lang="ts">
 import NavigatorBarForAuth from '@/components/NavigatorBarForAuth.vue';
 import Carousel from '@/components/BootstrapCarousel.vue';

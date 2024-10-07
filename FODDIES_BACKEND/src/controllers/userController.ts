@@ -1,53 +1,39 @@
 import { Request, Response } from 'express';
-import * as userQueries from '../database/queries/userQueries';
+import { registerUser, loginUser, getUserById, updateUser, deleteUser, getAllUsers } from '../database/queries/userQueries';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-
-dotenv.config(); // Charge les variables d'environnement
-
-// Récupère tous les utilisateurs de la base de données
-export const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await userQueries.getAllUsers();
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs.' });
-  }
-};
+dotenv.config(); // Chargement des variables d'environnement depuis le fichier .env
+import mongoose from 'mongoose';
 
 // Fonction d'envoi de courriel de confirmation
-const sendConfirmationEmail = async (email: string, password: string, type: string) => {
-  // Configuration du transporteur nodemailer
+const sendConfirmationEmail = async (email: string, type: string) => {
   const transporter = nodemailer.createTransport({
-    service: 'gmail', // Utilisez Gmail ou un autre service (par exemple, Mailgun, SendGrid, etc.)
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER, // Adresse e-mail de l'expéditeur (doit être configurée dans un fichier .env)
-      pass: process.env.EMAIL_PASSWORD, // Mot de passe de l'e-mail de l'expéditeur
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 
-  // Contenu de l'email de confirmation
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Adresse e-mail de l'expéditeur
-    to: email, // Adresse e-mail du destinataire
+    from: process.env.EMAIL_USER,
+    to: email,
     subject: 'Confirmation de création de compte Foodies',
     text: `Bonjour,
 
 Votre compte a été créé avec succès sur Foodies!
 
-Voici les détails de votre compte :
-- Email : ${email}
-- Mot de passe : ${password}
-- Type de compte : ${type}
+Pour activer votre compte, veuillez cliquer sur le lien suivant : [lien de confirmation].
 
 Merci d'utiliser Foodies!
 
 Cordialement,
+
 L'équipe Foodies`,
   };
 
   try {
-    await transporter.sendMail(mailOptions); // Envoie de l'email
+    await transporter.sendMail(mailOptions);
     console.log(`Email de confirmation envoyé à ${email}`);
   } catch (error) {
     console.error(`Erreur lors de l'envoi du courriel : ${error}`);
@@ -55,14 +41,115 @@ L'équipe Foodies`,
   }
 };
 
-// Création d'un nouvel utilisateur et envoi d'un courriel de confirmation
-export const createUser = async (req: Request, res: Response) => {
+// Contrôleur pour l'enregistrement des utilisateurs
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = await userQueries.createUser(req.body); // Ajoute l'utilisateur à la base de données MongoDB
-    await sendConfirmationEmail(user.email, user.password, user.type); // Envoie l'email de confirmation
-    res.status(201).json({ message: 'Utilisateur créé avec succès et email de confirmation envoyé.', user });
+    // 1. Création de l'utilisateur dans la base de données
+    const newUser = await registerUser(req.body);
+
+    console.log(`Utilisateur ${newUser.email} créé avec succès dans la base de données.`);
+
+    // 2. Envoi du courriel de confirmation
+    await sendConfirmationEmail(newUser.email, newUser.type);
+
+    // 3. Envoi de la réponse HTTP avec statut 201 (Créé)
+     res.status(201).json({
+      message: 'Utilisateur créé avec succès et email de confirmation envoyé.',
+      user: newUser,
+    });
   } catch (error) {
-    console.error(`Erreur lors de la création de l'utilisateur: ${error}`);
-    res.status(500).json({ message: 'Erreur lors de la création de l\'utilisateur ou de l\'envoi du courriel.' });
+    console.error(`Erreur lors de l'enregistrement de l'utilisateur : ${error}`);
+     res.status(500).json({
+      message: 'Erreur lors de l\'enregistrement de l\'utilisateur ou de l\'envoi de l\'email de confirmation.',
+    });
+  }
+};
+
+// Contrôleur pour la connexion des utilisateurs
+export const login = async (req: Request, res: Response): Promise<void> => {
+  const { email, password } = req.body;
+
+  try {
+    const token = await loginUser(email, password);
+    res.status(200).json({ message: 'Connexion réussie.', token });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Contrôleur pour obtenir un utilisateur par son ID
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.params.id;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: 'ID utilisateur invalide.' });
+      return;
+    }
+
+    const user = await getUserById(new mongoose.Types.ObjectId(userId));
+    if (!user) {
+      res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      return;
+    }
+
+    res.status(200).json(user);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Contrôleur pour récupérer tous les utilisateurs
+export const getAll = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await getAllUsers();
+    res.status(200).json(users);
+  } catch (error: any) {
+    res.status(400).json({ message: 'Erreur lors de la récupération des utilisateurs.' });
+  }
+};
+
+// Contrôleur pour la mise à jour d'un utilisateur par ID
+export const update = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.params.id;
+  const updateData = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: 'ID utilisateur invalide.' });
+      return;
+    }
+
+    const updatedUser = await updateUser(new mongoose.Types.ObjectId(userId), updateData);
+    if (!updatedUser) {
+      res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      return;
+    }
+
+    res.status(200).json({ message: 'Utilisateur mis à jour avec succès.', user: updatedUser });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Contrôleur pour la suppression d'un utilisateur par ID
+export const remove = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.params.id;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: 'ID utilisateur invalide.' });
+      return;
+    }
+
+    const deletedUser = await deleteUser(new mongoose.Types.ObjectId(userId));
+    if (!deletedUser) {
+      res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      return;
+    }
+
+    res.status(200).json({ message: 'Utilisateur supprimé avec succès.', user: deletedUser });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 };

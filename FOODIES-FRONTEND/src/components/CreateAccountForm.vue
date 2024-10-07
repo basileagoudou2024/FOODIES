@@ -1,206 +1,213 @@
+
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
-import type { UserType } from '../shared/interfaces/userInterface';
+import { ref } from 'vue';
+import { useAuthStore } from '../stores/authStore';
 
-// Utilisation du store et du router
 const authStore = useAuthStore();
-const route = useRoute();
-const router = useRouter();
 
-// Champs du formulaire
-const email = ref('');
-const password = ref('');
-const accountType = ref<UserType | ''>('');
+// Champs de base du formulaire
+const typeDeCompte = ref(authStore.typeDeCompte);
+const nom = ref(authStore.nom);
+const prenom = ref(authStore.prenom);
+const email = ref(authStore.email);
+const telephone = ref(authStore.telephone);
+const password = ref(authStore.password);
 
-// Tableau dynamique des types de compte
-const accountTypes = ['client', 'propriétaire', 'admin'];
-
-// Variables de gestion des erreurs
-const emailError = ref('');
-const passwordError = ref('');
-const serverError = ref(''); // Erreur de création de compte côté serveur
-
-// Validation des champs
-const validateEmail = () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  emailError.value = !email.value.match(emailRegex) ? 'Veuillez entrer un email valide.' : '';
-};
-
-const validatePassword = () => {
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  passwordError.value = !password.value.match(passwordRegex)
-    ? 'Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial.'
-    : '';
-};
-
-// Détection de validité globale du formulaire
-const formIsValid = computed(() => {
-  return emailError.value === '' && passwordError.value === '' && email.value !== '' && password.value !== '';
+// Adresse
+const adresse = ref({
+  numeroCivique: '',
+  rue: '',
+  ville: '',
+  province: '',
+  pays: '',
+  codePostal: '',
 });
 
-// Gestion du type de compte lors du chargement
-onMounted(() => {
-  if (route.query.type) {
-    accountType.value = route.query.type.toString() as UserType;
-  }
-});
+// Champs pour le Service Premium
+const servicePremium = ref(false);
+const forfait = ref('');
+const dateDebutForfait = ref('');
+const dateFinForfait = ref('');
 
-// Gestion de l'envoi du formulaire
-const handleSubmit = () => {
-  if (formIsValid.value) {
-    serverError.value = ''; // Réinitialisation de l'erreur serveur
-    // Appel au store pour créer le compte
-    authStore
-      .createAccount({
-        email: email.value,
-        password: password.value,
-        type: accountType.value as UserType,
-      })
-      .then(() => {
-        alert(`Compte créé pour : ${email.value}`);
-        router.push('/restaurants');
-      })
-      .catch((error) => {
-        serverError.value = 'Erreur lors de la création du compte. Veuillez réessayer.';
-        console.error('Erreur lors de la création du compte :', error);
-      });
-  } else {
-    alert('Veuillez remplir le formulaire correctement.');
+const handleSubmit = async () => {
+  // Mise à jour du store avec les données saisies
+  authStore.typeDeCompte = typeDeCompte.value;
+  authStore.nom = nom.value;
+  authStore.prenom = prenom.value;
+  authStore.email = email.value;
+  authStore.telephone = telephone.value;
+  authStore.password = password.value;
+
+  // Mise à jour de l'adresse
+  authStore.adresse.numeroCivique = adresse.value.numeroCivique;
+  authStore.adresse.rue = adresse.value.rue;
+  authStore.adresse.ville = adresse.value.ville;
+  authStore.adresse.province = adresse.value.province;
+  authStore.adresse.pays = adresse.value.pays;
+  authStore.adresse.codePostal = adresse.value.codePostal;
+
+  // Si le service premium est activé, enregistrer les informations
+  if (typeDeCompte.value === 'Propriétaire' && servicePremium.value) {
+    
+ // Mise à jour du service Premium et des informations associées
+  authStore.servicePremium = servicePremium.value;
+
+  if (authStore.servicePremium) { // Mettre à jour les informations de forfait si le service premium est activé
+    authStore.forfait = forfait.value;
+    authStore.dateDebutForfait = dateDebutForfait.value ? new Date(dateDebutForfait.value) : null;
+    authStore.dateFinForfait = dateFinForfait.value ? new Date(dateFinForfait.value) : null;
+  } else { // Réinitialiser les champs de forfait s'il est désactivé
+    authStore.forfait = '';
+    authStore.dateDebutForfait = null;
+    authStore.dateFinForfait = null;
   }
+  }
+
+  // Appel de la fonction d'enregistrement
+  authStore.registerUser();
 };
 </script>
 
+
+
+
 <template>
-  <div>
-    <div class="container">
-      <div class="form-container">
-        <h4>Créer un Compte</h4>
-        <form @submit.prevent="handleSubmit">
-          <!-- Type de compte -->
-          <div class="account-type">
-            <label for="account-type">Type de compte :</label>
-            <select id="account-type" v-model="accountType" required>
-              <option v-for="type in accountTypes" :key="type" :value="type">
-                {{ type }}
-              </option>
-            </select>
-          </div>
+  <form @submit.prevent="handleSubmit" class="create-account-form">
+    <h2>Création de Compte</h2>
 
-          <!-- Champ Email -->
-          <div class="form-group">
-            <label for="email">Courriel</label>
-            <input
-              id="email"
-              v-model="email"
-              type="email"
-              @input="validateEmail"
-              :class="{ 'is-invalid': emailError }"
-              placeholder="Couriel"
-              aria-describedby="emailHelp"
-              required
-            />
-            <span id="emailHelp" v-if="emailError" class="error-message">{{ emailError }}</span>
-          </div>
+    <!-- Sélection du type de compte -->
+    <div class="form-group">
+      <label for="typeCompte">Type de compte :</label>
+      <select v-model="typeDeCompte" id="typeCompte">
+        <option value="Client">Client</option>
+        <option value="Propriétaire">Propriétaire</option>
+        <option value="Admin">Admin</option>
+      </select>
+    </div>
 
-          <!-- Champ Mot de Passe -->
-          <div class="form-group">
-            <label for="password">Mot de Passe</label>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              @input="validatePassword"
-              :class="{ 'is-invalid': passwordError }"
-              placeholder="Mot de Passe"
-              aria-describedby="passwordHelp"
-              required
-            />
-            <span id="passwordHelp" v-if="passwordError" class="error-message">{{ passwordError }}</span>
-          </div>
+    <!-- Identification -->
+    <div class="form-group">
+      <label for="nom">Nom :</label>
+      <input type="text" v-model="nom" id="nom" required />
 
-          <!-- Message d'erreur serveur -->
-          <span v-if="serverError" class="error-message">{{ serverError }}</span>
+      <label for="prenom">Prénom :</label>
+      <input type="text" v-model="prenom" id="prenom" required />
+    </div>
 
-          <!-- Bouton de soumission -->
-          <div class="button">
-            <button type="submit" :disabled="!formIsValid">Soumettre</button>
-          </div>
-        </form>
+    <div class="form-group">
+      <label for="email">Email :</label>
+      <input type="email" v-model="email" id="email" required />
+
+      <label for="telephone">Téléphone :</label>
+      <input type="tel" v-model="telephone" id="telephone" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mot de passe :</label>
+      <input type="password" v-model="password" id="password" required />
+    </div>
+
+    <!-- Adresse -->
+    <h3>Adresse</h3>
+    <div class="form-group">
+      <label for="numeroCivique">Numéro civique :</label>
+      <input type="text" v-model="adresse.numeroCivique" id="numeroCivique" />
+
+      <label for="rue">Rue :</label>
+      <input type="text" v-model="adresse.rue" id="rue" />
+    </div>
+
+    <div class="form-group">
+      <label for="ville">Ville :</label>
+      <input type="text" v-model="adresse.ville" id="ville" />
+
+      <label for="province">Province :</label>
+      <input type="text" v-model="adresse.province" id="province" />
+    </div>
+
+    <div class="form-group">
+      <label for="pays">Pays :</label>
+      <input type="text" v-model="adresse.pays" id="pays" />
+
+      <label for="codePostal">Code Postal :</label>
+      <input type="text" v-model="adresse.codePostal" id="codePostal" />
+    </div>
+
+    <!-- Service Premium pour Propriétaire -->
+    <div v-if="typeDeCompte === 'Propriétaire'" class="premium-section">
+      <input type="checkbox" v-model="servicePremium" id="servicePremium" />
+      <label for="servicePremium">Service Premium</label>
+
+      <div v-if="servicePremium">
+        <div class="form-group">
+          <label for="forfait">Forfait :</label>
+          <input type="text" v-model="forfait" id="forfait" :disabled="!servicePremium" />
+        </div>
+
+        <div class="form-group">
+          <label for="dateDebutForfait">Date de début du forfait :</label>
+          <input type="date" v-model="dateDebutForfait" id="dateDebutForfait" :disabled="!servicePremium" />
+
+          <label for="dateFinForfait">Date de fin du forfait :</label>
+          <input type="date" v-model="dateFinForfait" id="dateFinForfait" :disabled="!servicePremium" />
+        </div>
       </div>
     </div>
-  </div>
+
+    <button type="submit">Soumettre</button>
+  </form>
 </template>
 
+
+
 <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 70vh;
-  width: 100vw;
-  background-color: #f4f4f4;
-}
-
-.form-container {
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 30vw;
-  padding: 20px;
+.create-account-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1em;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h3 {
-  color: #333;
-  margin-bottom: 10px;
+h2, h3 {
   text-align: center;
 }
 
-input[type="email"],
-input[type="password"],
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5em 0;
 }
 
-.form-group {
-  margin-bottom: 15px;
+label {
+  width: 30%;
+}
+
+input, select {
+  width: 65%;
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 button {
-  padding: 10px 20px;
+  width: 20%;
+  padding: 0.7em;
+  background-color:  #28a745;
+  color: white;
   border: none;
-  background-color: #28a745;
-  color: #fff;
+  border-radius: 20px;
   cursor: pointer;
-  border-radius: 4px;
 }
 
-button[disabled] {
-  background: #ddd;
-  cursor: not-allowed;
+button:hover {
+  background-color: #218838;
 }
 
-.is-invalid {
-  border: 1px solid red;
-}
-
-.error-message {
-  color: red;
-  font-size: 0.8em;
-  margin-top: 5px;
-}
-
-.account-type {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+.premium-section {
+  margin-top: 1em;
+  padding: 1em;
+  border: 1px dashed #007bff;
 }
 </style>
