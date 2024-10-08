@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
+import { useUserStore } from '@/stores/userStore';
 import type { UserType } from '../shared/interfaces/userInterface';
 
 // Utilisation du store et du router
-const authStore = useAuthStore();
+const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 
@@ -52,7 +52,7 @@ const handleSubmit = () => {
   if (formIsValid.value) {
     serverError.value = ''; // Réinitialisation de l'erreur serveur
     // Appel au store pour créer le compte
-    authStore
+    userStore
       .createAccount({
         email: email.value,
         password: password.value,

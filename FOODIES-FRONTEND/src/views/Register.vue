@@ -6,7 +6,7 @@
 import NavigatorBarForAuth from '@/components/NavigatorBarForAuth.vue';
 import Carousel from '@/components/BootstrapCarousel.vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
-import CreateAccountForm from '@/components/CreateAccountForm.vue';
+import CreateAccountForm from '@/components/RegistertForm.vue';
 
 
 </script>
