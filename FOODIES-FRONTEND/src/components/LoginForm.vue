@@ -1,7 +1,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -12,11 +12,11 @@ const email = ref('');
 const password = ref('');
 const errorMessage = ref('');  // renvoi de message d'erreur
   
-const authStore = useAuthStore();
+const userStore = useUserStore();
   
 const login = async () => {
     try {
-      const response = await authStore.login({ email: email.value, password: password.value});
+      const response = await userStore.login({ email: email.value, password: password.value});
 
       console.log("Réponse de l'authentification:", response);
       errorMessage.value = '';
