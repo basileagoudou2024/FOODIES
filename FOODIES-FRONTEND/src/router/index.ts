@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/views/Login.vue';
-import Register from '@/views/RegisterUser.vue';
-import RestaurantList from '@/views/RestaurantList.vue';
+import Login from '@/views/LoginPage.vue';
+import Register from '@/views/RegisterPage.vue';
+import RestaurantList from '@/views/RestaurantsPage.vue';
 
 // Définir les routes
 const routes = [
   {
-    path: '/',
+    path: '/',          // page de l'appli
     name: 'Login',
     component: Login,
     meta: { requiresAuth: false },

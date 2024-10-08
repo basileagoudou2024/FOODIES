@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 // Utilisation des routes
 app.use('/api/restaurants', restaurantRoutes);
-app.use('/api/Users', userRoutes); // Ajoute cette ligne si tu souhaites activer cette route
+app.use('/api/users', userRoutes); // Ajoute cette ligne si tu souhaites activer cette route
 app.use('/api/evaluations', evaluationRoutes);
 
 // Connexion à MongoDB avec confirmation de démarrage

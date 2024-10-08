@@ -16,15 +16,21 @@ const authStore = useAuthStore();
   
 const login = async () => {
     try {
-      await authStore.login({ email: email.value, password: password.value});
+      const response = await authStore.login({ email: email.value, password: password.value});
+
+      console.log("Réponse de l'authentification:", response);
       errorMessage.value = '';
-    } catch (error) {
+    } catch (error: any) {
+
+      console.error("Erreur pendant l'authentification:", error.esponse?.data || error.message);
       errorMessage.value = 'Login failed. Please check your credentials.';
     }
+
   };
 
   const goToCreateAccount = () => {
-  // Transmet le type de compte à la page de création
+
+  // Redirige de l'utilisateur vers la page de création de compte s'il n'est pas enregistré
   router.push('/register');
 
   console.log('Redirecting to create account page...');
@@ -52,7 +58,7 @@ const login = async () => {
           <input   v-model="password"   type="password"   placeholder="Mot de passe"   required/>
         </div>
   
-        <!-- Boutons de soumission -->
+        <!-- Boutons de connexion -->
         <div class="button-group">
           <button @click="login">Connexion</button>
         </div>

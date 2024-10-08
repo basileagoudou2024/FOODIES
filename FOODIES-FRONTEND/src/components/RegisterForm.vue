@@ -3,6 +3,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/authStore';
 
+
 const authStore = useAuthStore();
 
 // Champs de base du formulaire
@@ -12,6 +13,7 @@ const prenom = ref(authStore.prenom);
 const email = ref(authStore.email);
 const telephone = ref(authStore.telephone);
 const password = ref(authStore.password);
+const langueParlee = ref(authStore.langueParlee);
 
 // Adresse
 const adresse = ref({
@@ -37,6 +39,7 @@ const handleSubmit = async () => {
   authStore.email = email.value;
   authStore.telephone = telephone.value;
   authStore.password = password.value;
+  authStore.langueParlee = langueParlee.value;  
 
   // Mise à jour de l'adresse
   authStore.adresse.numeroCivique = adresse.value.numeroCivique;
@@ -65,6 +68,7 @@ const handleSubmit = async () => {
 
   // Appel de la fonction d'enregistrement
   authStore.registerUser();
+  
 };
 </script>
 
@@ -105,6 +109,9 @@ const handleSubmit = async () => {
     <div class="form-group">
       <label for="password">Mot de passe :</label>
       <input type="password" v-model="password" id="password" required />
+
+      <label for="langueParlee"> langue parlée :</label>
+      <input type="password" v-model="langueParlee" id="langueParlee" required />
     </div>
 
     <!-- Adresse -->

@@ -32,7 +32,7 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
   const fetchRestaurants = async () => {
     try {
       console.log('Fetching restaurants...');
-      const response = await axios.get('http://localhost:5000/api/restaurants'); // Adapter l'URL si nécessaire
+      const response = await axios.get('/restaurants'); // Adapter l'URL si nécessaire
       console.log('Restaurants fetched:', response.data);
       restaurants.value = response.data;
     } catch (error: any) {

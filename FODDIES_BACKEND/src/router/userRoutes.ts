@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import { loginUser, registerUser } from '../database/queries/userQueries';
+import * as userController from '../controllers/userController';
 
 const router = express.Router();
 
-// Route pour l'enregistrement
-router.post('/api/Users', async (req: Request, res: Response) => {
+router.post('/registerUser', async (req: Request, res: Response) => {
   try {
     const newUser = await registerUser(req.body);
     res.status(201).json(newUser);
@@ -14,7 +14,8 @@ router.post('/api/Users', async (req: Request, res: Response) => {
 });
 
 // Route pour la connexion
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', userController.login);
+/*router.post('/loginUser',*/ async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -23,6 +24,6 @@ router.post('/login', async (req: Request, res: Response) => {
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
-});
+};
 
 export default router;

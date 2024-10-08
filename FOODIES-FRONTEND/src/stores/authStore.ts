@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('authStore', {
     password: '',
     telephone: '',
     adresseString: '', // Nouvelle propriété pour stocker l'adresse sous forme de chaîne
+    langueParlee:'',
     adresse: {
       numeroCivique: '',
       rue: '',
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('authStore', {
     dateDebutForfait: null as Date | null,
     dateFinForfait: null as Date | null,
     isAuthenticated: false, // Indicateur d'authentification
+  
   }),
 
   actions: {
@@ -38,7 +40,6 @@ export const useAuthStore = defineStore('authStore', {
       this.email = '';
       this.password = '';
       this.telephone = '';
-      this.adresseString = '';
       this.adresse = {
         numeroCivique: '',
         rue: '',
@@ -47,62 +48,77 @@ export const useAuthStore = defineStore('authStore', {
         pays: '',
         codePostal: '',
       };
+      this.langueParlee = '';
       this.typeDeCompte = 'Client';
       this.servicePremium = false;
       this.forfait = '';
       this.dateDebutForfait = null;
       this.dateFinForfait = null;
       this.isAuthenticated = false;
+    
     },
 
     // Nouvelle action pour envoyer les informations d'inscription au backend
-async registerUser() {
-  try {
-    // Construire l'objet utilisateur avec les données actuelles du store
-    const newUser = {
-      nom: this.nom,
-      prenom: this.prenom,
-      email: this.email,
-      password: this.password,
-      telephone: this.telephone,
-      adresse: this.adresseString, // Utilisez la chaîne d'adresse formatée
-      typeDeCompte: this.typeDeCompte,
-      servicePremium: this.servicePremium,
-      forfait: this.forfait,
-      dateDebutForfait: this.dateDebutForfait,
-      dateFinForfait: this.dateFinForfait,
-    };
+    async registerUser() {
+      try {
+        // Mettre à jour la chaîne d'adresse avant de créer l'objet utilisateur
+        this.updateAdresseString();
+        
+        // Construire l'objet utilisateur avec les données actuelles du store
+        const newUser = {
+          nom: this.nom,
+          prenom: this.prenom,
+          email: this.email,
+          password: this.password,
+          telephone: this.telephone,
+          adresse: this.adresseString, // Utilisez la chaîne d'adresse formatée
+          langueParlee: this.langueParlee,
+          typeDeCompte: this.typeDeCompte,
+          servicePremium: this.servicePremium,
+          forfait: this.forfait,
+          dateDebutForfait: this.dateDebutForfait,
+          dateFinForfait: this.dateFinForfait,
+        };
+    
+        // Log de l'objet avant l'envoi
+        console.log('Objet à envoyer au backend :', newUser);
+    
+        // Envoyer la requête POST vers le backend
+        const response = await axios.post('http://localhost:5000/api/users/registerUser', newUser);
+    
+        // Log de la réponse reçue
+        console.log('Réponse reçue du backend :', response.data);
+    
+        // Afficher le succès dans la console
+        console.log('Utilisateur créé avec succès :', response.data);
+        alert(`${response.data.message}`);
+    
+        // Réinitialiser le formulaire après la création de l'utilisateur
+        this.resetForm();
+      } catch (error: any) {
+        // Log des erreurs éventuelles
+        if (error.response) {
+          console.error("Erreur lors de la création de l'utilisateur :", error.response.data);
+          alert(`Erreur : ${error.response.data.message}`);
+          console.error("Statut de l'erreur :", error.response.status);
+        } else {
+          console.error("Erreur lors de la création de l'utilisateur :", error.message);
+          alert(`Erreur : ${error.message}`);
+        }
+      }
+    },
 
-    // Log de l'objet avant l'envoi
-    console.log('Objet à envoyer au backend :', newUser);
 
-    // Envoyer la requête POST vers le backend
-    const response = await axios.post('http://localhost:5000/api/users', newUser);
 
-    // Log de la réponse reçue
-    console.log('Réponse reçue du backend :', response.data);
+    /*---------------------------------------------Authentification-----------------------------------------------------------*/
 
-    // Afficher le succès dans la console
-    console.log('Utilisateur créé avec succès :', response.data);
 
-    // Réinitialiser le formulaire après la création de l'utilisateur
-    this.resetForm();
-  } catch (error: any) {
-    // Log des erreurs éventuelles
-    if (error.response) {
-      console.error("Erreur lors de la création de l'utilisateur :", error.response.data);
-      console.error("Statut de l'erreur :", error.response.status);
-    } else {
-      console.error("Erreur lors de la création de l'utilisateur :", error.message);
-    }
-  }
-},
 
     // Nouvelle action pour authentifier l'utilisateur
     async login(credentials: { email: string; password: string }) {
       try {
         // Envoyer la requête POST pour vérifier les identifiants
-        const response = await axios.post('http://localhost:5000/api/Users/login', credentials);
+        const response = await axios.post('http://localhost:5000/api/users/login', credentials);
     
         // Si la réponse est positive, récupérer les informations de l'utilisateur
         if (response.data) {
@@ -114,6 +130,7 @@ async registerUser() {
           this.email = userData.email;
           this.telephone = userData.telephone;
           this.adresseString = userData.adresse;
+          this.langueParlee = userData.langueParlee;
           this.typeDeCompte = userData.typeDeCompte;
           this.servicePremium = userData.servicePremium;
           this.forfait = userData.forfait;
@@ -123,6 +140,7 @@ async registerUser() {
           // Indiquer que l'utilisateur est authentifié
           this.isAuthenticated = true;
           console.log('Connexion réussie:', userData);
+          alert(`Connexion réussie!`);
         }
       } catch (error: any) {
         // Gestion spécifique des erreurs de connexion
@@ -143,6 +161,8 @@ async registerUser() {
         }
       }
     },
+
+  /*---------------------------------------------Se Déconnecter-----------------------------------------------------------*/
     
     // Action pour déconnecter l'utilisateur
     logout() {

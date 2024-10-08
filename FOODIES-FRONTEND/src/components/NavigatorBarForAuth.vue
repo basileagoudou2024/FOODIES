@@ -29,6 +29,7 @@ const toggleMenu = () => {
      
       <LanguageSelect :selectedLanguage="navigatorStore.selectedLanguage" @updateLanguage="navigatorStore.updateSelectedLanguage" />
     </div>
+    <UserProfile class="user-profile" />
   </div>
 </template>
 

@@ -3,7 +3,7 @@
 import NavigatorBarForAuth from '@/components/NavigatorBarForAuth.vue';
 import Carousel from '@/components/BootstrapCarousel.vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
-import CreateAccountForm from '@/components/CreateAccountForm.vue';
+import RegisterForm from '@/components/RegisterForm.vue';
 
 
 </script>
@@ -12,7 +12,7 @@ import CreateAccountForm from '@/components/CreateAccountForm.vue';
   <NavigatorBarForAuth/>
   <Carousel/>
   <MessageDisplay/>
-  <CreateAccountForm/>
+  <RegisterForm/>
 </template>
 
 <style scoped>
