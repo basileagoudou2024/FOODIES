@@ -2,14 +2,14 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { User } from '../shared/interfaces/userInterface'; // Importe le type User
 
-interface AuthState {
+interface UserState {
   users: User[];
   currentUser: User | null;
   isAuthenticated: boolean;
 }
 
-export const useAuthStore = defineStore('authStore', {
-  state: (): AuthState => ({
+export const useUserStore = defineStore('userStore', {
+  state: (): UserState => ({
     users: [], // Stocke la liste des utilisateurs
     currentUser: null, // Utilisateur actuellement connecté
     isAuthenticated: false, // Indique si l'utilisateur est authentifié ou non
