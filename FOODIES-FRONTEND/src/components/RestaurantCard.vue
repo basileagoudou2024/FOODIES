@@ -59,6 +59,14 @@ defineProps({
         <!-- Affichage de la valeur par défaut si bestComment est null -->
         <span class="value">{{ restaurant.bestComment || t('restaurant.pas de commentaire') }}</span>
       </p>
+
+      <!-- Nouveau bouton Réserver -->
+      <button @click="showReservationForm = true" class="reserve-button">
+        {{ t('restaurant.Réserver') }}
+      </button>
+
+      <!-- Formulaire de réservation affiché comme une modale -->
+      <ReservationModal v-if="showReservationForm" :restaurant="restaurant" @close="showReservationForm = false" />
     </div>
   </div>
   
