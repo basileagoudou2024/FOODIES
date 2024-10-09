@@ -4,6 +4,7 @@ import { ref, computed } from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface'; // Assurez-vous que cette interface est bien définie.
 
 export const useRestaurantStore = defineStore('restaurantStore', () => {
+  
   // Liste des restaurants récupérés depuis l'API
   const restaurants = ref<Restaurant[]>([]);
 
