@@ -1,12 +1,10 @@
 
 
-
-
 <script setup lang="ts">
+import LoginForm from '@/components/LoginForm.vue';
 import NavigatorBarForAuth from '@/components/NavigatorBarForAuth.vue';
 import Carousel from '@/components/BootstrapCarousel.vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
-import CreateAccountForm from '@/components/CreateAccountForm.vue';
 
 
 </script>
@@ -15,7 +13,7 @@ import CreateAccountForm from '@/components/CreateAccountForm.vue';
   <NavigatorBarForAuth/>
   <Carousel/>
   <MessageDisplay/>
-  <CreateAccountForm/>
+    <LoginForm/>
 </template>
 
 <style scoped>

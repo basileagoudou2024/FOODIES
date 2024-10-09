@@ -24,7 +24,7 @@ const filteredRestaurants = computed(() => restaurantStore.searchResults);
 
 <template>
   <div class="restaurant-list">
-    {{ t('restaurantList.title') }}
+    {{ t('RestaurantsPage.title') }}
     <div v-if="filteredRestaurants && filteredRestaurants.length > 0" class="restaurant-cards">
       <RestaurantCard
         v-for="restaurant in filteredRestaurants"

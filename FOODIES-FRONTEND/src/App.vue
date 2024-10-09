@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import RestaurantsPage from '@/views/RestaurantPage.vue';
 
 
 </script>
 
 <template>
   <div>
-    <RouterView/>
+    <RestaurantsPage/>
   </div>
   
 </template>
