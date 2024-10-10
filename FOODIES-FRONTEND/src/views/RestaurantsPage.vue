@@ -3,6 +3,9 @@ import { useRestaurantStore } from '../stores/restaurantStore';
 import { onMounted, computed } from 'vue';
 import RestaurantCard from '../components/RestaurantCard.vue';
 import { useI18n } from 'vue-i18n'; // Importation de useI18n pour la 
+import NavigatorBar from '@/components/NavigatorBar.vue';
+import BootstrapCarousel from '@/components/BootstrapCarousel.vue';
+import MessageDisplay from '@/components/MessageDisplay.vue';
 
 
 // Utilisation de `useI18n` dans le composant pour accéder à `$t`
@@ -23,6 +26,9 @@ const filteredRestaurants = computed(() => restaurantStore.searchResults);
 </script>
 
 <template>
+  <NavigatorBar/>
+  <BootstrapCarousel/>
+  <MessageDisplay/>
   <div class="restaurant-list">
     {{ t('RestaurantsPage.title') }}
     <div v-if="filteredRestaurants && filteredRestaurants.length > 0" class="restaurant-cards">

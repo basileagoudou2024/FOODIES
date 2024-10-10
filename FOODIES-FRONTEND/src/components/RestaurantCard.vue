@@ -2,6 +2,7 @@
 import { PropType, ref} from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
 import { useI18n } from 'vue-i18n'; // Importation de useI18n pour la traduction
+import ReservationModal from './ReservationModal.vue';
 
 
 // Utilisation de useI18n dans le composant pour accéder à $t
@@ -60,12 +61,12 @@ defineProps({
         <span class="value">{{ restaurant.bestComment || t('restaurant.pas de commentaire') }}</span>
       </p>
 
-      <!-- Nouveau bouton Réserver -->
+      <!-- Nouveau bouton Réserver pour ouvrir la modale -->
       <button @click="showReservationForm = true" class="reserve-button">
         {{ t('restaurant.Réserver') }}
       </button>
 
-      <!-- Formulaire de réservation affiché comme une modale -->
+      <!-- Affichage de la modale de réservation -->
       <ReservationModal v-if="showReservationForm" :restaurant="restaurant" @close="showReservationForm = false" />
     </div>
   </div>

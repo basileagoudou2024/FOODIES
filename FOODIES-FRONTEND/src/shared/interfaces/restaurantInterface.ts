@@ -26,7 +26,7 @@ export interface Evaluation{
 
 
 export interface Restaurant {
-  _id: string;
+  _id?: string;
   nom: string;
   adresse: string;
   telephone: string;
@@ -36,9 +36,9 @@ export interface Restaurant {
   evaluations?: Evaluation[]; // Utilisation de l'interface `Evaluation`lée
   averageStars?: number; // La moyenne des étoiles calculée
   bestComment?: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 
 }
 

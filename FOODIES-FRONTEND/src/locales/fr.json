@@ -57,6 +57,17 @@
   "scrollingText":{
 
     "message": "Bienvenu sur Foodie's, la plateforme N°1 de réservation de restaurant en ligne!"
+  },
+
+  "reservation": {
+    "Titre": "Titre",
+    "Nombre de places": "Nombre de places",
+    "Heure de réservation": "Heure de réservation",
+    "Date de réservation": "Date de réservation",
+    "Envoyer": "Envoyer",
+    "Fermer": "Fermer",
+    "Commentaires":"Commentaires"
+  
   }
 
 

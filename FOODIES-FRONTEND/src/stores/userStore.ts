@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import {Reservation} from '../shared/interfaces/reservationInterface';
+
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({
@@ -25,15 +25,7 @@ export const useUserStore = defineStore('userStore', {
     dateDebutForfait: null as Date | null,
     dateFinForfait: null as Date | null,
     isAuthenticated: false, // Indicateur d'authentification
-    reservation: {
-    
-      dateReservation: '',
-      nombreDePlaces: '',
-      heureReservation: null,
-     
-    } ,
-   
-  
+    userId: '',
   }),
 
   actions: {
@@ -180,10 +172,9 @@ export const useUserStore = defineStore('userStore', {
       console.log('Déconnexion réussie.');
     },
 
-  /*---------------------------------------------Réservation---------------------------------------------*/
+ 
 
 
-  // Action pour faire une réservation
 
 
   },

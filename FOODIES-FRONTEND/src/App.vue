@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
-import RestaurantsPage from '@/views/RestaurantPage.vue';
+import RestaurantsPage from '@/views/RestaurantsPage.vue';
+import ReservationModal from './components/ReservationModal.vue';
+import ReservationModalPage from './views/ReservationModalPage.vue';
 
 
 </script>
 
 <template>
-  <div>
-    <RestaurantsPage/>
-  </div>
+  <!----
+    <RestaurantsPage/>-->
+
+ <ReservationModalPage/>
+
   
 </template>
 
