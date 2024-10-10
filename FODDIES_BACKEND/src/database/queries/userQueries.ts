@@ -19,6 +19,8 @@ export const getUserByEmail = async (email: string): Promise<any | null> => {
   return await BaseUserModel.findOne({ email }).exec();
 };
 
+/*------------------------------------------------------ENREGISTRER NOUVEL UTILISATEUR--------------------------------------------------*/
+
 // Enregistrement d'un nouvel utilisateur
 export const registerUser = async (data: any): Promise<any> => {
   const { email, password, typeDeCompte } = data;
@@ -52,6 +54,9 @@ export const registerUser = async (data: any): Promise<any> => {
   return await newUser.save();
 };
 
+/*--------------------------------------------------AUTHENTIFICATION------------------------------------------------------------------------------*/
+
+
 // Connexion d'un utilisateur (authentification)
 export const loginUser = async (email: string, password: string): Promise<string | null> => {
   // Rechercher l'utilisateur par email
@@ -71,6 +76,8 @@ export const loginUser = async (email: string, password: string): Promise<string
 
   return token;
 };
+
+/*--------------------------------------------------UTILISATEURS-------------------------------------------------------------------------------------*/
 
 // Récupérer tous les utilisateurs
 export const getAllUsers = async (): Promise<any[]> => {

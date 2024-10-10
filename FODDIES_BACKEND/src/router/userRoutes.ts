@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import { loginUser, registerUser } from '../database/queries/userQueries';
-import * as userController from '../controllers/userController';
+import { registerUser } from '../database/queries/userQueries';
+import { login } from '../controllers/userController';
 
 const router = express.Router();
 
@@ -13,9 +13,11 @@ router.post('/registerUser', async (req: Request, res: Response) => {
   }
 });
 
-// Route pour la connexion
-router.post('/login', userController.login);
-/*router.post('/loginUser',*/ async (req: Request, res: Response) => {
+// Route pour la  l'authentification des utilisateurs (connexion)
+
+router.post('/login', login);
+
+/*router.post('/loginUser', async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -24,6 +26,6 @@ router.post('/login', userController.login);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
-};
+};  */
 
 export default router;
