@@ -6,6 +6,8 @@ import { useI18n } from 'vue-i18n'; // Importation de useI18n pour la
 import NavigatorBar from '@/components/NavigatorBar.vue';
 import BootstrapCarousel from '@/components/BootstrapCarousel.vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
+import { useRouter } from 'vue-router';
+
 
 
 // Utilisation de `useI18n` dans le composant pour accéder à `$t`
@@ -23,6 +25,9 @@ onMounted(() => {
 
 // Accéder à la liste filtrée des restaurants en fonction du texte de recherche
 const filteredRestaurants = computed(() => restaurantStore.searchResults);
+
+
+
 </script>
 
 <template>

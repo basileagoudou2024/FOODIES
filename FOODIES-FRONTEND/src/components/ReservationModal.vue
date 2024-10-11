@@ -51,7 +51,7 @@
     <div class="modal">
       <div class="modal-content">
         <span class="close" @click="$emit('close')">&times;</span>
-        <h2>{{ t('reservation.Titre') }} - {{ restaurant.nom }}</h2>
+        <h2> {{ restaurant.nom }}</h2>
   
         <!-- Formulaire de réservation -->
         <form @submit.prevent="submitReservation">

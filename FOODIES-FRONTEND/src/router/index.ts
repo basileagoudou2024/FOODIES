@@ -1,26 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/views/LoginPage.vue';
-import Register from '@/views/RegisterPage.vue';
-import RestaurantList from '@/views/RestaurantsPage.vue';
+import LoginPage from '@/views/LoginPage.vue';
+import RegisterPage from '@/views/RegisterPage.vue';
+import RestaurantsPage from '../views/RestaurantsPage.vue';
 
 // Définir les routes
 const routes = [
   {
     path: '/',
     name: 'Login',
-    component: Login,
+    component: LoginPage,
     meta: { requiresAuth: false },
   },
   {
     path: '/register',
     name: 'Register',
-    component: Register,
+    component: RegisterPage,
     meta: { requiresAuth: false },
   },
   {
     path: '/restaurants',
-    name: 'RestaurantList',
-    component: RestaurantList,
+    name: 'restaurants_page',
+    component: RestaurantsPage,
     meta: { requiresAuth: true },
   },
 ];

@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 
 export const useUserStore = defineStore('userStore', {
@@ -118,9 +121,13 @@ export const useUserStore = defineStore('userStore', {
     // Nouvelle action pour authentifier l'utilisateur
     async login(credentials: { email: string; password: string }) {
       try {
+        
         // Envoyer la requête POST pour vérifier les identifiants
         const response = await axios.post('http://localhost:5000/api/users/login', credentials);
-    
+
+        console.log('Réponse reçue lors de la connexion:', response);
+
+      
         // Si la réponse est positive, récupérer les informations de l'utilisateur
         if (response.data) {
           const userData = response.data;
@@ -141,8 +148,11 @@ export const useUserStore = defineStore('userStore', {
           // Indiquer que l'utilisateur est authentifié
           this.isAuthenticated = true;
           console.log('Connexion réussie:', userData);
-          alert(`Connexion réussie!`);
+
         }
+
+        return response;
+
       } catch (error: any) {
         // Gestion spécifique des erreurs de connexion
         if (error.response) {
@@ -160,7 +170,11 @@ export const useUserStore = defineStore('userStore', {
           console.error('Erreur de connexion :', error.message);
           throw new Error("Erreur de connexion. Veuillez réessayer plus tard.");
         }
+
+        return error
+
       }
+
     },
 
   /*---------------------------------------------Se Déconnecter-----------------------------------------------------------*/

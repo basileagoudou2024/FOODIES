@@ -34,7 +34,8 @@
     "Heures Ouverture": "Opening Hours",
     "Meilleur commentaire": "Best comment",
     "non évalué": "no rating",
-    "pas de commentaire": "no comment"
+    "pas de commentaire": "no comment",
+    "Réserver": "Book"
   },
   
   "placeholder": {
@@ -50,8 +51,8 @@
     "5 étoiles": "5 stars"
   },
 
-  "restaurantList": {
-    "title": "Restaurant List"
+  "RestaurantsPage": {
+    "title": "List of restaurants"
   },
 
   "scrollingText":{
@@ -62,8 +63,8 @@
   "reservation": {
     "Titre": "Title",
     "Nombre de places": "Number of seats",
-    "Heure de réservation": "Reservation Time",
-    "Date de réservation": "Reservation Date",
+    "Heure de réservation": "Booking Time",
+    "Date de réservation": "Booking Date",
     "Envoyer": "Submit",
     "Fermer": "Close",
     "Commentaires":"Comments",

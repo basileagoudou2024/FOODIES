@@ -34,7 +34,8 @@
     "Heures Ouverture": "Heures Ouverture",
     "Meilleur commentaire": "Meilleur commentaire",
     "non évalué": "non évalué",
-    "pas de commentaire": "pas de commentaire"
+    "pas de commentaire": "pas de commentaire",
+    "Réserver": "Réserver"
   },
   
   "placeholder": {
@@ -50,7 +51,7 @@
     "5 étoiles": "5 étoiles"
   },
 
-  "restaurantList": {
+  "RestaurantsPage": {
     "title": "Liste des Restaurants"
   },
 
@@ -70,6 +71,6 @@
     "Echec": "Echec"
   
   }
-
-
 }
+
+ 

@@ -107,14 +107,20 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     // 1. Validation de l'email et du mot de passe
     if (!validateEmail(email)) {
-      res.status(400).json({ message: 'Format de l\'email invalide. Veuillez vérifier votre saisie.' });
+      res.status(500).json({ message: 'Format de l\'email invalide. Veuillez vérifier votre saisie.' });
+      console.log('Format de l\'email invalide. Veuillez vérifier votre saisie.');
       return;
     }
 
-    if (!validatePassword(password)) {
-      res.status(400).json({
+    // TODO:  enlever "false&&"  après les tests
+
+    if (false&&!validatePassword(password)) {
+      res.status(500).json({
         message: 'Le mot de passe doit contenir au moins 8 caractères, incluant au moins une lettre et un chiffre.',
+        
       });
+
+      console.log('Le mot de passe doit contenir au moins 8 caractères, incluant au moins une lettre et un chiffre.')
       return;
     }
 
@@ -122,7 +128,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = await loginUser(email, password);
     res.status(200).json({ message: 'Connexion réussie.', token });
   } catch (error: any) {
-    res.status(400).json({ message: `Erreur de connexion : ${error.message}. Vérifiez vos identifiants.` });
+    res.status(500).json({ message: `Erreur de connexion : ${error.message}. Vérifiez vos identifiants.` });
+    console.log(error);
   }
 };
 
