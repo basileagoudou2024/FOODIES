@@ -5,7 +5,8 @@ export interface Reservation {
     dateReservation: string;            // Date de la réservation sous forme d'objet Date (permet de stocker année/mois/jour)
     nombreDePlaces: number;           // Nombre de places réservées (nombre entier)
     heureReservation: string;         // Heure de la réservation (sous forme de chaîne de caractères pour simplifier, par ex : "19:30")
-    idUtilisateur?: string;           // Identifiant unique de l'utilisateur attribué par la base de données (mongoDB)
-    idRestaurant?: string;            // Identifiant unique du restaurant attribué par la base de données (mongoDB)
+    idUtilisateur: string;           // Identifiant unique de l'utilisateur attribué par la base de données (mongoDB)
+    idRestaurant: string | null;
+    commentaires?: string            // Identifiant unique du restaurant attribué par la base de données (mongoDB)
   }
   

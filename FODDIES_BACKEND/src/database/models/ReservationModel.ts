@@ -16,7 +16,7 @@ export interface IReservation extends Document{
 // Schéma de la Réservation
 const ReservationSchema = new Schema({
 
-    idReservation: { type: String }, // Identifiant optionnel, géré automatiquement par MongoDB
+    idReservation: { type: String, required: false }, // Identifiant optionnel, géré automatiquement par MongoDB
     dateReservation: { type: String, required: true }, // Ex: "2024-10-09"
     nombreDePlaces: { type: Number, required: true },  // Nombre entier de places réservées
     heureReservation: { type: String, required: true }, // Heure au format "HH:MM"

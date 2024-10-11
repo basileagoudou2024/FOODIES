@@ -1,11 +1,15 @@
 <script setup lang="ts">
   import { ref, defineProps, PropType } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import axios from 'axios';
   import { Restaurant } from '../shared/interfaces/restaurantInterface';
+  import { useRestaurantStore } from '../stores/restaurantStore';
+  import { useUserStore } from '../stores/userStore';
+  import { Reservation } from '@/shared/interfaces/reservationInterface';
+  
   
   const { t } = useI18n();
-
+  const restaurantStore = useRestaurantStore();
+  const userStore = useUserStore();
   const props = defineProps({
     restaurant: {
       type: Object as PropType<Restaurant>,
@@ -25,18 +29,18 @@
   // Méthode de soumission de la réservation
   const submitReservation = async () => {
     try {
-      const reservationData = {
+      const reservationData: Reservation = {
         nombreDePlaces: nombreDePlaces.value,
         dateReservation: dateReservation.value,
         heureReservation: heureReservation.value,
-        commentaires: commentaires.value,  // Envoyer le nouveau champ de commentaires
+        commentaires: commentaires.value, // Envoyer le nouveau champ de commentaires
         idRestaurant: props.restaurant._id,
-        idUtilisateur: 'user123'  // Remplacer par l'ID utilisateur authentifié
+        idUtilisateur: userStore.getUserIdFromToken() ?? '' // Appeler la fonction pour obtenir l'ID utilisateur
       };
   
-      const response = await axios.post('http://localhost:5000/api/reservations', reservationData);
+        await restaurantStore.addReservation(reservationData);  // Envoyer la réservation via le store
 
-      console.log('Reservation response:', response);
+      console.log('Reservation response:', confirmationMessage);
       confirmationMessage.value = t('reservation.Confirmation');
     } catch (error) {
       console.error('Erreur lors de la réservation :', error);

@@ -26,7 +26,7 @@ export interface Evaluation{
 
 
 export interface Restaurant {
-  _id?: string;
+  _id: string;   // attribuée explicitement par la base de donnée
   nom: string;
   adresse: string;
   telephone: string;

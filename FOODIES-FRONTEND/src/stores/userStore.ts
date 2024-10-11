@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
+import {jwtDecode} from 'jwt-decode';
 
 
 export const useUserStore = defineStore('userStore', {
@@ -28,7 +26,8 @@ export const useUserStore = defineStore('userStore', {
     dateDebutForfait: null as Date | null,
     dateFinForfait: null as Date | null,
     isAuthenticated: false, // Indicateur d'authentification
-    userId: '',
+    userToken: localStorage.getItem('userToken') || null,  // Stocke le token JWT
+    userId: null  // Stocke l'ID utilisateur après décodage
   }),
 
   actions: {
@@ -113,8 +112,7 @@ export const useUserStore = defineStore('userStore', {
     },
 
 
-
-    /*---------------------------------------------Authentification-----------------------------------------------------------*/
+/*---------------------------------------------Authentification (Login) -----------------------------------------------------------*/
 
 
 
@@ -177,7 +175,7 @@ export const useUserStore = defineStore('userStore', {
 
     },
 
-  /*---------------------------------------------Se Déconnecter-----------------------------------------------------------*/
+/*---------------------------------------------Se Déconnecter-----------------------------------------------------------*/
     
     // Action pour déconnecter l'utilisateur
     logout() {
@@ -186,10 +184,19 @@ export const useUserStore = defineStore('userStore', {
       console.log('Déconnexion réussie.');
     },
 
- 
+   
+    
+/*----------------------------- Fonction pour décoder le JWT et récupérer l'ID utilisateur-------------------------------*/
 
-
-
-
+getUserIdFromToken() {
+  if (this.userToken) {
+    const decodedToken: any = jwtDecode(this.userToken); // Utilisez jwtDecode ici
+    this.userId = decodedToken.id; // Stocker l'ID utilisateur dans le store
+    return this.userId;
+  }
+  return null;
+}
+    
   },
+  
 });
