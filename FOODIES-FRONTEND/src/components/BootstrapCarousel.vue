@@ -69,5 +69,7 @@
   height: 15vh;
   width: 2%;
   object-fit: cover; /* Ajuste l'image dans le conteneur */
+  position: relative;
+  z-index: -1000;
 }
 </style>

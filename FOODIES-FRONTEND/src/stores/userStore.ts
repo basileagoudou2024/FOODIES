@@ -181,14 +181,17 @@ export const useUserStore = defineStore('userStore', {
     logout() {
       this.resetForm(); // Réinitialiser les informations utilisateur
       this.isAuthenticated = false; // Désactiver l'état d'authentification
+      
+      // Nettoyer les informations d'authentification (ex. localStorage ou cookies)
+      localStorage.removeItem('userToken'); // Exemple : si vous utilisez un token d'authentification
+      sessionStorage.removeItem('userData'); // Exemple : si vous stockez des données utilisateur
       console.log('Déconnexion réussie.');
     },
 
-   
-    
+  
 /*----------------------------- Fonction pour décoder le JWT et récupérer l'ID utilisateur-------------------------------*/
 
-getUserIdFromToken() {
+getUserIdFromToken(): string| null {
   if (this.userToken) {
     const decodedToken: any = jwtDecode(this.userToken); // Utilisez jwtDecode ici
     this.userId = decodedToken.id; // Stocker l'ID utilisateur dans le store

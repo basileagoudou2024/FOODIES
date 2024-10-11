@@ -23,7 +23,7 @@ const login = async () => {
     
     const response = await userStore.login(credentials.value);
 
-    // 1. réception du token d'authentification (maispas encore enregistré dans localStorage)
+    // 1. réception du token d'authentification (mais pas encore enregistré dans localStorage)
 
         const token = response.data.token;
     
@@ -33,6 +33,9 @@ const login = async () => {
     // 2. Enregistrement du token dans localStorage pour une utilisation future
 
     localStorage.setItem('userToken', token); 
+
+    console.log('Token stocké dans localStorage :', token); // log pour visualiser la valeur du Token
+
     
     // 3. Si l'utilisateur est authentifié, rediriger vers la page des restaurants
     

@@ -58,17 +58,30 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
   async function addReservation(reservation: Reservation) {
     try {
       // Envoi de la réservation au backend via une requête POST
+
+  
+       console.log('Envoi de la réservation :', reservation);  // Loguer l'objet réservation
+
       const response = await axios.post('http://localhost:5000/api/reservations', reservation);
+
+
+      // Loguer la réponse du serveur
+       console.log('Réponse du serveur après réservation :', response.data);
       
       // Vérification de la réponse du backend
+      
       if (response.status === 201) {
-        console.log('Réservation réussie:', response.data); // Log de succès de la réservation
+
+        console.log('Réservation réussie:', response.data); // Retourner la réponse si nécessaire
+
         // Ici, vous pouvez ajouter la réservation à l'état du store ou déclencher une action supplémentaire si nécessaire.
+
       } else {
         throw new Error('Erreur lors de la réservation'); // Lever une erreur si la réponse du serveur n'est pas correcte
       }
     } catch (error) {
       console.error('Échec de la réservation:', error); // Log de l'erreur en cas d'échec
+      
       throw error; // Renvoyer l'erreur pour qu'elle puisse être gérée dans le composant appelant
     }
   }

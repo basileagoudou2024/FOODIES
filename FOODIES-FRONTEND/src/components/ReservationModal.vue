@@ -35,12 +35,19 @@
         heureReservation: heureReservation.value,
         commentaires: commentaires.value, // Envoyer le nouveau champ de commentaires
         idRestaurant: props.restaurant._id,
-        idUtilisateur: userStore.getUserIdFromToken() ?? '' // Appeler la fonction pour obtenir l'ID utilisateur
+        idUtilisateur: userStore.getUserIdFromToken() // Appeler la fonction pour obtenir l'ID utilisateur authentifié
       };
-  
-        await restaurantStore.addReservation(reservationData);  // Envoyer la réservation via le store
 
-      console.log('Reservation response:', confirmationMessage);
+      // Loguer l'objet envoyé
+    console.log('Données de réservation envoyées :', reservationData);
+
+      // Envoi de la requête
+  
+    const response =  await restaurantStore.addReservation(reservationData);  // Envoyer la réservation via le store
+
+     // Loguer la réponse
+    console.log('Réponse du serveur :', response);
+
       confirmationMessage.value = t('reservation.Confirmation');
     } catch (error) {
       console.error('Erreur lors de la réservation :', error);
