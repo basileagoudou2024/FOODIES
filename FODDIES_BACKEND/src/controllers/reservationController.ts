@@ -17,7 +17,7 @@ export const createReservation = async (req: Request, res: Response) => {
       reservation: newReservation,
     });
   } catch (error: any) {
-    return res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -28,7 +28,7 @@ export const deleteReservation = async (req: Request, res: Response) => {
     const result = await cancelReservation(idReservation);
     return res.status(200).json({ message: result });
   } catch (error: any) {
-    return res.status(404).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -43,7 +43,7 @@ export const editReservation = async (req: Request, res: Response) => {
       reservation: updatedReservation,
     });
   } catch (error: any) {
-    return res.status(404).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -52,12 +52,12 @@ export const getUserReservations = async (req: Request, res: Response) => {
   const { userId } = req.params;
   try {
     const reservations = await getAllUserReservations(userId);
-    return res.status(200).json({
+    return res.status(201).json({
       message: `Réservations trouvées pour l'utilisateur avec ID ${userId}`,
       reservations,
     });
   } catch (error: any) {
-    return res.status(404).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -71,7 +71,7 @@ export const getReservationsByUserAndRestaurant = async (req: Request, res: Resp
         reservations,
       });
     } catch (error: any) {
-      return res.status(404).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   };
   

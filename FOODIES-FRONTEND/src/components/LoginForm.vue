@@ -1,113 +1,82 @@
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-// champs du formulaire 
-
-const email = ref('');
-const password = ref('');
-const errorMessage = ref('');  // renvoi de message d'erreur
-
 const userStore = useUserStore();
 
-const credentials = ref({ email, password});
+// Initialiser les champs avec ref() pour suivre les valeurs
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
 
 const login = async () => {
+
   try {
-    
-    // 1. Appel de l'action `login` dans le store pour authentifier l'utilisateur
-    
-    const response = await userStore.login(credentials.value);
+             await userStore.login({ email: email.value, password: password.value });
 
-    // 1. réception du token d'authentification (mais pas encore enregistré dans localStorage)
+            const token = localStorage.getItem('userToken');
 
-        const token = response.data.token;
-    
-    console.log('isAuthenticated:', userStore.isAuthenticated); // Vérifier l'état
+            console.log('la valeur du token est:', token);
 
- 
-    // 2. Enregistrement du token dans localStorage pour une utilisation future
+            if (token) {
+              
+              console.log('Authentification reussie!');
 
-    localStorage.setItem('userToken', token); 
+              router.push('/restaurants');
 
-    console.log('Token stocké dans localStorage :', token); // log pour visualiser la valeur du Token
+              console.log('Redirecting to RestaurantsPage...');
+            } else{
 
-    
-    // 3. Si l'utilisateur est authentifié, rediriger vers la page des restaurants
-    
-    
-    if (userStore.isAuthenticated) {
-      
-      router.push('restaurants') .then((e)=> console.log('page restaurants', e)) .catch((e)=> console.log('failed to restarant page ',e));
+              console.log('Authentification echouée!');
+            }
 
-      console.log('Redirecting to RestaurantsPage page...')
-    }
-    
-    
-  } catch (error) {
-    
-    console.error('Erreur lors de la connexion :', error);
-    
-    errorMessage.value = "Échec de la connexion. Veuillez vérifier vos informations.";
+
+
+      } catch (error:any) {
+  
+    console.error('Erreur lors de la connexion :', error.message);
+    errorMessage.value = error.message || "Échec de la connexion.";
   }
-  
-  
 };
 
 const goToCreateAccount = () => {
-  
-  // Redirige de l'utilisateur vers la page de création de compte s'il n'est pas enregistré
   router.push('/register');
-  
   console.log('Redirecting to create account page...');
 };
-
-
 </script>
 
-
-
 <template>
-  
   <div class="auth-form">
     <div class="form-container">
       <h3>Connexion à Foodies</h3>
-      
-      <!-- Sélecteur de type de compte -->
-      
-      <!-- Champs de saisie pour l'email et le mot de passe -->
+
       <div class="form-group">
-        <input    v-model="email"    type="email"      placeholder="Courriel"     required  />
+        <input v-model="email" type="email" placeholder="Courriel" required />
       </div>
-      
+
       <div class="form-group">
-        <input   v-model="password"   type="password"   placeholder="Mot de passe"   required/>
+        <input v-model="password" type="password" placeholder="Mot de passe" required />
       </div>
-      
-      <!-- Boutons de connexion -->
+
       <div class="button-group">
         <button @click="login">Connexion</button>
       </div>
-      
-      <!-- Liens pour récupérer le mot de passe ou créer un nouveau compte -->
+
       <div class="links">
         <a href="#">Mot de passe oublié?</a>
-        <p> Pas encore inscrit?</p>
+        <p>Pas encore inscrit?</p>
       </div>
+
       <div class="button-group">
         <button @click="goToCreateAccount">Créer compte</button>
       </div>
-      
-      <!-- Message d'erreur -->
+
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .auth-form {

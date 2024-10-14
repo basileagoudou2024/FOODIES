@@ -79,19 +79,21 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 
     // 2. Création de l'utilisateur dans la base de données
-    const newUser = await registerUser(req.body);
-    console.log(`Utilisateur ${newUser.email} créé avec succès dans la base de données.`);
+    const newUserInfo = await registerUser(req.body);
+    console.log(`Utilisateur ${newUserInfo.email} créé avec succès dans la base de données.`);
 
     // 3. Envoi du courriel de confirmation
-    await sendConfirmationEmail(newUser.email, newUser.type);
+    await sendConfirmationEmail(newUserInfo.email, newUserInfo.type);
 
     // 4. Envoi de la réponse HTTP avec statut 201 (Créé)
     res.status(201).json({
       message: 'Utilisateur créé avec succès et email de confirmation envoyé.',
-      user: newUser,
+      user: newUserInfo,
     });
   } catch (error) {
+    
     console.error(`Erreur lors de l'enregistrement de l'utilisateur : ${error}`);
+
     res.status(500).json({
       message: 'Une erreur interne est survenue lors de l\'enregistrement de l\'utilisateur. Veuillez réessayer plus tard.',
     });

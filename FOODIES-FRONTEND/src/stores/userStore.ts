@@ -1,17 +1,20 @@
+
+
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { ref, reactive } from 'vue';
 
+export const useUserStore = defineStore('userStore', () => {
+  const isAuthenticated = ref(false);
 
-export const useUserStore = defineStore('userStore', {
-  state: () => ({
+  // State
+  const userInfo = reactive({
     nom: '',
     prenom: '',
     email: '',
     password: '',
     telephone: '',
-    adresseString: '', // Nouvelle propriété pour stocker l'adresse sous forme de chaîne
-    langueParlee:'',
+    langueParlee: '',
     adresse: {
       numeroCivique: '',
       rue: '',
@@ -20,186 +23,160 @@ export const useUserStore = defineStore('userStore', {
       pays: '',
       codePostal: '',
     },
+    adresseString: '', // Nouvelle propriété pour stocker l'adresse sous forme de chaîne
     typeDeCompte: 'Client', // Par défaut 'Client', peut être 'Propriétaire' ou 'Admin'
     servicePremium: false, // Booléen
     forfait: '', // string
     dateDebutForfait: null as Date | null,
     dateFinForfait: null as Date | null,
-    isAuthenticated: false, // Indicateur d'authentification
-    userToken: localStorage.getItem('userToken') || null,  // Stocke le token JWT
-    userId: null  // Stocke l'ID utilisateur après décodage
-  }),
+  });
 
-  actions: {
-    // Mettre à jour l'adresseString en fusionnant tous les champs d'adresse
-    updateAdresseString() {
-      this.adresseString = `${this.adresse.numeroCivique} ${this.adresse.rue}, ${this.adresse.ville}, ${this.adresse.province}, ${this.adresse.pays} ${this.adresse.codePostal}`;
-    },
+  // Mettre à jour l'adresseString en fusionnant tous les champs d'adresse
+  const updateAdresseString = () => {
+    userInfo.adresseString = `${userInfo.adresse.numeroCivique} ${userInfo.adresse.rue}, ${userInfo.adresse.ville}, ${userInfo.adresse.province}, ${userInfo.adresse.pays} ${userInfo.adresse.codePostal}`;
+  };
 
-    // Action pour réinitialiser le formulaire
-    resetForm() {
-      this.nom = '';
-      this.prenom = '';
-      this.email = '';
-      this.password = '';
-      this.telephone = '';
-      this.adresse = {
+  // Action pour réinitialiser le formulaire
+  const resetForm = () => {
+    userInfo.nom = '';
+    userInfo.prenom = '';
+    userInfo.email = '';
+    userInfo.password = '';
+    userInfo.telephone = '';
+    userInfo.adresse = {
+      numeroCivique: '',
+      rue: '',
+      ville: '',
+      province: '',
+      pays: '',
+      codePostal: '',
+    };
+    userInfo.langueParlee = '';
+    userInfo.typeDeCompte = 'Client';
+    userInfo.servicePremium = false;
+    userInfo.forfait = '';
+    userInfo.dateDebutForfait = null;
+    userInfo.dateFinForfait = null;
+    isAuthenticated.value = false;
+  };
+
+  // Nouvelle action pour envoyer les informations d'inscription au backend
+  const registerUser = async () => {
+    try {
+      // Mettre à jour la chaîne d'adresse avant de créer l'objet utilisateur
+      updateAdresseString();
+
+      // Construire l'objet utilisateur avec les données actuelles du store
+      const newUserInfo = {
+        nom: userInfo.nom,
+        prenom: userInfo.prenom,
+        email: userInfo.email,
+        password: userInfo.password,
+        telephone: userInfo.telephone,
+        adresse: userInfo.adresseString, // Utilisez la chaîne d'adresse formatée
+        langueParlee: userInfo.langueParlee,
+        typeDeCompte: userInfo.typeDeCompte,
+        servicePremium: userInfo.servicePremium,
+        forfait: userInfo.forfait,
+        dateDebutForfait: userInfo.dateDebutForfait,
+        dateFinForfait: userInfo.dateFinForfait,
+      };
+
+      // Log de l'objet avant l'envoi
+      console.log('Objet à envoyer au backend :', newUserInfo);
+
+      // Envoyer la requête POST vers le backend
+      const response = await axios.post('http://localhost:5000/api/users/registerUser', newUserInfo);
+
+      // Log de la réponse reçue
+      console.log('Réponse reçue du backend :', response.data);
+
+      // Afficher le succès dans la console
+      console.log('Utilisateur créé avec succès :', response.data);
+      alert(`${response.data.message}`);
+
+      // Réinitialiser le formulaire après la création de l'utilisateur
+      resetForm();
+    } catch (error: any) {
+      // Log des erreurs éventuelles
+      if (error.response) {
+        console.error("Erreur lors de la création de l'utilisateur :", error.response.data);
+        alert(`Erreur : ${error.response.data.message}`);
+        console.error("Statut de l'erreur :", error.response.status);
+      } else {
+        console.error("Erreur lors de la création de l'utilisateur :", error.message);
+        alert(`Erreur : ${error.message}`);
+      }
+    }
+  };
+
+  // Action de connexion (Authentification)
+  const login = async (credentials: { email: string; password: string }) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login', credentials);
+
+      console.log('Réponse reçue lors de la connexion:', response);
+      const token = response.data.token;
+
+      if (token) {
+        // Stocker le token dans localStorage (mais voir l'alternative cookie)
+        localStorage.setItem('userToken', token);
+
+        // Mettre à jour les infos utilisateur
+        Object.assign(userInfo, response.data);
+
+        // Mettre à jour l'adresseString
+        updateAdresseString();
+
+        // Marquer l'utilisateur comme authentifié
+        isAuthenticated.value = true;
+        console.log('Utilisateur authentifié:', isAuthenticated.value);
+      }
+    } catch (error: any) {
+      console.error('Erreur lors de la connexion:', error.message);
+      throw error;
+    }
+  };
+
+  // Déconnexion
+  const logout = () => {
+    Object.assign(userInfo, {
+      nom: '',
+      prenom: '',
+      email: '',
+      password: '',
+      telephone: '',
+      langueParlee: '',
+      adresse: {
         numeroCivique: '',
         rue: '',
         ville: '',
         province: '',
         pays: '',
         codePostal: '',
-      };
-      this.langueParlee = '';
-      this.typeDeCompte = 'Client';
-      this.servicePremium = false;
-      this.forfait = '';
-      this.dateDebutForfait = null;
-      this.dateFinForfait = null;
-      this.isAuthenticated = false;
-    
-    },
+      },
+      adresseString: '',
+      typeDeCompte: 'Client',
+      servicePremium: false,
+      forfait: '',
+      dateDebutForfait: null,
+      dateFinForfait: null,
+    });
+    isAuthenticated.value = false;
+    localStorage.removeItem('userToken');
+    sessionStorage.removeItem('userData');
+    localStorage.removeItem('userId');
+    sessionStorage.removeItem('userId');
+    console.log('Déconnexion réussie.');
+  };
 
-    // Nouvelle action pour envoyer les informations d'inscription au backend
-    async registerUser() {
-      try {
-        // Mettre à jour la chaîne d'adresse avant de créer l'objet utilisateur
-        this.updateAdresseString();
-        
-        // Construire l'objet utilisateur avec les données actuelles du store
-        const newUser = {
-          nom: this.nom,
-          prenom: this.prenom,
-          email: this.email,
-          password: this.password,
-          telephone: this.telephone,
-          adresse: this.adresseString, // Utilisez la chaîne d'adresse formatée
-          langueParlee: this.langueParlee,
-          typeDeCompte: this.typeDeCompte,
-          servicePremium: this.servicePremium,
-          forfait: this.forfait,
-          dateDebutForfait: this.dateDebutForfait,
-          dateFinForfait: this.dateFinForfait,
-        };
-    
-        // Log de l'objet avant l'envoi
-        console.log('Objet à envoyer au backend :', newUser);
-    
-        // Envoyer la requête POST vers le backend
-        const response = await axios.post('http://localhost:5000/api/users/registerUser', newUser);
-    
-        // Log de la réponse reçue
-        console.log('Réponse reçue du backend :', response.data);
-    
-        // Afficher le succès dans la console
-        console.log('Utilisateur créé avec succès :', response.data);
-        alert(`${response.data.message}`);
-    
-        // Réinitialiser le formulaire après la création de l'utilisateur
-        this.resetForm();
-      } catch (error: any) {
-        // Log des erreurs éventuelles
-        if (error.response) {
-          console.error("Erreur lors de la création de l'utilisateur :", error.response.data);
-          alert(`Erreur : ${error.response.data.message}`);
-          console.error("Statut de l'erreur :", error.response.status);
-        } else {
-          console.error("Erreur lors de la création de l'utilisateur :", error.message);
-          alert(`Erreur : ${error.message}`);
-        }
-      }
-    },
-
-
-/*---------------------------------------------Authentification (Login) -----------------------------------------------------------*/
-
-
-
-    // Nouvelle action pour authentifier l'utilisateur
-    async login(credentials: { email: string; password: string }) {
-      try {
-        
-        // Envoyer la requête POST pour vérifier les identifiants
-        const response = await axios.post('http://localhost:5000/api/users/login', credentials);
-
-        console.log('Réponse reçue lors de la connexion:', response);
-
-      
-        // Si la réponse est positive, récupérer les informations de l'utilisateur
-        if (response.data) {
-          const userData = response.data;
-    
-          // Mettre à jour le store avec les informations de l'utilisateur
-          this.nom = userData.nom;
-          this.prenom = userData.prenom;
-          this.email = userData.email;
-          this.telephone = userData.telephone;
-          this.adresseString = userData.adresse;
-          this.langueParlee = userData.langueParlee;
-          this.typeDeCompte = userData.typeDeCompte;
-          this.servicePremium = userData.servicePremium;
-          this.forfait = userData.forfait;
-          this.dateDebutForfait = new Date(userData.dateDebutForfait);
-          this.dateFinForfait = new Date(userData.dateFinForfait);
-    
-          // Indiquer que l'utilisateur est authentifié
-          this.isAuthenticated = true;
-          console.log('Connexion réussie:', userData);
-
-        }
-
-        return response;
-
-      } catch (error: any) {
-        // Gestion spécifique des erreurs de connexion
-        if (error.response) {
-          if (error.response.status === 404) {
-            // Cas où l'utilisateur n'existe pas dans la base de données
-            console.error('Erreur : Utilisateur non trouvé. Veuillez vous inscrire.');
-            throw new Error("Utilisateur non trouvé. Veuillez vous inscrire.");
-          } else if (error.response.status === 401) {
-            // Cas où le mot de passe ou l'email est incorrect
-            console.error('Erreur : Email ou mot de passe incorrect.');
-            throw new Error("Email ou mot de passe incorrect.");
-          }
-        } else {
-          // Autres erreurs (exemple : problème de réseau, serveur hors ligne)
-          console.error('Erreur de connexion :', error.message);
-          throw new Error("Erreur de connexion. Veuillez réessayer plus tard.");
-        }
-
-        return error
-
-      }
-
-    },
-
-/*---------------------------------------------Se Déconnecter-----------------------------------------------------------*/
-    
-    // Action pour déconnecter l'utilisateur
-    logout() {
-      this.resetForm(); // Réinitialiser les informations utilisateur
-      this.isAuthenticated = false; // Désactiver l'état d'authentification
-      
-      // Nettoyer les informations d'authentification (ex. localStorage ou cookies)
-      localStorage.removeItem('userToken'); // Exemple : si vous utilisez un token d'authentification
-      sessionStorage.removeItem('userData'); // Exemple : si vous stockez des données utilisateur
-      console.log('Déconnexion réussie.');
-    },
-
-  
-/*----------------------------- Fonction pour décoder le JWT et récupérer l'ID utilisateur-------------------------------*/
-
-getUserIdFromToken(): string| null {
-  if (this.userToken) {
-    const decodedToken: any = jwtDecode(this.userToken); // Utilisez jwtDecode ici
-    this.userId = decodedToken.id; // Stocker l'ID utilisateur dans le store
-    return this.userId;
-  }
-  return null;
-}
-    
-  },
-  
+  return {
+    isAuthenticated,
+    userInfo,
+    updateAdresseString,
+    resetForm,
+    registerUser,
+    login,
+    logout,
+  };
 });

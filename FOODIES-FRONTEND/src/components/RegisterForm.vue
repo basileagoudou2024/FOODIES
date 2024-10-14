@@ -4,74 +4,64 @@
 import { ref } from 'vue';
 import { useUserStore } from '../stores/userStore';
 
-
 const userStore = useUserStore();
 
 // Champs de base du formulaire
-const typeDeCompte = ref(userStore.typeDeCompte);
-const nom = ref(userStore.nom);
-const prenom = ref(userStore.prenom);
-const email = ref(userStore.email);
-const telephone = ref(userStore.telephone);
-const password = ref(userStore.password);
-const langueParlee = ref(userStore.langueParlee);
+const typeDeCompte = ref(userStore.userInfo.typeDeCompte);
+const nom = ref(userStore.userInfo.nom);
+const prenom = ref(userStore.userInfo.prenom);
+const email = ref(userStore.userInfo.email);
+const telephone = ref(userStore.userInfo.telephone);
+const password = ref(userStore.userInfo.password);
+const langueParlee = ref(userStore.userInfo.langueParlee);
 
 // Adresse
-const adresse = ref({
-  numeroCivique: '',
-  rue: '',
-  ville: '',
-  province: '',
-  pays: '',
-  codePostal: '',
-});
+const adresse = ref(userStore.userInfo.adresse);
 
 // Champs pour le Service Premium
-const servicePremium = ref(false);
-const forfait = ref('');
-const dateDebutForfait = ref('');
-const dateFinForfait = ref('');
+const servicePremium = ref(userStore.userInfo.servicePremium);
+const forfait = ref(userStore.userInfo.forfait);
+const dateDebutForfait = ref(userStore.userInfo.dateDebutForfait);
+const dateFinForfait = ref(userStore.userInfo.dateFinForfait);
 
 const handleSubmit = async () => {
   // Mise à jour du store avec les données saisies
-  userStore.typeDeCompte = typeDeCompte.value;
-  userStore.nom = nom.value;
-  userStore.prenom = prenom.value;
-  userStore.email = email.value;
-  userStore.telephone = telephone.value;
-  userStore.password = password.value;
-  userStore.langueParlee = langueParlee.value;  
+  userStore.userInfo.typeDeCompte = typeDeCompte.value;
+  userStore.userInfo.nom = nom.value;
+  userStore.userInfo.prenom = prenom.value;
+  userStore.userInfo.email = email.value;
+  userStore.userInfo.telephone = telephone.value;
+  userStore.userInfo.password = password.value;
+  userStore.userInfo.langueParlee = langueParlee.value;
 
   // Mise à jour de l'adresse
-  userStore.adresse.numeroCivique = adresse.value.numeroCivique;
-  userStore.adresse.rue = adresse.value.rue;
-  userStore.adresse.ville = adresse.value.ville;
-  userStore.adresse.province = adresse.value.province;
-  userStore.adresse.pays = adresse.value.pays;
-  userStore.adresse.codePostal = adresse.value.codePostal;
+  userStore.userInfo.adresse.numeroCivique = adresse.value.numeroCivique;
+  userStore.userInfo.adresse.rue = adresse.value.rue;
+  userStore.userInfo.adresse.ville = adresse.value.ville;
+  userStore.userInfo.adresse.province = adresse.value.province;
+  userStore.userInfo.adresse.pays = adresse.value.pays;
+  userStore.userInfo.adresse.codePostal = adresse.value.codePostal;
 
   // Si le service premium est activé, enregistrer les informations
-  if (typeDeCompte.value === 'Propriétaire' && servicePremium.value) {
-    
- // Mise à jour du service Premium et des informations associées
-  userStore.servicePremium = servicePremium.value;
+  if (userStore.userInfo.typeDeCompte === 'Propriétaire' && userStore.userInfo.servicePremium) {
+    userStore.userInfo.servicePremium = servicePremium.value;
 
-  if (userStore.servicePremium) { // Mettre à jour les informations de forfait si le service premium est activé
-    userStore.forfait = forfait.value;
-    userStore.dateDebutForfait = dateDebutForfait.value ? new Date(dateDebutForfait.value) : null;
-    userStore.dateFinForfait = dateFinForfait.value ? new Date(dateFinForfait.value) : null;
-  } else { // Réinitialiser les champs de forfait s'il est désactivé
-    userStore.forfait = '';
-    userStore.dateDebutForfait = null;
-    userStore.dateFinForfait = null;
-  }
+    if (userStore.userInfo.servicePremium) { // Mettre à jour les informations de forfait si le service premium est activé
+      userStore.userInfo.forfait = forfait.value;
+      userStore.userInfo.dateDebutForfait = dateDebutForfait.value ? new Date(dateDebutForfait.value) : null;
+      userStore.userInfo.dateFinForfait = dateFinForfait.value ? new Date(dateFinForfait.value) : null;
+    } else { // Réinitialiser les champs de forfait s'il est désactivé
+      userStore.userInfo.forfait = '';
+      userStore.userInfo.dateDebutForfait = null;
+      userStore.userInfo.dateFinForfait = null;
+    }
   }
 
   // Appel de la fonction d'enregistrement
-  userStore.registerUser();
-  
+  await userStore.registerUser();
 };
 </script>
+
 
 
 
@@ -169,6 +159,7 @@ const handleSubmit = async () => {
 
 
 <style scoped>
+
 .create-account-form {
   max-width: 600px;
   margin: 0 auto;
@@ -218,4 +209,5 @@ button:hover {
   padding: 1em;
   border: 1px dashed #007bff;
 }
+
 </style>

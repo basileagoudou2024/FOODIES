@@ -7,7 +7,7 @@ const router = express.Router();
 
 //  route pour créer une nouvelle réservation
 
-router.post('/reservation', createReservation);
+router.post('/', createReservation);
 
 
 export default router;

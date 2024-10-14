@@ -3,31 +3,60 @@
   import { useI18n } from 'vue-i18n';
   import { Restaurant } from '../shared/interfaces/restaurantInterface';
   import { useRestaurantStore } from '../stores/restaurantStore';
-  import { useUserStore } from '../stores/userStore';
   import { Reservation } from '@/shared/interfaces/reservationInterface';
-  
-  
+  import {jwtDecode} from 'jwt-decode';  // Correction : import sans accolades
+
   const { t } = useI18n();
   const restaurantStore = useRestaurantStore();
-  const userStore = useUserStore();
+
+
   const props = defineProps({
     restaurant: {
       type: Object as PropType<Restaurant>,
       required: true,
-    }
+    },
   });
 
-  
-  
   // Champs de formulaire
   const nombreDePlaces = ref(1);
   const dateReservation = ref('');
   const heureReservation = ref('');
-  const commentaires = ref('');  // Nouveau champ pour les commentaires
+  const commentaires = ref(''); // Nouveau champ pour les commentaires
   const confirmationMessage = ref('');
-  
+
+  // Méthode pour récupérer l'ID utilisateur depuis le token JWT
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('userToken');
+    console.log('Token récupéré depuis le localStorage dans userStore:', token);
+
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        console.log('Token décodé:', decodedToken);
+
+        const userId = decodedToken.userId;
+        console.log('La valeur de userId est:', userId);
+
+        return userId;
+      } catch (error) {
+        console.error('Erreur lors du décodage du token :', error);
+        return null;
+      }
+    } else {
+      console.error("Aucun token trouvé dans le localStorage.");
+      return null;
+    }
+  };
+
   // Méthode de soumission de la réservation
   const submitReservation = async () => {
+    const userId = getUserIdFromToken();
+
+    if (!userId) {
+      console.error("Impossible d'envoyer la réservation, l'utilisateur n'est pas authentifié.");
+      return;
+    }
+
     try {
       const reservationData: Reservation = {
         nombreDePlaces: nombreDePlaces.value,
@@ -35,26 +64,27 @@
         heureReservation: heureReservation.value,
         commentaires: commentaires.value, // Envoyer le nouveau champ de commentaires
         idRestaurant: props.restaurant._id,
-        idUtilisateur: userStore.getUserIdFromToken() // Appeler la fonction pour obtenir l'ID utilisateur authentifié
+        idUtilisateur: userId, // ID utilisateur authentifié
       };
 
-      // Loguer l'objet envoyé
-    console.log('Données de réservation envoyées :', reservationData);
+      // Log de l'objet envoyé
+      console.log('Données de réservation envoyées :', reservationData);
 
-      // Envoi de la requête
-  
-    const response =  await restaurantStore.addReservation(reservationData);  // Envoyer la réservation via le store
+      // Envoi de la requête via le store
+      const response = await restaurantStore.addReservation(reservationData);
 
-     // Loguer la réponse
-    console.log('Réponse du serveur :', response);
+      // Log de la réponse
+      console.log('Réponse du serveur :', response);
 
+      // Message de confirmation
       confirmationMessage.value = t('reservation.Confirmation');
     } catch (error) {
       console.error('Erreur lors de la réservation :', error);
       confirmationMessage.value = t('reservation.Echec');
     }
   };
-  </script>
+</script>
+
 
 
 

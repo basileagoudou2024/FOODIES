@@ -9,7 +9,9 @@ export interface IReservation extends Document{
     dateReservation: string;
     heureReservation: string;
     idRestaurant: string;
-    idUtilisateur: string
+    idUtilisateur: string;
+    commentaires: string  
+
 } 
 
 
@@ -20,8 +22,9 @@ const ReservationSchema = new Schema({
     dateReservation: { type: String, required: true }, // Ex: "2024-10-09"
     nombreDePlaces: { type: Number, required: true },  // Nombre entier de places réservées
     heureReservation: { type: String, required: true }, // Heure au format "HH:MM"
-    idUtilisateur: { type: Schema.Types.ObjectId, ref: 'Client' }, // Référence au client (ClientUserModel)
-    idRestaurant: { type: Schema.Types.ObjectId, ref: 'Restaurant' }    // Référence au restaurant
+    idUtilisateur: { type: String, required: true }, // Référence au client (ClientUserModel)
+    idRestaurant: { type: String, required: true },    // Référence au 
+    commentaires: {type: String, required: true}  
   },
 
   { timestamps: true },
