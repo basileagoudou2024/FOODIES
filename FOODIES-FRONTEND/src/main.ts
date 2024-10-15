@@ -13,3 +13,5 @@ app.use(i18n); // Utilisez i18n comme plugin
 app.use(createPinia());
 app.use(router);     // Utiliser le router
 app.mount('#app');
+
+

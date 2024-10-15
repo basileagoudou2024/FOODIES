@@ -2,99 +2,136 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { ref, computed } from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
-import { Reservation } from '../shared/interfaces/reservationInterface'; // Assurez-vous que cette interface est bien définie.
+import { Reservation } from '../shared/interfaces/reservationInterface';
 
 export const useRestaurantStore = defineStore('restaurantStore', () => {
-  
-  // Liste des restaurants récupérés depuis l'API
-  const restaurants = ref<Restaurant[]>([]);
+  const restaurants = ref<Restaurant[]>([]); // Liste des restaurants
+  const searchText = ref(''); // Texte de recherche
 
-  // Texte de recherche pour filtrer les restaurants
-  const searchText = ref('');
+  // **Filtres**
+  const selectedCuisine = ref(''); // Filtrer par type de cuisine
+  const minStars = ref(0); // Filtrer par nombre d’étoiles minimum
+  const maxDistance = ref<number | null>(null); // Distance maximale (en km)
 
-  // Liste filtrée des restaurants en fonction du texte de recherche
-  const searchResults = computed(() => {
-    if (!searchText.value) return restaurants.value; // Si aucun texte de recherche, retourner tous les restaurants
-    const searchTextLower = searchText.value.toLowerCase(); // Mettre en minuscule pour une recherche insensible à la casse
-    return restaurants.value.filter((restaurant) =>
-      restaurant.nom.toLowerCase().includes(searchTextLower) ||
-      restaurant.cuisine.toLowerCase().includes(searchTextLower) ||
-      restaurant.adresse.toLowerCase().includes(searchTextLower) ||
-      restaurant.averageStars // Rechercher aussi par les étoiles moyennes
-    );
+  // **Option de tri**
+  const sortOption = ref('alphabetical'); // Par défaut : tri alphabétique
+
+  // **Computed : Filtrage + Tri**
+  const filteredAndSortedRestaurants = computed(() => {
+
+    console.log('Filtrage avec le texte :', searchText.value); // Log du texte de recherche
+
+    let filtered = restaurants.value;
+
+    // **Filtrer par texte de recherche**
+    if (!searchText.value) {
+      const searchLower = searchText.value.toLowerCase();
+      filtered = filtered.filter(
+        (restaurant) =>
+          restaurant.nom.toLowerCase().includes(searchLower) ||
+          restaurant.cuisine.toLowerCase().includes(searchLower) ||
+          restaurant.adresse.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // **Filtrer par type de cuisine**
+    if (selectedCuisine.value) {
+      filtered = filtered.filter(
+        (restaurant) => restaurant.cuisine === selectedCuisine.value
+      );
+    }
+
+    // **Filtrer par nombre d’étoiles minimum**
+    if (minStars.value > 0) {
+      filtered = filtered.filter(
+        (restaurant) => (restaurant.averageStars ?? 0) >= minStars.value
+      );
+    }
+
+    // **Filtrer par distance maximale**
+    if (maxDistance.value !== null) {
+      filtered = filtered.filter(
+        (restaurant) => restaurant.distance <= maxDistance.value!
+      );
+    }
+
+    // **Appliquer le tri selon l’option choisie**
+    if (sortOption.value === 'alphabetical') {
+      filtered.sort((a, b) => a.nom.localeCompare(b.nom));
+    } else if (sortOption.value === 'distance') {
+      filtered.sort((a, b) => a.distance - b.distance);
+    } else if (sortOption.value === 'rating') {
+      filtered.sort((a, b) => b.averageStars - a.averageStars);
+    }
+
+    console.log('Restaurants filtrés :', filtered); // Log de la liste filtrée
+
+    return filtered;
   });
 
-  // Méthode pour mettre à jour le texte de recherche
-  function updateSearchText(text: string) {
-    searchText.value = text;
-  }
 
-  // Action pour récupérer tous les restaurants depuis l'API
+  /**
+   * Mise à jour du texte de recherche et déclenchement du filtrage.
+   * @param newSearchText Le texte saisi par l'utilisateur dans la barre de recherche.
+   */
+  const updateSearchText = (newSearchText: string) => {
+    searchText.value = newSearchText;
+    restaurants.value = [...restaurants.value]; // Forcer une réévaluation
+
+  };
+
+
+
+
+  // **Récupérer les restaurants depuis l’API**
   const fetchRestaurants = async () => {
     try {
-      console.log('Fetching restaurants...');
-      const response = await axios.get('http://localhost:5000/api/restaurants'); // Adapter l'URL si nécessaire
-      console.log('Restaurants fetched:', response.data);
-      restaurants.value = response.data; // Mise à jour de la liste des restaurants dans l'état du store
+      const response = await axios.get('http://localhost:5000/api/restaurants');
+      restaurants.value = response.data;
     } catch (error: any) {
       console.error('Erreur lors de la récupération des restaurants :', error);
-      if (error.response) {
-        console.error('Réponse de l\'API :', error.response.data);
-        console.error('Statut de la réponse :', error.response.status);
-      } else if (error.request) {
-        console.error('La requête a été envoyée, mais aucune réponse n\'a été reçue :', error.request);
-      } else {
-        console.error('Erreur de configuration de la requête :', error.message);
-      }
     }
   };
 
-  /*-----------------------------------------------------Réservation---------------------------------------------------------------*/
-
-  /*
-   * Action pour ajouter une réservation pour un restaurant donné.
-   * @param reservation Les détails de la réservation (nombre de places, date, heure, etc.)
-   */
-  async function addReservation(reservation: Reservation) {
-    try {
-      // Envoi de la réservation au backend via une requête POST
-
   
-       console.log('Envoi de la réservation :', reservation);  // Loguer l'objet réservation
+  /*-----------------------------------------------------
+     Gestion des Réservations 
+  -----------------------------------------------------*/
+  const addReservation = async (reservation: Reservation) => {
+    try {
+      console.log('Envoi de la réservation :', reservation);
 
-      const response = await axios.post('http://localhost:5000/api/reservations', reservation);
+      const response = await axios.post(
+        'http://localhost:5000/api/reservations',
+        reservation
+      );
 
+      console.log('Réponse du serveur après réservation :', response.data);
 
-      // Loguer la réponse du serveur
-       console.log('Réponse du serveur après réservation :', response.data);
-      
-      // Vérification de la réponse du backend
-      
       if (response.status === 201) {
-
-        console.log('Réservation réussie:', response.data); // Retourner la réponse si nécessaire
-
-        // Ici, vous pouvez ajouter la réservation à l'état du store ou déclencher une action supplémentaire si nécessaire.
-
+        console.log('Réservation réussie:', response.data);
       } else {
-        throw new Error('Erreur lors de la réservation'); // Lever une erreur si la réponse du serveur n'est pas correcte
+        throw new Error('Erreur lors de la réservation');
       }
     } catch (error) {
-      console.error('Échec de la réservation:', error); // Log de l'erreur en cas d'échec
-      
-      throw error; // Renvoyer l'erreur pour qu'elle puisse être gérée dans le composant appelant
+      console.error('Échec de la réservation:', error);
+      throw error;
     }
-  }
+  };
 
   return {
-    // Propriétés accessibles à partir du store
-    restaurants,        // Liste des restaurants
-    searchText,         // Texte de recherche actuel
-    searchResults,      // Résultats filtrés en fonction du texte de recherche
+    // **Données accessibles dans le store**
+    restaurants,
+    searchText,
+    selectedCuisine,
+    minStars,
+    maxDistance,
+    sortOption,
+    filteredAndSortedRestaurants,
 
-    // Méthodes accessibles à partir du store
-    updateSearchText,   // Met à jour le texte de recherche
-    fetchRestaurants,   // Récupère les restaurants depuis l'API
-    addReservation,     // Envoie une réservation au backend
+    // **Méthodes du store**
+    fetchRestaurants,
+    addReservation,
+    updateSearchText, // Ajout de la méthode updateSearchText
   };
 });

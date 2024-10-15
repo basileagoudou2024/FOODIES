@@ -3,12 +3,10 @@ import { useNavigatorStore } from '../stores/navigatorStore';
 import { storeToRefs } from 'pinia';
 import LogoComponent from './LogoComponent.vue';
 import SearchTextComponent from '../components/SearchTextComponent.vue';
-import LocationFilter from './LocationFilter.vue';
-import StarsFilter from './StarsFilter.vue';
-import CuisineFilter  from "./CuisineFilter.vue";
 import LanguageSelect from './LanguageSelect.vue';
 import UserProfile from './UserProfile.vue';
 import { ref } from 'vue';
+import FilterModal from './FilterModal.vue';
 
 const navigatorStore = useNavigatorStore();
 const { searchText } = storeToRefs(navigatorStore); // Récupération de l'état réactif
@@ -27,9 +25,7 @@ const toggleMenu = () => {
     <button class="mobile-menu-button" @click="toggleMenu">☰</button> <!-- Bouton pour le menu sur mobile -->
     <div class="left-section" :class="{ 'mobile-hidden': !isMenuOpen }"> <!-- Appliquer la classe mobile-hidden si le menu est masqué -->
       <SearchTextComponent :query="searchText" @updateQuery="navigatorStore.updateSearchText" />
-      <LocationFilter :selectedLocation="navigatorStore.selectedLocation" @updateLocation="navigatorStore.updateSelectedLocation" />
-      <StarsFilter :selectedStars="navigatorStore.selectedStars" @updateStars="navigatorStore.updateSelectedStars" />
-      <CuisineFilter :selectedKitchen="navigatorStore.selectedKitchen" @updateKitchen="navigatorStore.updateSelectedKitchen" />
+      <FilterModal/>
       <LanguageSelect :selectedLanguage="navigatorStore.selectedLanguage" @updateLanguage="navigatorStore.updateSelectedLanguage" />
     </div>
     <UserProfile class="user-profile" />
@@ -43,6 +39,8 @@ const toggleMenu = () => {
   display: flex;
   align-items: center;
   justify-content: space-between; /* Espace entre LogoComponent et UserProfileComponent */
+  gap: 20em;
+  margin-right: 1em;
   width: 100vw;
   height: 10vh;
   background-color: #bde0fe;

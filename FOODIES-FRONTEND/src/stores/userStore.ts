@@ -93,7 +93,7 @@ export const useUserStore = defineStore('userStore', () => {
 
       // Afficher le succès dans la console
       console.log('Utilisateur créé avec succès :', response.data);
-      alert(`${response.data.message}`);
+     
 
       // Réinitialiser le formulaire après la création de l'utilisateur
       resetForm();
@@ -101,11 +101,11 @@ export const useUserStore = defineStore('userStore', () => {
       // Log des erreurs éventuelles
       if (error.response) {
         console.error("Erreur lors de la création de l'utilisateur :", error.response.data);
-        alert(`Erreur : ${error.response.data.message}`);
+      
         console.error("Statut de l'erreur :", error.response.status);
       } else {
         console.error("Erreur lors de la création de l'utilisateur :", error.message);
-        alert(`Erreur : ${error.message}`);
+      
       }
     }
   };

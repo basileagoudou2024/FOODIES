@@ -1,9 +1,9 @@
-// seed.ts
 import mongoose from 'mongoose';
-import User from './src/database/models/UserModel';
+import { BaseUserModel, AdminUserModel, ClientUserModel, ProprietaireUserModel, UserType } from './src/database/models/UserModel';
 import Restaurant from './src/database/models/RestaurantModel';
 import Evaluation from './src/database/models/EvaluationModel';
-import { restaurantsData, usersData, evaluationsData } from './seedData';
+import Reservation from './src/database/models/ReservationModel';
+import { restaurantsData, usersData, evaluationsData, reservationsData } from './seedData';
 
 const MONGO_URI = 'mongodb://localhost:27017/foodies';
 
@@ -14,23 +14,42 @@ async function seedDatabase() {
     console.log('MongoDB connecté.');
 
     // Nettoyage de la base de données existante
-    await User.deleteMany({});
-    await Restaurant.deleteMany({});
-    await Evaluation.deleteMany({});
+    await Promise.all([
+      BaseUserModel.deleteMany({}),
+      AdminUserModel.deleteMany({}),
+      ClientUserModel.deleteMany({}),
+      ProprietaireUserModel.deleteMany({}),
+      Restaurant.deleteMany({}),
+      Evaluation.deleteMany({}),
+      Reservation.deleteMany({})
+    ]);
 
-    // Insérer les restaurants dans la base de données
+    console.log('Base de données nettoyée.');
+
+    // Insertion des données
     await Restaurant.insertMany(restaurantsData);
-    console.log('Les restaurants ont été ajoutés avec succès dans la base de données.');
+    console.log('Restaurants ajoutés avec succès.');
 
-    // Insérer les utilisateurs dans la base de données
-    await User.insertMany(usersData);
-    console.log('Les utilisateurs ont été ajoutés avec succès dans la base de données.');
+    await Reservation.insertMany(reservationsData);
+    console.log('Réservations ajoutées avec succès.');
 
-    // Insérer les évaluations dans la base de données
+    const baseUsersData = usersData.filter(user => user.typeDeCompte === UserType.Base);
+    const adminUsersData = usersData.filter(user => user.typeDeCompte === UserType.Admin);
+    const clientUsersData = usersData.filter(user => user.typeDeCompte === UserType.Client);
+    const proprietaireUsersData = usersData.filter(user => user.typeDeCompte === UserType.Proprietaire);
+
+    await Promise.all([
+      BaseUserModel.insertMany(baseUsersData),
+      AdminUserModel.insertMany(adminUsersData),
+      ClientUserModel.insertMany(clientUsersData),
+      ProprietaireUserModel.insertMany(proprietaireUsersData),
+    ]);
+    console.log('Utilisateurs ajoutés avec succès.');
+
     await Evaluation.insertMany(evaluationsData);
-    console.log('Les évaluations ont été ajoutées avec succès dans la base de données.');
+    console.log('Évaluations ajoutées avec succès.');
   } catch (error) {
-    console.error('Erreur lors de l\'ajout des données : ', error);
+    console.error('Erreur lors du seed :', error);
   } finally {
     // Déconnexion de MongoDB
     await mongoose.disconnect();

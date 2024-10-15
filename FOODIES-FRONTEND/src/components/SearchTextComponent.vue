@@ -16,7 +16,11 @@ const restaurantStore = useRestaurantStore();
 
 // Méthode de recherche déclenchée par le bouton ou saisie utilisateur
 function performSearch() {
-  restaurantStore.updateSearchText(searchText.value);
+
+  console.log('Texte de recherche envoyé :', search.value); // Log de vérification
+  return restaurantStore.updateSearchText(searchText.value);
+
+ 
 }
 </script>
 

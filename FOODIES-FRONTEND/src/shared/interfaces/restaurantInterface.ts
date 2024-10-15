@@ -31,10 +31,11 @@ export interface Restaurant {
   adresse: string;
   telephone: string;
   cuisine: string;
+  distance: number;
   image: string;
   heuresOuverture: string;
   evaluations?: Evaluation[]; // Utilisation de l'interface `Evaluation`lée
-  averageStars?: number; // La moyenne des étoiles calculée
+  averageStars: number; // La moyenne des étoiles calculée
   bestComment?: string;
   createdAt?: string;
   updatedAt?: string;

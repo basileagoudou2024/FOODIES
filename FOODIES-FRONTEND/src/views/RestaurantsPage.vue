@@ -1,41 +1,52 @@
 <script setup lang="ts">
 import { useRestaurantStore } from '../stores/restaurantStore';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, watch } from 'vue';
 import RestaurantCard from '../components/RestaurantCard.vue';
-import { useI18n } from 'vue-i18n'; // Importation de useI18n pour la 
+import { useI18n } from 'vue-i18n';
 import NavigatorBar from '@/components/NavigatorBar.vue';
 import BootstrapCarousel from '@/components/BootstrapCarousel.vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
-import { useRouter } from 'vue-router';
 
-
+// Récupérer l'instance du routeur
 
 // Utilisation de `useI18n` dans le composant pour accéder à `$t`
-const { t } = useI18n()
+const { t } = useI18n();
 
-// Récupérer l'instance du store
+// Récupérer le store des restaurants
 const restaurantStore = useRestaurantStore();
 
 // Lors du montage du composant, récupérer les restaurants
-onMounted(() => {
-  restaurantStore.fetchRestaurants().then(() => {
+onMounted(async () => {
+  try {
+    await restaurantStore.fetchRestaurants();
     console.log('Données récupérées par le store:', restaurantStore.restaurants);
-  });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des restaurants :', error);
+  }
 });
 
-// Accéder à la liste filtrée des restaurants en fonction du texte de recherche
-const filteredRestaurants = computed(() => restaurantStore.searchResults);
+// Accéder à la liste filtrée et triée des restaurants depuis le store
+// Utilisation des restaurants filtrés
+const filteredRestaurants = computed(() => restaurantStore.filteredAndSortedRestaurants);
+
+  console.log('Restaurants filtrés :', restaurantStore.filteredAndSortedRestaurants);
+
+  watch(filteredRestaurants, (newValue) => {
+  console.log('Restaurants après filtrage:', newValue);
+});
 
 
 
 </script>
 
 <template>
-  <NavigatorBar/>
-  <BootstrapCarousel/>
-  <MessageDisplay/>
+  <NavigatorBar />
+  <BootstrapCarousel />
+  <MessageDisplay />
+
   <div class="restaurant-list">
-    {{ t('RestaurantsPage.title') }}
+    <h1>{{ t('RestaurantsPage.title') }}</h1>
+
     <div v-if="filteredRestaurants && filteredRestaurants.length > 0" class="restaurant-cards">
       <RestaurantCard
         v-for="restaurant in filteredRestaurants"
@@ -43,8 +54,9 @@ const filteredRestaurants = computed(() => restaurantStore.searchResults);
         :restaurant="restaurant"
       />
     </div>
+
     <div v-else>
-      <p>Aucun restaurant à afficher.</p>
+      <p>{{ t('RestaurantsPage.noRestaurants') }}</p>
     </div>
   </div>
 </template>

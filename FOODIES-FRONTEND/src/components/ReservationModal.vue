@@ -1,132 +1,151 @@
 <script setup lang="ts">
-  import { ref, defineProps, PropType } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import { Restaurant } from '../shared/interfaces/restaurantInterface';
-  import { useRestaurantStore } from '../stores/restaurantStore';
-  import { Reservation } from '@/shared/interfaces/reservationInterface';
-  import {jwtDecode} from 'jwt-decode';  // Correction : import sans accolades
+import { ref, defineProps, PropType } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { Restaurant } from '../shared/interfaces/restaurantInterface';
+import { useRestaurantStore } from '../stores/restaurantStore';
+import { Reservation } from '@/shared/interfaces/reservationInterface';
+import {jwtDecode} from 'jwt-decode'; // Fix: No curly braces needed
+import { defineEmits } from 'vue';
 
-  const { t } = useI18n();
-  const restaurantStore = useRestaurantStore();
+const { t } = useI18n();
+const restaurantStore = useRestaurantStore();
+const emit = defineEmits(['close']);
 
+const props = defineProps({
+  restaurant: {
+    type: Object as PropType<Restaurant>,
+    required: true,
+  },
+});
 
-  const props = defineProps({
-    restaurant: {
-      type: Object as PropType<Restaurant>,
-      required: true,
-    },
-  });
+// Form fields
+const nombreDePlaces = ref(1);
+const dateReservation = ref('');
+const heureReservation = ref('');
+const commentaires = ref('');
+const confirmationMessage = ref('');
+const isSubmitting = ref(false); // Loading state
 
-  // Champs de formulaire
-  const nombreDePlaces = ref(1);
-  const dateReservation = ref('');
-  const heureReservation = ref('');
-  const commentaires = ref(''); // Nouveau champ pour les commentaires
-  const confirmationMessage = ref('');
-
-  // Méthode pour récupérer l'ID utilisateur depuis le token JWT
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem('userToken');
-    console.log('Token récupéré depuis le localStorage dans userStore:', token);
-
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        console.log('Token décodé:', decodedToken);
-
-        const userId = decodedToken.userId;
-        console.log('La valeur de userId est:', userId);
-
-        return userId;
-      } catch (error) {
-        console.error('Erreur lors du décodage du token :', error);
-        return null;
-      }
-    } else {
-      console.error("Aucun token trouvé dans le localStorage.");
+// Decode the user ID from the JWT token
+const getUserIdFromToken = (): string | null => {
+  const token = localStorage.getItem('userToken');
+  if (token) {
+    try {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.userId || null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
       return null;
     }
-  };
+  }
+  console.warn('No token found in localStorage.');
+  return null;
+};
 
-  // Méthode de soumission de la réservation
-  const submitReservation = async () => {
-    const userId = getUserIdFromToken();
+// Handle form submission
+const submitReservation = async () => {
+  const userId = getUserIdFromToken();
+  if (!userId) {
+    console.error("Cannot submit reservation, user not authenticated.");
+    return;
+  }
 
-    if (!userId) {
-      console.error("Impossible d'envoyer la réservation, l'utilisateur n'est pas authentifié.");
-      return;
-    }
+  isSubmitting.value = true; // Set loading state
 
-    try {
-      const reservationData: Reservation = {
-        nombreDePlaces: nombreDePlaces.value,
-        dateReservation: dateReservation.value,
-        heureReservation: heureReservation.value,
-        commentaires: commentaires.value, // Envoyer le nouveau champ de commentaires
-        idRestaurant: props.restaurant._id,
-        idUtilisateur: userId, // ID utilisateur authentifié
-      };
+  try {
+    const reservationData: Reservation = {
+      nombreDePlaces: nombreDePlaces.value,
+      dateReservation: dateReservation.value,
+      heureReservation: heureReservation.value,
+      commentaires: commentaires.value,
+      idRestaurant: props.restaurant._id,
+      idUtilisateur: userId,
+    };
 
-      // Log de l'objet envoyé
-      console.log('Données de réservation envoyées :', reservationData);
+    console.log('Sending reservation data:', reservationData);
+    const response = await restaurantStore.addReservation(reservationData);
 
-      // Envoi de la requête via le store
-      const response = await restaurantStore.addReservation(reservationData);
+    console.log('Server response:', response);
+    confirmationMessage.value = t('reservation.Confirmation');
 
-      // Log de la réponse
-      console.log('Réponse du serveur :', response);
+    // Reset the form and close the modal after a short delay
+    setTimeout(() => {
+      resetForm();
+      confirmationMessage.value = '';
+      emitClose();
+    }, 1500);
+  } catch (error) {
+    console.error('Reservation error:', error);
+    confirmationMessage.value = t('reservation.Echec');
+  } finally {
+    isSubmitting.value = false; // Reset loading state
+  }
+};
 
-      // Message de confirmation
-      confirmationMessage.value = t('reservation.Confirmation');
-    } catch (error) {
-      console.error('Erreur lors de la réservation :', error);
-      confirmationMessage.value = t('reservation.Echec');
-    }
-  };
+// Reset form fields
+const resetForm = () => {
+  nombreDePlaces.value = 1;
+  dateReservation.value = '';
+  heureReservation.value = '';
+  commentaires.value = '';
+};
+
+// Emit the close event
+const emitClose = () => {
+  confirmationMessage.value = '';
+  resetForm();
+  isSubmitting.value = false;
+  emit('close');
+};
 </script>
 
-
-
-
 <template>
-    <div class="modal">
-      <div class="modal-content">
-        <span class="close" @click="$emit('close')">&times;</span>
-        <h2> {{ restaurant.nom }}</h2>
-  
-        <!-- Formulaire de réservation -->
-        <form @submit.prevent="submitReservation">
-          <label>{{ t('reservation.Nombre de places') }}:</label>
-          <input type="number" v-model.number="nombreDePlaces" min="1" required />
-  
-          <label>{{ t('reservation.Date de réservation') }}:</label>
-          <input type="date" v-model="dateReservation" required />
-  
-          <label>{{ t('reservation.Heure de réservation') }}:</label>
-          <input type="time" v-model="heureReservation" required />
-  
-          <!-- Nouveau champ pour les commentaires -->
-          <label>{{ t('reservation.Commentaires') }}:</label>
-          <textarea v-model="commentaires" rows="3" placeholder="Ajouter des commentaires ici..."></textarea>
-  
-          <!-- Bouton Submit -->
-          <button type="submit" class="submit-button">
-            {{ t('reservation.Envoyer') }}
-          </button>
-        </form>
-  
-        <button class="close-button" @click="$emit('close')">
-          {{ t('reservation.Fermer') }}
-        </button>
-  
-        <!-- Message de confirmation après réservation -->
+  <div class="modal">
+    <div class="modal-content">
+      <span class="close" @click="emitClose">&times;</span>
+      <h2>{{ restaurant.nom }}</h2>
 
-        <p v-if="confirmationMessage" class="confirmation-message">
-          {{ confirmationMessage }}
-        </p>
-      </div>
+      <!-- Reservation Form -->
+      <form @submit.prevent="submitReservation">
+        <label>{{ t('reservation.Nombre de places') }}:</label>
+        <input type="number" v-model.number="nombreDePlaces" min="1" required />
+
+        <label>{{ t('reservation.Date de réservation') }}:</label>
+        <input type="date" v-model="dateReservation" required />
+
+        <label>{{ t('reservation.Heure de réservation') }}:</label>
+        <input type="time" v-model="heureReservation" required />
+
+        <label>{{ t('reservation.Commentaires') }}:</label>
+        <textarea
+          v-model="commentaires"
+          rows="3"
+          placeholder="Ajouter des commentaires ici..."
+        ></textarea>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="submit-button"
+          :disabled="isSubmitting"
+        >
+          <span v-if="isSubmitting">{{ t('reservation.En cours...') }}</span>
+          <span v-else>{{ t('reservation.Envoyer') }}</span>
+        </button>
+      </form>
+
+      <!-- Close Button -->
+      <button class="close-button" @click="emitClose">
+        {{ t('reservation.Fermer') }}
+      </button>
+
+      <!-- Confirmation Message -->
+      <p v-if="confirmationMessage" class="confirmation-message">
+        {{ confirmationMessage }}
+      </p>
     </div>
-  </template>
+  </div>
+</template>
 
 <style scoped>
 .modal {
@@ -145,7 +164,7 @@
   background: #fff;
   padding: 20px;
   border-radius: 10px;
-  width: 450px; /* Ajuster la largeur si nécessaire */
+  width: 450px;
   position: relative;
 }
 
@@ -160,65 +179,43 @@
 form {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 
-.form-group {
-  display: flex;
-  align-items: center; /* Aligner les champs au centre verticalement */
-  justify-content: space-between;
-  margin-bottom: 15px;
+input,
+textarea {
   width: 100%;
-}
-
-label {
-  width: 45%; /* Ajuster la largeur pour les aligner à gauche */
-  text-align: left; /* Alignement du texte à gauche */
-}
-
-input, textarea, select {
-  width: 50%; /* Prend la place restante */
+  margin-bottom: 10px;
   padding: 8px;
-  border-radius: 5px;
   border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 textarea {
   resize: none;
-  height: 80px;
-}
-
-.buttons {
-  display: flex;
-  justify-content: space-around; /* Espacement égal entre les boutons */
-  width: 100%;
-  margin-top: 20px;
 }
 
 .submit-button {
   background-color: #4CAF50;
   color: white;
-  padding: 10px 20px;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.submit-button:hover {
-  background-color: #45a049;
+.submit-button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
 }
 
 .close-button {
   background-color: #f44336;
   color: white;
-  padding: 10px 20px;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
-
-.close-button:hover {
-  background-color: #d32f2f;
+  margin-top: 10px;
 }
 
 .confirmation-message {
@@ -227,7 +224,3 @@ textarea {
   text-align: center;
 }
 </style>
-
-  
-  
-  

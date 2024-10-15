@@ -4,12 +4,12 @@ import mongoose, {Schema, Document, model } from 'mongoose';
 
 
 // Définition des types d'utilisateurs
-enum UserType {
+export enum UserType {
   Admin = 'Admin',
   Client = 'Client',
-  Proprietaire = 'Propriétaire'
+  Proprietaire = 'Propriétaire',
+  Base = 'Base' // Ajout pour la cohérence avec la gestion des utilisateurs
 }
-
 // Interface de base pour tous les utilisateurs
 export interface IBaseUser extends Document {
   _id: mongoose.Types.ObjectId;  // Ajout explicite de l'ID

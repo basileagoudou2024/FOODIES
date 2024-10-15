@@ -8,6 +8,7 @@ export interface IRestaurant extends Document {
   heuresOuverture: string;
   image: string;
   evaluation: mongoose.Types.ObjectId[]; // Références vers les évaluations liées
+ 
 }
 
 const restaurantSchema: Schema = new Schema({

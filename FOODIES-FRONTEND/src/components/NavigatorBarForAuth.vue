@@ -1,29 +1,31 @@
 <script setup lang="ts"> 
-import { useNavigatorStore } from '../stores/navigatorStore';
-import { storeToRefs } from 'pinia';
+import { useNavigatorStore } from '../stores/navigatorStore'
 import LogoComponent from './LogoComponent.vue';
-import SearchTextComponent from '../components/SearchTextComponent.vue';
-import LocationFilter from './LocationFilter.vue';
-import StarsFilter from './StarsFilter.vue';
-import CuisineFilter  from "./CuisineFilter.vue";
 import LanguageSelect from './LanguageSelect.vue';
-import UserProfile from './UserProfile.vue';
 import { ref } from 'vue';
-
+import ConnexionButton from './ConnexionButton.vue';
 const navigatorStore = useNavigatorStore();
-const { searchText } = storeToRefs(navigatorStore); // Récupération de l'état réactif
+import { useRouter } from 'vue-router';
 
 const isMenuOpen = ref(true); // Initialisation de l'état du menu pour ordinateur
+
+const router = useRouter(); // Initialiser le routeur
 
 // Fonction pour basculer l'affichage du menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
+
+const goToLogin = () => {
+  router.push({ name: 'Login' }); // Redirige vers la page de connexion
+};
+
 </script>
 
 <template>
   <div class="navigator-bar">
     <LogoComponent class="logo" />
+    <ConnexionButton @click="goToLogin" class="buttonConnect"/>
     <button class="mobile-menu-button" @click="toggleMenu">☰</button> <!-- Bouton pour le menu sur mobile -->
     <div class="left-section" :class="{ 'mobile-hidden': !isMenuOpen }"> <!-- Appliquer la classe mobile-hidden si le menu est masqué -->
      
@@ -37,6 +39,8 @@ const toggleMenu = () => {
 <style scoped>
 .navigator-bar {
   display: flex;
+  flex-direction: row;
+  gap:35em;
   align-items: center;
   justify-content: space-between; /* Espace entre LogoComponent et UserProfileComponent */
   width: 100vw;

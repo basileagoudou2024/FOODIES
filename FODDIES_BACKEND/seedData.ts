@@ -1,5 +1,8 @@
 // seedData.ts
 import { Types } from 'mongoose';
+import { IReservation } from './src/database/models/ReservationModel';
+import {UserType}  from './src/database/models/UserModel';
+
 
 // Définir les données pour les restaurants
 const restaurantsData = [
@@ -165,9 +168,10 @@ const restaurantsData = [
 interface UserData {
   _id: Types.ObjectId;
   nom: string;
+  typeDeCompte: UserType,
   prenom: string;
   email: string;
-  motDePasse: string;
+  password: string;
   adresse: string;
   langueParlee: string;
   dateInscription: Date;
@@ -183,7 +187,8 @@ const usersData: UserData[] = [
     nom: 'Amary',
     prenom: 'Jean-jaurey',
     email: 'jj@hotmail.com',
-    motDePasse: '********',
+    typeDeCompte: UserType.Client, 
+    password: 'jean2024',
     adresse: '789 avenue des courges, St-Lambert, Québec, Canada',
     langueParlee: 'fr',
     dateInscription: new Date(),
@@ -193,8 +198,9 @@ const usersData: UserData[] = [
     _id: new Types.ObjectId(),
     nom: 'Smith',
     prenom: 'Jane',
+    typeDeCompte: UserType.Client ,
     email: 'jane.smith@gmail.com',
-    motDePasse: '***',
+    password: 'jane2023',
     adresse: '101 Rue de Berlin, Montreal E, H2K 8L5, Québec, Canada',
     langueParlee: 'en',
     dateInscription: new Date(),
@@ -227,12 +233,120 @@ const evaluationsData = [
     credibilite: 5,
     utilisateur: usersData[1]._id,
     restaurant: restaurantsData[1]._id
+  },
+
+  {
+    noteQualite: 5,
+    noteProprete: 5,
+    notePrix: 4,
+    noteService: 4,
+    noteAmbiance: 5,
+    noteEtoile: 5,
+    commentaire: ' service à améliorer!',
+    credibilite: 10,
+    utilisateur: usersData[0]._id,
+    restaurant: restaurantsData[8]._id
+  },
+  {
+    noteQualite: 3,
+    noteProprete: 3,
+    notePrix: 2,
+    noteService: 3,
+    noteAmbiance: 3,
+    noteEtoile: 4,
+    commentaire: 'Les plats sont un peu trop salés!',
+    credibilite: 5,
+    utilisateur: usersData[1]._id,
+    restaurant: restaurantsData[10]._id
+  },
+
+  {
+    noteQualite: 5,
+    noteProprete: 5,
+    notePrix: 4,
+    noteService: 4,
+    noteAmbiance: 5,
+    noteEtoile: 5,
+    commentaire: 'Service un peu lent!',
+    credibilite: 10,
+    utilisateur: usersData[1]._id,
+    restaurant: restaurantsData[12]._id
+  },
+  {
+    noteQualite: 3,
+    noteProprete: 3,
+    notePrix: 2,
+    noteService: 3,
+    noteAmbiance: 3,
+    noteEtoile: 3.5,
+    commentaire: 'Ambiance à améliorer.',
+    credibilite: 5,
+    utilisateur: usersData[0]._id,
+    restaurant: restaurantsData[9]._id
   }
 ];
+
+// Définir les données pour les réservations
+
+const reservationsData: Partial<IReservation>[] = [
+  {
+    idReservation: new Types.ObjectId(),
+    idUtilisateur: usersData[0]._id.toString(),  // Jean-jaurey
+    idRestaurant: restaurantsData[0]._id.toString(),  // Le Gourmet
+    dateReservation: new Date('2024-10-20').toISOString(),
+    heureReservation: '19:00',
+    nombreDePlaces: 2,
+    commentaires: 'J\'aime ce restaurant',
+  },
+
+  { 
+    idReservation: new Types.ObjectId(),
+    idUtilisateur: usersData[1]._id.toString(), // Jane Smith
+    idRestaurant: restaurantsData[0]._id.toString(),   // Sushi Place
+    dateReservation: new Date('2024-10-21').toISOString(),
+    heureReservation: '12:30',
+    nombreDePlaces: 4,
+    commentaires: 'préférence pour la mezanine',
+  },
+ 
+  {
+    idReservation: new Types.ObjectId(),
+    idUtilisateur: usersData[0]._id.toString(), // Jean-jaurey
+    idRestaurant: restaurantsData[8]._id.toString(),   // Le Bananier Antillais
+    dateReservation: new Date('2024-10-26').toISOString(),
+    heureReservation: '20:30',
+    nombreDePlaces: 3,
+    commentaires: '1 personne à mobilité réduite',
+
+},
+  
+{
+    idReservation: new Types.ObjectId(),
+    idUtilisateur: usersData[1]._id.toString(), // Jane Smith
+    idRestaurant: restaurantsData[4]._id.toString(),   // La Cuisine Santé
+    dateReservation: new Date('2024-11-02').toISOString(),
+    heureReservation: '20:00',
+    nombreDePlaces: 1,
+    commentaires: 'prévoir poivre blanc',
+},
+
+  {
+
+    idReservation: new Types.ObjectId(),
+    idUtilisateur: usersData[0]._id.toString(), // Jean-jaurey
+    idRestaurant: restaurantsData[11]._id.toString(), // Burritos Comesticos
+    dateReservation: new Date('2024-10-24').toISOString(),
+    heureReservation: '13:00',
+    nombreDePlaces: 5,
+    commentaires: 'nous aimons vos plats! ',
+},
+
+];
+
 
 // Associer les utilisateurs aux restaurants
 restaurantsData[0].utilisateurs.push(usersData[0]._id, usersData[1]._id);
 restaurantsData[1].utilisateurs.push(usersData[1]._id);
 
 // Exporter les données de démonstration
-export { restaurantsData, usersData, evaluationsData };
+export { restaurantsData, usersData, evaluationsData,reservationsData  };

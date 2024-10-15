@@ -83,7 +83,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     console.log(`Utilisateur ${newUserInfo.email} créé avec succès dans la base de données.`);
 
     // 3. Envoi du courriel de confirmation
-    await sendConfirmationEmail(newUserInfo.email, newUserInfo.type);
+
+       // TODO: Réactiver l'envoi d'email après correction de l'erreur
+
+    /*await sendConfirmationEmail(newUserInfo.email, newUserInfo.type); */
 
     // 4. Envoi de la réponse HTTP avec statut 201 (Créé)
     res.status(201).json({
@@ -91,7 +94,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       user: newUserInfo,
     });
   } catch (error) {
-    
+
     console.error(`Erreur lors de l'enregistrement de l'utilisateur : ${error}`);
 
     res.status(500).json({

@@ -52,7 +52,8 @@
   },
 
   "RestaurantsPage": {
-    "title": "List of restaurants"
+    "title": "List of restaurants",
+     "Aucun restaurant à afficher": "No restaurants"
   },
 
   "scrollingText":{

@@ -3,8 +3,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUserStore } from '../stores/userStore';
+import axios from 'axios';
 
 const userStore = useUserStore();
+const form = ref<{ email: string; password: string }>({ email: '', password: '' });
+const message = ref('');
 
 // Champs de base du formulaire
 const typeDeCompte = ref(userStore.userInfo.typeDeCompte);
@@ -24,7 +27,17 @@ const forfait = ref(userStore.userInfo.forfait);
 const dateDebutForfait = ref(userStore.userInfo.dateDebutForfait);
 const dateFinForfait = ref(userStore.userInfo.dateFinForfait);
 
+const validateForm = () => {
+  if (!email.value || !password.value) {
+    message.value = 'Email et mot de passe sont requis.';
+    return false;
+  }
+  return true;
+};
+
 const handleSubmit = async () => {
+  if (!validateForm()) return;
+
   // Mise à jour du store avec les données saisies
   userStore.userInfo.typeDeCompte = typeDeCompte.value;
   userStore.userInfo.nom = nom.value;
@@ -57,10 +70,48 @@ const handleSubmit = async () => {
     }
   }
 
+  try {
+    const response = await axios.post('/api/register', form.value);
+    message.value = response.data.message;
+    resetForm(); // Réinitialiser le formulaire après l'enregistrement
+  } catch (error: any) {
+    message.value = `Erreur lors de l'enregistrement: ${error.response?.data?.message || error.message}`;
+  }
+
   // Appel de la fonction d'enregistrement
   await userStore.registerUser();
 };
+
+// réinitialiser les champs email et mot de passe
+const resetForm = () => {
+  form.value = { email: '', password: '' };
+  typeDeCompte.value = '';
+  nom.value = '';
+  prenom.value = '';
+  email.value = '';
+  telephone.value = '';
+  password.value = '';
+  langueParlee.value = '';
+  adresse.value = {
+    numeroCivique: '',
+    rue: '',
+    ville: '',
+    province: '',
+    pays: '',
+    codePostal: ''
+  };
+  servicePremium.value = false;
+  forfait.value = '';
+  dateDebutForfait.value = null;
+  dateFinForfait.value = null;
+};
+
+// redirection vers la page de connexion
+const openLoginForm = () => {
+  console.log('Ouverture du formulaire de connexion');
+};
 </script>
+
 
 
 
@@ -101,8 +152,8 @@ const handleSubmit = async () => {
       <label for="password">Mot de passe :</label>
       <input type="password" v-model="password" id="password" required />
 
-      <label for="langueParlee"> langue parlée :</label>
-      <input type="password" v-model="langueParlee" id="langueParlee" required />
+      <label for="langueParlee">Langue parlée :</label>
+      <input type="text" v-model="langueParlee" id="langueParlee" required />
     </div>
 
     <!-- Adresse -->
@@ -152,14 +203,20 @@ const handleSubmit = async () => {
       </div>
     </div>
 
+    <div class="button-group">
+
     <button type="submit">Soumettre</button>
+    <button type="button" @click="resetForm">Réinitialiser</button>
+
+    </div>
+
+    
   </form>
 </template>
 
 
 
 <style scoped>
-
 .create-account-form {
   max-width: 600px;
   margin: 0 auto;
@@ -179,6 +236,15 @@ h2, h3 {
   margin: 0.5em 0;
 }
 
+.button-group{
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 10em ;
+  margin-right: 5em ;
+}
+
 label {
   width: 30%;
 }
@@ -192,8 +258,11 @@ input, select {
 
 button {
   width: 20%;
+  width: 80px;
+  height: 35px;
+  font-size: 13px;
   padding: 0.7em;
-  background-color:  #28a745;
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 20px;
@@ -207,7 +276,7 @@ button:hover {
 .premium-section {
   margin-top: 1em;
   padding: 1em;
-  border: 1px dashed #007bff;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
 }
-
 </style>
