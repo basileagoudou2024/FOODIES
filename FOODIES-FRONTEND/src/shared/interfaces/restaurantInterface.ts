@@ -31,7 +31,7 @@ export interface Restaurant {
   adresse: string;
   telephone: string;
   cuisine: string;
-  distance: number;
+  distance?: number;
   image: string;
   heuresOuverture: string;
   evaluations?: Evaluation[]; // Utilisation de l'interface `Evaluation`lée
