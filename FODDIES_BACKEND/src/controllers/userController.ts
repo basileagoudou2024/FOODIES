@@ -1,28 +1,32 @@
 
 
 
-
 import { Request, Response } from 'express';
 import { registerUser, loginUser, getUserById, updateUser, deleteUser, getAllUsers } from '../database/queries/userQueries';
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-dotenv.config(); // Chargement des variables d'environnement depuis le fichier .env
+import dotenv from 'dotenv';   
+dotenv.config();           // Chargement des variables d'environnement depuis le fichier .env
 import mongoose from 'mongoose';
 
+
 // Validation des formats d'email et de mot de passe
+
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
 const validatePassword = (password: string): boolean => {
-  // Doit contenir au moins une lettre, un chiffre, et être d'une longueur minimale de 8 caractères
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;     // Doit contenir au moins une lettre, un chiffre, et être d'une longueur minimale de 8 caractères
   return passwordRegex.test(password);
 };
 
 // Fonction d'envoi de courriel de confirmation
-const sendConfirmationEmail = async (email: string, type: string) => {
+const sendConfirmationEmail = async (email: string) => {
+
+  console.log('EMAIL_USER:', process.env.EMAIL_USER);
+  console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
+  
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -63,7 +67,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    // 1. Validation des entrées utilisateur
+     // 1. Validation des entrées utilisateur
+
     if (!validateEmail(email)) {
       res.status(400).json({
         message: 'Format de l\'email invalide. Veuillez fournir un email valide.',
@@ -79,29 +84,29 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 
     // 2. Création de l'utilisateur dans la base de données
+
     const newUserInfo = await registerUser(req.body);
     console.log(`Utilisateur ${newUserInfo.email} créé avec succès dans la base de données.`);
 
-    // 3. Envoi du courriel de confirmation
+     // 3. Envoi du courriel de confirmation
 
-       // TODO: Réactiver l'envoi d'email après correction de l'erreur
+    await sendConfirmationEmail(newUserInfo.email);
 
-    /*await sendConfirmationEmail(newUserInfo.email, newUserInfo.type); */
 
-    // 4. Envoi de la réponse HTTP avec statut 201 (Créé)
+     // 4. Envoi de la réponse HTTP avec statut 201 (Créé)
+
     res.status(201).json({
       message: 'Utilisateur créé avec succès et email de confirmation envoyé.',
       user: newUserInfo,
     });
   } catch (error) {
-
     console.error(`Erreur lors de l'enregistrement de l'utilisateur : ${error}`);
-
     res.status(500).json({
       message: 'Une erreur interne est survenue lors de l\'enregistrement de l\'utilisateur. Veuillez réessayer plus tard.',
     });
   }
 };
+
 
 
 //----------------------- Contrôleur pour la connexion des utilisateurs-----------------------------------------------------*/
