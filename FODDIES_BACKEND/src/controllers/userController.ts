@@ -26,14 +26,17 @@ const sendConfirmationEmail = async (email: string) => {
 
   console.log('EMAIL_USER:', process.env.EMAIL_USER);
   console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
-  
+
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true pour le port 465
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
     },
   });
+  
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -43,7 +46,7 @@ const sendConfirmationEmail = async (email: string) => {
 
 Votre compte a été créé avec succès sur Foodies!
 
-Pour activer votre compte, veuillez cliquer sur le lien suivant : [lien de confirmation].
+Accéeder à votre compte en vous authentifiant sur la page suivante :http://localhost:5173
 
 Merci d'utiliser Foodies!
 
@@ -56,6 +59,7 @@ L'équipe Foodies`,
     await transporter.sendMail(mailOptions);
     console.log(`Email de confirmation envoyé à ${email}`);
   } catch (error) {
+    console.log('Erreur lors de l\'envoi du courriel :', error);
     console.error(`Erreur lors de l'envoi du courriel : ${error}`);
     throw new Error(`Erreur lors de l'envoi du courriel de confirmation à ${email}`);
   }
@@ -77,7 +81,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (!validatePassword(password)) {
-      res.status(400).json({
+      res.status(401).json({
         message: 'Le mot de passe doit contenir au moins 8 caractères, incluant au moins une lettre et un chiffre.',
       });
       return;
