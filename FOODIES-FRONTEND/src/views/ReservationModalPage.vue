@@ -12,6 +12,7 @@ const restaurant: Restaurant = {
   adresse: '123 Rue de Paris, 75000 Paris',
   telephone: '01 23 45 67 89',
   cuisine: 'Française',
+  evaluation: 4,
   averageStars: 4.5,
   heuresOuverture: '12:00 - 22:00',
   bestComment: 'Excellent restaurant avec une ambiance chaleureuse !',

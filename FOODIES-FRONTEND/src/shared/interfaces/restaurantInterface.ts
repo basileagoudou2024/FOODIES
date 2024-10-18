@@ -8,8 +8,9 @@
 export interface Evaluation{
 
  _id: string,
- utilisateur_id: string,
+ idUtilisateur: string,
  restaurant_id: string,
+ idReservation: string,
  notePrix:number,
  noteQualite:number,
  noteService :number,
@@ -31,15 +32,14 @@ export interface Restaurant {
   adresse: string;
   telephone: string;
   cuisine: string;
-  distance?: number;
   image: string;
   heuresOuverture: string;
-  evaluations?: Evaluation[]; // Utilisation de l'interface `Evaluation`lée
-  averageStars: number; // La moyenne des étoiles calculée
-  bestComment?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  __v?: number;
+  evaluation: number; // moyenne des (moyennes pondérées de notes de chaque utilisateur)  
+  averageStars: number; // La moyenne des étoiles attribuées par les utilisateurs
+  bestComment: string;   // comment de l'évaluation qui a obtenu la plus grande moyenne pondérée
+  createdAt?: string;  // généré automatiquement par la base de donnée
+  updatedAt?: string;   // généré automatiquement par la base de donnée
+  __v?: number;   // généré automatiquement par la base de donnée
 
 }
 

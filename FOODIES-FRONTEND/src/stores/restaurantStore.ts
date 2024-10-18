@@ -3,9 +3,11 @@ import axios from 'axios';
 import { ref, computed } from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
 import { Reservation } from '../shared/interfaces/reservationInterface';
+import { Evaluation } from '../shared/interfaces/evaluationInterface';
 
 export const useRestaurantStore = defineStore('restaurantStore', () => {
   const restaurants = ref<Restaurant[]>([]); // Liste des restaurants
+  const evaluations = ref<Evaluation[]>([]); // Liste des évaluations
   const searchText = ref(''); // Texte de recherche
 
   // **Filtres**
@@ -48,19 +50,19 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
       );
     }
 
-    // **Filtrer par distance maximale**
+    /*Filtrer par distance maximale**
     if (maxDistance.value !== null) {
       filtered = filtered.filter(
-        (restaurant) => restaurant.distance <= maxDistance.value!
+        (restaurant) => (restaurant.distance ?? 0) <= maxDistance.value!
       );
-    }
+    }  */
 
     // **Appliquer le tri selon l’option choisie**
     if (sortOption.value === 'alphabetical') {
       filtered.sort((a, b) => a.nom.localeCompare(b.nom));
-    } else if (sortOption.value === 'distance') {
-      filtered.sort((a, b) => a.distance - b.distance);
-    } else if (sortOption.value === 'rating') {
+    } /*else if (sortOption.value === 'distance') {
+      filtered.sort((a, b) => a?.distance - b?.distance);
+    } */else if (sortOption.value === 'rating') {
       filtered.sort((a, b) => b.averageStars - a.averageStars);
     }
 
@@ -119,9 +121,43 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     }
   };
 
+
+  /*-----------------------------------------------------
+     Gestion des Évaluations 
+  -----------------------------------------------------*/
+
+
+  /**
+   * Ajouter une évaluation pour un restaurant.
+   * @param evaluation Les données de l’évaluation à envoyer.
+   */
+
+  const addEvaluation = async (evaluation: Evaluation) => {
+    try {
+      console.log('Envoi de l’évaluation :', evaluation);
+
+      const response = await axios.post(
+        'http://localhost:5000/api/evaluations',
+        evaluation
+      );
+
+      console.log('Réponse du serveur :', response.data);
+
+      if (response.status === 201) {
+        console.log('Évaluation enregistrée avec succès');
+        evaluations.value.push(evaluation); // Ajouter l'évaluation localement
+      } else {
+        throw new Error('Erreur lors de l’enregistrement de l’évaluation');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l’envoi de l’évaluation :', error);
+    }
+  };
+
   return {
     // **Données accessibles dans le store**
     restaurants,
+    evaluations,
     searchText,
     selectedCuisine,
     minStars,
@@ -132,6 +168,7 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     // **Méthodes du store**
     fetchRestaurants,
     addReservation,
+    addEvaluation,
     updateSearchText, // Ajout de la méthode updateSearchText
   };
 });
