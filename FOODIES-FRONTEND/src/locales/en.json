@@ -35,7 +35,8 @@
     "Meilleur commentaire": "Best comment",
     "non évalué": "no rating",
     "pas de commentaire": "no comment",
-    "Réserver": "Book"
+    "Réserver": "Book",
+    "Évaluer": "Rate"
   },
   
   "placeholder": {
@@ -71,5 +72,19 @@
     "Commentaires":"Comments",
     "Echec": "Failed"
     
+  },
+
+  "evaluation":{
+    "Titre": "Rating",
+    "Proprete": "Cleanliness",
+    "Qualite": "Quality",
+    "Service": "Service",
+    "Prix": "Price",
+    "Ambiance": "Ambience",
+    "Etoile": "Stars",
+    "Commentaire": "Comment",
+    "Envoyer": "Submit",
+    "Echec": "Failed"
+
   }
 }

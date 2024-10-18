@@ -35,7 +35,8 @@
     "Meilleur commentaire": "Meilleur commentaire",
     "non évalué": "non évalué",
     "pas de commentaire": "pas de commentaire",
-    "Réserver": "Réserver"
+    "Réserver": "Réserver",
+    "Évaluer": "Évaluer"
   },
   
   "placeholder": {
@@ -71,7 +72,23 @@
     "Commentaires":"Commentaires",
     "Echec": "Echec"
   
+  },
+
+  "evaluation":{
+    "Titre": "Evaluation",
+    "Proprete": "Proprete",
+    "Qualite": "Qualité",
+    "Service": "Service",
+    "Prix": "Prix",
+    "Ambiance": "Ambiance",
+    "Etoile": "Étoile",
+    "Commentaire": "Commentaire",
+    "Envoyer": "Envoyer",
+    "Echec": "Echec"
   }
+
+
+
 }
 
  
