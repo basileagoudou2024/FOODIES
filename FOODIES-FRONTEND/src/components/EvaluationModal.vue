@@ -33,7 +33,11 @@ const getUserIdFromToken = (): string | null => {
   if (token) {
     try {
       const decodedToken: any = jwtDecode(token);
+
+      console.log('le userId trouvé est:', decodedToken.userId)
+
       return decodedToken.userId || null;
+      
     } catch (error) {
       console.error('Erreur lors du décodage du token:', error);
       return null;
@@ -70,6 +74,8 @@ const submitEvaluation = async () => {
 
     console.log('Envoi des données de l’évaluation :', evaluationData);
     await restaurantStore.addEvaluation(evaluationData);
+
+    console.log('Évaluation envoyée avec_succès');
 
     // Réinitialiser le formulaire et fermer la modale après un court délai
     setTimeout(() => {

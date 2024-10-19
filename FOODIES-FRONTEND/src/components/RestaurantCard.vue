@@ -12,7 +12,7 @@ const showReservationForm = ref(false);
 const showEvaluationForm = ref(false); 
 
 // Simule la réservation effectuée par l'utilisateur
-const hasReservation = ref(true); // Initialement false
+const hasReservation = ref(false); // Initialement false: permet d'afficher manuellement le bouton "Evaluer"
 
 // Définir les propriétés attendues
 defineProps({

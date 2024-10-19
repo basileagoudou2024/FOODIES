@@ -8,6 +8,8 @@ Chaque Evaluation porte sur un certain nombre de critères, tels que : noteQuali
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IEvaluation extends Document {
+
+  _id: mongoose.Types.ObjectId;
   noteQualite: number;
   noteProprete: number;
   notePrix: number;
@@ -16,8 +18,8 @@ export interface IEvaluation extends Document {
   noteEtoile: number;    // Note principale en étoile (1-5)
   commentaire: string;
   dateEvaluation: Date; // Date d'ajout de l'évaluation
-  utilisateur: mongoose.Types.ObjectId;  // L'utilisateur qui a laissé cette évaluation
-  restaurant: mongoose.Types.ObjectId;  // Le restaurant évalué
+  idUtilisateur: string,  // L'utilisateur qui a laissé cette évaluation
+  idRestaurant: string  // Le restaurant évalué
   
 }
 
@@ -33,8 +35,8 @@ const evaluationSchema: Schema = new Schema(
     noteEtoile: { type: Number, required: true, min: 1, max: 5 }, // Note principale pour le calcul des étoiles
     commentaire: { type: String, required: true },
     dateEvaluation: { type: Date, default: Date.now }, // Date d'évaluation
-    utilisateur: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
-    restaurant: { type: mongoose.Types.ObjectId, ref: 'Restaurant', required: true }
+    idUtilisateur: { type: String, required: true },
+    idRestaurant: { type: String, required: true }
   },
   { timestamps: true }
 );
