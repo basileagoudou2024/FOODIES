@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'; 
 import axios from 'axios';
 import { ref, computed } from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
@@ -20,13 +20,12 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
 
   // **Computed : Filtrage + Tri**
   const filteredAndSortedRestaurants = computed(() => {
+    console.log('Filtrage avec le texte :', searchText.value); 
 
-    console.log('Filtrage avec le texte :', searchText.value); // Log du texte de recherche
-
-    let filtered = restaurants.value;
+    let filtered = [...restaurants.value];
 
     // **Filtrer par texte de recherche**
-    if (!searchText.value) {
+    if (searchText.value) {
       const searchLower = searchText.value.toLowerCase();
       filtered = filtered.filter(
         (restaurant) =>
@@ -50,40 +49,34 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
       );
     }
 
-    /*Filtrer par distance maximale**
-    if (maxDistance.value !== null) {
+    // **Filtrer par distance maximale**
+   /* if (maxDistance.value !== null) {
       filtered = filtered.filter(
-        (restaurant) => (restaurant.distance ?? 0) <= maxDistance.value!
+        (restaurant) => (restaurant.distance ?? Infinity) <= maxDistance.value
       );
     }  */
 
     // **Appliquer le tri selon l’option choisie**
     if (sortOption.value === 'alphabetical') {
       filtered.sort((a, b) => a.nom.localeCompare(b.nom));
-    } /*else if (sortOption.value === 'distance') {
-      filtered.sort((a, b) => a?.distance - b?.distance);
-    } */else if (sortOption.value === 'rating') {
-      filtered.sort((a, b) => b.averageStars - a.averageStars);
+    }/* else if (sortOption.value === 'distance') {
+      filtered.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+    }*/else if (sortOption.value === 'rating') {
+      filtered.sort((a, b) => (b.averageStars ?? 0) - (a.averageStars ?? 0));
     }
 
-    console.log('Restaurants filtrés :', filtered); // Log de la liste filtrée
-
+    console.log('Restaurants filtrés :', filtered);
     return filtered;
   });
 
-
   /**
-   * Mise à jour du texte de recherche et déclenchement du filtrage.
-   * @param newSearchText Le texte saisi par l'utilisateur dans la barre de recherche.
+   * Mise à jour du texte de recherche.
+   * @param newSearchText Le texte saisi.
    */
   const updateSearchText = (newSearchText: string) => {
     searchText.value = newSearchText;
     restaurants.value = [...restaurants.value]; // Forcer une réévaluation
-
   };
-
-
-
 
   // **Récupérer les restaurants depuis l’API**
   const fetchRestaurants = async () => {
@@ -95,11 +88,10 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     }
   };
 
-  
   /*-----------------------------------------------------
      Gestion des Réservations 
   -----------------------------------------------------*/
-  const addReservation = async (reservation: Reservation) => {
+  const addReservation = async (reservation: Reservation): Promise<void> => {
     try {
       console.log('Envoi de la réservation :', reservation);
 
@@ -121,18 +113,24 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     }
   };
 
+  // **Méthode pour récupérer la dernière réservation**
+  const getLastReservation = async (userId: string): Promise<Reservation | null> => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/reservations/last/${userId}`);
+      const lastReservation = response.data;
+      console.log('Dernière réservation:', lastReservation);
+  
+      return lastReservation;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la dernière réservation:', error);
+      return null;
+    }
+  };
 
   /*-----------------------------------------------------
      Gestion des Évaluations 
   -----------------------------------------------------*/
-
-
-  /**
-   * Ajouter une évaluation pour un restaurant.
-   * @param evaluation Les données de l’évaluation à envoyer.
-   */
-
-  const addEvaluation = async (evaluation: Evaluation) => {
+  const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
     try {
       console.log('Envoi de l’évaluation :', evaluation);
 
@@ -145,7 +143,7 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
 
       if (response.status === 201) {
         console.log('Évaluation enregistrée avec succès');
-        evaluations.value.push(evaluation); // Ajouter l'évaluation localement
+        evaluations.value.push(evaluation); // Ajouter localement
       } else {
         throw new Error('Erreur lors de l’enregistrement de l’évaluation');
       }
@@ -168,7 +166,8 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     // **Méthodes du store**
     fetchRestaurants,
     addReservation,
+    getLastReservation,
     addEvaluation,
-    updateSearchText, // Ajout de la méthode updateSearchText
+    updateSearchText,
   };
 });
