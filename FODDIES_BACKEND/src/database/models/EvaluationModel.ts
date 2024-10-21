@@ -16,7 +16,7 @@ export interface IEvaluation extends Document {
   noteService: number;
   noteAmbiance: number;
   noteEtoile: number;    // Note principale en étoile (1-5)
-  commentaire: string;
+  commentaire?: string;
   dateEvaluation: Date; // Date d'ajout de l'évaluation
   idUtilisateur: string,  // L'utilisateur qui a laissé cette évaluation
   idRestaurant: string  // Le restaurant évalué

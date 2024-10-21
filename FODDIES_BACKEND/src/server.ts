@@ -30,6 +30,7 @@ app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/users', userRoutes); // Ajoute cette ligne si tu souhaites activer cette route
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/evaluations', evaluationRoutes);
+ 
 
 // Connexion à MongoDB avec confirmation de démarrage
 mongoose.connect('mongodb://localhost:27017/foodies')

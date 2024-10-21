@@ -15,7 +15,7 @@ export const ajouterEvaluation = async (req: Request, res: Response) => {
     const evaluation = await creerEvaluation(req.body);
     res.status(201).json(evaluation);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    res.status(501).json({ error: error.message });
   }
 };
 

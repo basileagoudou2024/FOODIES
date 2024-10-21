@@ -1,6 +1,6 @@
 // src/queries/restaurantQueries.ts
-import Restaurant from '../models/RestaurantModel';
-import { IRestaurant } from '../models/RestaurantModel';
+import Restaurant, { IRestaurant } from '../models/RestaurantModel';
+
 
 export const getAllRestaurants = async (): Promise<IRestaurant[]> => {
   return await Restaurant.find().populate('utilisateurs').exec();

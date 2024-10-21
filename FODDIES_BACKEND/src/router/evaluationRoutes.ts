@@ -7,6 +7,6 @@ import { ajouterEvaluation, afficherEvaluationRestaurant} from '../controllers/e
 const router = express.Router();
 
 router.get('/', afficherEvaluationRestaurant); // Route pour obtenir toutes les évaluations
-router.post('/', ajouterEvaluation); // Route pour créer une nouvelle évaluation
+router.post('/evaluation', ajouterEvaluation); // Route pour créer une nouvelle évaluation
 
 export default router;

@@ -12,7 +12,7 @@ export interface Evaluation {
     notePrix: number;      // Note de prix (1-5)
     noteAmbiance: number;  // Note d’ambiance (1-5)
     noteEtoile: number;  // Nombre d'étoiles (1-5)
-    commentaire: string;  // Commentaire optionnel
+    commentaire?: string;  // Commentaire optionnel
     DateEvaluation: string //createdAt: Date;  // Date de l'évaluation
   }
   

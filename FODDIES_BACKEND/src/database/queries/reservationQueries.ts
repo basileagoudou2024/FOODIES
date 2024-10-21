@@ -1,6 +1,7 @@
+
 import { Model } from 'mongoose';
-import { IReservation } from '../models/ReservationModel'; // Importation de l'interface de la réservation
-import Reservation from '../models/ReservationModel'; // Importation du modèle Mongoose
+import Reservation, {IReservation}  from '../models/ReservationModel'; // Importation du modèle Mongoose
+
 
 // Fonction pour ajouter (créer) une nouvelle réservation
 export const addReservation = async (reservationData: Partial<IReservation>) => {
@@ -90,4 +91,7 @@ export const getAllReservationsPerUserAndRestaurant = async (
     );
   }
 };
+
+
+
 
