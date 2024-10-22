@@ -71,18 +71,19 @@
     "Envoyer": "Submit",
     "Fermer": "Close",
     "Commentaires":"Comments",
-    "Echec": "Failed"
+    "Echec": "Failed",
+     "Confirmation": "Confirmation"
     
   },
 
   "evaluation":{
     "Titre": "Rating",
-    "Proprete": "Cleanliness",
-    "Qualite": "Quality",
-    "Service": "Service",
-    "Prix": "Price",
-    "Ambiance": "Ambience",
-    "Etoile": "Stars",
+    "proprete": "Cleanliness",
+    "qualite": "Quality",
+    "service": "Service",
+    "prix": "Price",
+    "ambiance": "Ambience",
+    "etoile": "Stars",
     "Commentaire": "Comment",
     "Envoyer": "Submit",
     "Echec": "Failed",

@@ -71,18 +71,19 @@
     "Envoyer": "Envoyer",
     "Fermer": "Fermer",
     "Commentaires":"Commentaires",
-    "Echec": "Echec"
+    "Echec": "Echec",
+    "Confirmation": "Confirmation"
   
   },
 
   "evaluation":{
     "Titre": "Evaluation",
-    "Proprete": "Proprete",
-    "Qualite": "Qualité",
-    "Service": "Service",
-    "Prix": "Prix",
-    "Ambiance": "Ambiance",
-    "Etoile": "Étoile",
+    "proprete": "proprete",
+    "qualite": "qualité",
+    "service": "service",
+    "prix": "prix",
+    "ambiance": "ambiance",
+    "etoile": "etoile",
     "Commentaire": "Commentaire",
     "Envoyer": "Envoyer",
     "Echec": "Echec",

@@ -75,7 +75,7 @@ const submitEvaluation = async () => {
     console.log('Évaluation envoyée avec succès');
     setTimeout(() => {
       resetForm();
-      emit('evaluationComplete');
+      emit('evaluationComplete');  // Émettre l'événement pour signaler la soumission
       emit('close');
     }, 1500);
   } catch (error) {

@@ -69,14 +69,14 @@ const handleSubmit = async () => {
       userStore.userInfo.dateFinForfait = null;
     }
   }
-
+/*
   try {
     const response = await axios.post('/api/register', form.value);
     message.value = response.data.message;
     resetForm(); // Réinitialiser le formulaire après l'enregistrement
   } catch (error: any) {
     message.value = `Erreur lors de l'enregistrement: ${error.response?.data?.message || error.message}`;
-  }
+  }  */
 
   // Appel de la fonction d'enregistrement
   await userStore.registerUser();

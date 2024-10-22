@@ -91,8 +91,7 @@ export const useUserStore = defineStore('userStore', () => {
       // Log de la réponse reçue
       console.log('Réponse reçue du backend :', response.data);
 
-      // Afficher le succès dans la console
-      console.log('Utilisateur créé avec succès :', response.data);
+    
      
 
       // Réinitialiser le formulaire après la création de l'utilisateur

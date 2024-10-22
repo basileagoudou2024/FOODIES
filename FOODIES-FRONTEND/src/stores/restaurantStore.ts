@@ -10,6 +10,12 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
   const evaluations = ref<Evaluation[]>([]);
   const searchText = ref('');
 
+  // Nouvelle méthode pour mettre à jour le texte de recherche
+  const updateSearchText = (text: string) => {
+    searchText.value = text;
+  };
+
+
   // **Filtres et options**
   const selectedCuisine = ref('');
   const minStars = ref(0);
@@ -36,12 +42,21 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     if (minStars.value > 0) {
       filtered = filtered.filter(restaurant => (restaurant.averageStars ?? 0) >= minStars.value);
     }
-    if (sortOption.value === 'alphabetical') {
-      filtered.sort((a, b) => a.nom.localeCompare(b.nom));
-    } else if (sortOption.value === 'rating') {
-      filtered.sort((a, b) => (b.averageStars ?? 0) - (a.averageStars ?? 0));
+     // **Tri**
+     switch (sortOption.value) {
+      case 'alphabetical':
+        filtered.sort((a, b) => a.nom.localeCompare(b.nom));
+        break;
+      case 'alphabetical_desc':
+        filtered.sort((a, b) => b.nom.localeCompare(a.nom));
+        break;
+      case 'rating':
+        filtered.sort((a, b) => (b.averageStars ?? 0) - (a.averageStars ?? 0));
+        break;
+      case 'rating_desc':
+        filtered.sort((a, b) => (a.averageStars ?? 0) - (b.averageStars ?? 0));
+        break;
     }
-
     return filtered;
   });
 
@@ -55,7 +70,17 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     }
   };
 
-  /** Méthode pour gérer les réservations */
+  /** Méthode pour récupérer les évaluations depuis l’API */
+  const fetchEvaluations = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/evaluations');
+      evaluations.value = response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des évaluations :', error);
+    }
+  };
+
+  /** Méthode pour faire une nouvelle réservation depuis l'API et enregistrer */
   const addReservation = async (reservation: Reservation): Promise<void> => {
     try {
       const response = await axios.post('http://localhost:5000/api/reservations', reservation);
@@ -73,7 +98,7 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     }
   };
 
-  /** Méthode pour gérer les évaluations */
+  /** Méthode pour créer une nouvelle évaluation depuis l’API et enregistrer */
   const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
     try {
       const response = await axios.post('http://localhost:5000/api/evaluations', evaluation);
@@ -92,12 +117,17 @@ export const useRestaurantStore = defineStore('restaurantStore', () => {
     restaurants,
     evaluations,
     searchText,
+    updateSearchText,
     selectedCuisine,
     minStars,
     sortOption,
     filteredAndSortedRestaurants,
     fetchRestaurants,
+    fetchEvaluations, // Exposée pour utilisation
     addReservation,
     addEvaluation,
+    setCuisine: (cuisine: string) => (selectedCuisine.value = cuisine),
+    setMinStars: (stars: number) => (minStars.value = stars),
+    setSortOption: (option: string) => (sortOption.value = option)
   };
 });

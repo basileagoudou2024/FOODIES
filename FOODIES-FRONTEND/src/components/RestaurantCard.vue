@@ -7,10 +7,13 @@ import EvaluationModal from './EvaluationModal.vue';
 import { useRestaurantStore } from '../stores/restaurantStore';
 
 const { t } = useI18n();
-const store = useRestaurantStore();
+const restaurantStore = useRestaurantStore();
 
 const showReservationForm = ref(false);
 const showEvaluationForm = ref(false);
+const hasReservation = ref(false);
+const evaluationSubmitted = ref(false); // Nouveau : pour gérer la soumission de l'évaluation
+
 const props = defineProps({
   restaurant: {
     type: Object as PropType<Restaurant>,
@@ -18,29 +21,42 @@ const props = defineProps({
   },
 });
 
-const hasReservation = ref(false);
-
 // Vérifier l'état de réservation
 const checkReservationStatus = () => {
   const reservationData = JSON.parse(localStorage.getItem('reservationData') || '{}');
   hasReservation.value = reservationData.idRestaurant === props.restaurant._id;
 };
 
+// Vérifier si l'évaluation a déjà été soumise
+const checkEvaluationStatus = () => {
+  const evaluationData = localStorage.getItem(`evaluation_${props.restaurant._id}`);
+  evaluationSubmitted.value = !!evaluationData;
+};
+
 onMounted(() => {
   checkReservationStatus();
+  checkEvaluationStatus(); // Appeler la vérification de l'évaluation
 });
 
 watch(() => localStorage.getItem('reservationData'), () => {
   checkReservationStatus();
 });
 
-// Gérer la complétion de la réservation
+// Gestion de la complétion de la réservation
 function handleReservationComplete(idReservation: string) {
   showReservationForm.value = false;
   localStorage.setItem('reservationData', JSON.stringify({ idReservation, idRestaurant: props.restaurant._id }));
   hasReservation.value = true;
 }
+
+// Gestion de la soumission de l'évaluation
+function handleEvaluationComplete() {
+  showEvaluationForm.value = false;
+  evaluationSubmitted.value = true;
+  localStorage.setItem(`evaluation_${props.restaurant._id}`, 'submitted'); // Sauvegarder l'état
+}
 </script>
+
 
 <template>
   <div class="restaurant-card">
@@ -51,12 +67,17 @@ function handleReservationComplete(idReservation: string) {
       <p><strong>{{ t('restaurant.Téléphone') }}:</strong> <span class="value">{{ restaurant.telephone }}</span></p>
       <p><strong>{{ t('restaurant.Cuisine') }}:</strong> <span class="value">{{ t(`cuisine.${restaurant.cuisine.toLowerCase()}`) }}</span></p>
       <p><strong>{{ t('restaurant.Étoiles') }}:</strong> <span class="value">{{ restaurant.averageStars || t('restaurant.non évalué') }}</span></p>
+      <p><strong>{{ t('restaurant.Heures Ouverture') }}:</strong><span class="value">{{ restaurant.heuresOuverture }}</span></p>
+      <p><strong>{{ t('restaurant.Meilleur commentaire') }}:</strong><span class="value">{{ restaurant.bestComment || t('restaurant.pas de commentaire') }}</span></p>
 
       <button @click="showReservationForm = true" class="reserve-button">
         {{ t('restaurant.Réserver') }}
       </button>
 
-      <button v-if="hasReservation" @click="showEvaluationForm = true" class="evaluate-button">
+      <button 
+        v-if="hasReservation && !evaluationSubmitted" 
+        @click="showEvaluationForm = true" 
+        class="evaluate-button">
         {{ t('restaurant.Évaluer') }}
       </button>
 
@@ -68,11 +89,13 @@ function handleReservationComplete(idReservation: string) {
       />
 
       <EvaluationModal 
-  v-if="showEvaluationForm" 
-  :idRestaurant="restaurant._id" 
-  :restaurant="{ nom: restaurant.nom }" 
-  @close="showEvaluationForm = false" 
-/>
+        v-if="showEvaluationForm" 
+        :idRestaurant="restaurant._id" 
+        :restaurantId="restaurant._id" 
+        :restaurant="{ nom: restaurant.nom }" 
+        @close="showEvaluationForm = false" 
+        @evaluationComplete="handleEvaluationComplete" 
+      />
     </div>
   </div>
 </template>

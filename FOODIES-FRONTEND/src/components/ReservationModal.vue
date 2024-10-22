@@ -73,7 +73,7 @@ const submitReservation = async () => {
       resetForm();
       confirmationMessage.value = '';
       emitClose();
-    }, 1500);
+    }, 5000);
   } catch (error) {
     console.error('Reservation error:', error);
     confirmationMessage.value = t('reservation.Echec');
