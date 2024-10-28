@@ -1,30 +1,21 @@
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
-/*
-Chaque Evaluation porte sur un certain nombre de critères, tels que : noteQualite, notePropreté, etc.
-*/
-
-
-
-import mongoose, { Schema, Document } from 'mongoose';
-
+// Interface d'une évaluation
 export interface IEvaluation extends Document {
-
-  _id: mongoose.Types.ObjectId;
+  _id: Types.ObjectId;
   noteQualite: number;
   noteProprete: number;
   notePrix: number;
   noteService: number;
   noteAmbiance: number;
-  noteEtoile: number;    // Note principale en étoile (1-5)
+  noteEtoile: number; // Note principale en étoile (1-5)
   commentaire?: string;
-  dateEvaluation: Date; // Date d'ajout de l'évaluation
-  idUtilisateur: string,  // L'utilisateur qui a laissé cette évaluation
-  restaurantId: string  // Le restaurant évalué
-  
+  dateEvaluation: Date;
+  utilisateurId: Types.ObjectId; // Référence à l'utilisateur
+  restaurantId: Types.ObjectId; // Référence au restaurant
 }
 
-// Schéma d'une Évaluation
-
+// Schéma de l'évaluation
 const evaluationSchema: Schema = new Schema(
   {
     noteQualite: { type: Number, required: true, min: 1, max: 5 },
@@ -32,13 +23,14 @@ const evaluationSchema: Schema = new Schema(
     notePrix: { type: Number, required: true, min: 1, max: 5 },
     noteService: { type: Number, required: true, min: 1, max: 5 },
     noteAmbiance: { type: Number, required: true, min: 1, max: 5 },
-    noteEtoile: { type: Number, required: true, min: 1, max: 5 }, // Note principale pour le calcul des étoiles
-    commentaire: { type: String, required: true },
+    noteEtoile: { type: Number, required: true, min: 1, max: 5 }, // Note principale pour l'affichage des étoiles
+    commentaire: { type: String, required: false }, // Le commentaire est facultatif
     dateEvaluation: { type: Date, default: Date.now }, // Date d'évaluation
-    idUtilisateur: { type: String, required: true },
-    restaurantId: { type: String, required: true }
+    utilisateurId: { type: Schema.Types.ObjectId, ref: 'Utilisateur', required: true }, // Référence utilisateur
+    restaurantId: { type: Schema.Types.ObjectId, ref: 'Restaurant', required: true }, // Référence restaurant
   },
-  { timestamps: true }
+  { timestamps: true } // Ajoute createdAt et updatedAt automatiquement
 );
 
+// Export du modèle
 export default mongoose.model<IEvaluation>('Evaluation', evaluationSchema);

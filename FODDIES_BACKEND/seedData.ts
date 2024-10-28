@@ -219,8 +219,8 @@ const evaluationsData = [
     noteEtoile: 5,
     commentaire: 'Excellent service!',
     credibilite: 10,
-    utilisateur: usersData[0]._id,
-    restaurant: restaurantsData[0]._id
+    utilisateurId: usersData[0]._id,
+    restaurantId: restaurantsData[0]._id
   },
   {
     noteQualite: 3,
@@ -231,8 +231,8 @@ const evaluationsData = [
     noteEtoile: 3,
     commentaire: 'Un peu cher pour ce que c\'est.',
     credibilite: 5,
-    utilisateur: usersData[1]._id,
-    restaurant: restaurantsData[1]._id
+    utilisateurId: usersData[1]._id,
+    restaurantId: restaurantsData[1]._id
   },
 
   {
@@ -244,8 +244,8 @@ const evaluationsData = [
     noteEtoile: 5,
     commentaire: ' service à améliorer!',
     credibilite: 10,
-    utilisateur: usersData[0]._id,
-    restaurant: restaurantsData[8]._id
+    utilisateurId: usersData[0]._id,
+    restaurantId: restaurantsData[8]._id
   },
   {
     noteQualite: 3,
@@ -256,8 +256,8 @@ const evaluationsData = [
     noteEtoile: 4,
     commentaire: 'Les plats sont un peu trop salés!',
     credibilite: 5,
-    utilisateur: usersData[1]._id,
-    restaurant: restaurantsData[10]._id
+    utilisateurId: usersData[1]._id,
+    restaurantId: restaurantsData[10]._id
   },
 
   {
@@ -269,8 +269,8 @@ const evaluationsData = [
     noteEtoile: 5,
     commentaire: 'Service un peu lent!',
     credibilite: 10,
-    utilisateur: usersData[1]._id,
-    restaurant: restaurantsData[12]._id
+    utilisateurId: usersData[1]._id,
+    restaurantId: restaurantsData[12]._id
   },
   {
     noteQualite: 3,
@@ -281,8 +281,8 @@ const evaluationsData = [
     noteEtoile: 3.5,
     commentaire: 'Ambiance à améliorer.',
     credibilite: 5,
-    utilisateur: usersData[0]._id,
-    restaurant: restaurantsData[9]._id
+    utilisateurId: usersData[0]._id,
+    restaurantId: restaurantsData[9]._id
   }
 ];
 
@@ -291,7 +291,7 @@ const evaluationsData = [
 const reservationsData: Partial<IReservation>[] = [
   {
     idReservation: new Types.ObjectId(),
-    idUtilisateur: usersData[0]._id.toString(),  // Jean-jaurey
+    utilisateurId: usersData[0]._id.toString(),  // Jean-jaurey
     restaurantId: restaurantsData[0]._id.toString(),  // Le Gourmet
     dateReservation: new Date('2024-10-20').toISOString(),
     heureReservation: '19:00',
@@ -301,7 +301,7 @@ const reservationsData: Partial<IReservation>[] = [
 
   { 
     idReservation: new Types.ObjectId(),
-    idUtilisateur: usersData[1]._id.toString(), // Jane Smith
+    utilisateurId: usersData[1]._id.toString(), // Jane Smith
     restaurantId: restaurantsData[0]._id.toString(),   // Sushi Place
     dateReservation: new Date('2024-10-21').toISOString(),
     heureReservation: '12:30',
@@ -311,7 +311,7 @@ const reservationsData: Partial<IReservation>[] = [
  
   {
     idReservation: new Types.ObjectId(),
-    idUtilisateur: usersData[0]._id.toString(), // Jean-jaurey
+    utilisateurId: usersData[0]._id.toString(), // Jean-jaurey
     restaurantId: restaurantsData[8]._id.toString(),   // Le Bananier Antillais
     dateReservation: new Date('2024-10-26').toISOString(),
     heureReservation: '20:30',
@@ -322,7 +322,7 @@ const reservationsData: Partial<IReservation>[] = [
   
 {
     idReservation: new Types.ObjectId(),
-    idUtilisateur: usersData[1]._id.toString(), // Jane Smith
+    utilisateurId: usersData[1]._id.toString(), // Jane Smith
     restaurantId: restaurantsData[4]._id.toString(),   // La Cuisine Santé
     dateReservation: new Date('2024-11-02').toISOString(),
     heureReservation: '20:00',
@@ -333,7 +333,7 @@ const reservationsData: Partial<IReservation>[] = [
   {
 
     idReservation: new Types.ObjectId(),
-    idUtilisateur: usersData[0]._id.toString(), // Jean-jaurey
+    utilisateurId: usersData[0]._id.toString(), // Jean-jaurey
     restaurantId: restaurantsData[11]._id.toString(), // Burritos Comesticos
     dateReservation: new Date('2024-10-24').toISOString(),
     heureReservation: '13:00',

@@ -3,7 +3,7 @@
 // Interface de l'utilisateur ayant évalué un restaurant
 export interface Evaluation {
     _id?: string;  // attribué automatiquement par mongoDB
-    idUtilisateur: string;
+    utilisateurId: string;
     restaurantId: string;
     idReservation?: string;
     noteProprete: number;  // Note de propreté (1-5)

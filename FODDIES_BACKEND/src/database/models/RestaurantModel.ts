@@ -7,8 +7,8 @@ export interface IRestaurant extends Document {
   cuisine: string;
   heuresOuverture: string;
   image: string;
-  evaluation: mongoose.Types.ObjectId[]; // Références vers les évaluations liées
- 
+  utilisateurs: mongoose.Types.ObjectId[]; // Référence aux utilisateurs liés
+  evaluations: mongoose.Types.ObjectId[]; // Référence aux évaluations liées
 }
 
 const restaurantSchema: Schema = new Schema({
@@ -18,9 +18,13 @@ const restaurantSchema: Schema = new Schema({
   cuisine: { type: String, required: true },
   heuresOuverture: { type: String, required: true },
   image: { type: String, required: true },
-  evaluations: [{ type: Schema.Types.ObjectId, ref: 'Evaluation' }],  // Liste des ObjectId des évaluations
+  utilisateurs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' }],
+  evaluations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Evaluation' }],
+ 
 },
-  { timestamps: true },
+
+{ timestamps: true },
+
 );
 
 export default mongoose.model<IRestaurant>('Restaurant', restaurantSchema);

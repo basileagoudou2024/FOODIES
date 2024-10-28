@@ -59,7 +59,7 @@ const submitReservation = async () => {
       heureReservation: heureReservation.value,
       commentaires: commentaires.value,
       restaurantId: props.restaurant._id,
-      idUtilisateur: userId,
+      utilisateurId: userId,
     };
 
     console.log('Sending reservation data:', reservationData);

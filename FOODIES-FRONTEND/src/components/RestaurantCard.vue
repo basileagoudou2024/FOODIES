@@ -8,7 +8,6 @@ import { useRestaurantStore } from '../stores/restaurantStore';
 
 const { t } = useI18n();
 const restaurantStore = useRestaurantStore();
-console.log(restaurantStore.restaurants); // Use the restaurantStore variable
 
 const showReservationForm = ref(false);
 const showEvaluationForm = ref(false);
@@ -25,17 +24,16 @@ const props = defineProps({
 // Vérifier l'état de réservation
 const checkReservationStatus = () => {
   const reservationData = JSON.parse(localStorage.getItem('reservationData') || '{}');
-  hasReservation.value = reservationData.restaurant === props.restaurant._id;
-
+  hasReservation.value = reservationData.idRestaurant === props.restaurant._id;
+  console.log('Has Reservation:', hasReservation.value); // Debugging log
 };
 
 // Vérifier si l'évaluation a déjà été soumise
 const checkEvaluationStatus = () => {
   const evaluationData = localStorage.getItem(`evaluation_${props.restaurant._id}`);
   evaluationSubmitted.value = !!evaluationData;
-
+  console.log('Evaluation Submitted:', evaluationSubmitted.value); // Debugging log
 };
-
 
 // **(vérifier la récupération des évaluations, l'état des réservations et des évaluations) au montage du composant**
 
@@ -181,7 +179,7 @@ function handleEvaluationComplete() {
 }
 
 .value {
-  color: white;
+  color:#ccff33;
 }
 
 .star {

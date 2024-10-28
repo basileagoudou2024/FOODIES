@@ -9,6 +9,9 @@ import {
 
 // Ajouter une nouvelle réservation
 export const createReservation = async (req: Request, res: Response) => {
+
+  console.log(req.body);
+
   try {
     const reservationData = req.body;
     const newReservation = await addReservation(reservationData);
@@ -17,7 +20,9 @@ export const createReservation = async (req: Request, res: Response) => {
       reservation: newReservation,
     });
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({ error: error.message });
+   
   }
 };
 
