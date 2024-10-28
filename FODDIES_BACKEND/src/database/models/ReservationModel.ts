@@ -8,7 +8,7 @@ export interface IReservation extends Document{
     nombreDePlaces: number;
     dateReservation: string;
     heureReservation: string;
-    idRestaurant: string;
+    restaurantId: string;
     idUtilisateur: string;
     commentaires: string 
     statut?: 'En attente' | 'Confirmée' | 'Annulée';  // Statut géré par le système 
@@ -24,7 +24,7 @@ const ReservationSchema = new Schema({
     nombreDePlaces: { type: Number, required: true },  // Nombre entier de places réservées
     heureReservation: { type: String, required: true }, // Heure au format "HH:MM"
     idUtilisateur: { type: String, required: true }, // Référence au client (ClientUserModel)
-    idRestaurant: { type: String, required: true },    // Référence au 
+    restaurantId: { type: String, required: true },    // Référence au 
     commentaires: {type: String, required: true},  
     statut: {type: String, required: false}
   },

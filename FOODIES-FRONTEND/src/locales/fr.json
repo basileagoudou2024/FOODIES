@@ -37,7 +37,9 @@
     "pas de commentaire": "pas de commentaire",
     "Réserver": "Réserver",
     "Évaluer": "Évaluer",
-    "Évaluation":"Évaluation"
+    "Évaluation":"Évaluation",
+    "Note Globale": "Note Globale",
+    "Points": "Points"
   },
   
   "placeholder": {
@@ -90,8 +92,7 @@
     "Fermer": "Fermer"
   }
 
-
-
+ 
 }
 
  

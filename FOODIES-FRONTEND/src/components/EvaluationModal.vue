@@ -12,7 +12,7 @@ const emit = defineEmits(['close', 'evaluationComplete']); // Événements d'ém
 
 // Propriétés attendues
 const props = defineProps({
-  idRestaurant: { type: String, required: true },
+  restaurantId: { type: String, required: true },
   restaurant: { type: Object as PropType<{ nom: string }>, required: true },
 });
 
@@ -66,7 +66,7 @@ const submitEvaluation = async () => {
   noteEtoile: notes.value.etoile,
   commentaire: commentaire.value,
   DateEvaluation: new Date().toISOString(),
-  idRestaurant: props.idRestaurant,
+  restaurantId: props.restaurantId,
   idUtilisateur: userId,
 };
     console.log('Envoi des données d’évaluation :', evaluationData);

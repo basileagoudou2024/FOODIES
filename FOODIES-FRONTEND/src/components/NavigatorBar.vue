@@ -39,7 +39,7 @@ const toggleMenu = () => {
   display: flex;
   align-items: center;
   justify-content: space-between; /* Espace entre LogoComponent et UserProfileComponent */
-  gap: 20em;
+  gap: 5em;
   margin-right: 1em;
   width: 100vw;
   height: 10vh;

@@ -58,7 +58,7 @@ const submitReservation = async () => {
       dateReservation: dateReservation.value,
       heureReservation: heureReservation.value,
       commentaires: commentaires.value,
-      idRestaurant: props.restaurant._id,
+      restaurantId: props.restaurant._id,
       idUtilisateur: userId,
     };
 

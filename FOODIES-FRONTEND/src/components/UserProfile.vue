@@ -1,112 +1,95 @@
-
-
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Importer useRouter pour la redirection
-import { useUserStore } from '@/stores/userStore'; // Ajustez le chemin selon votre structure de projet
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/userStore'; // Ajustez le chemin si nécessaire
 
-
-const router = useRouter(); // Initialiser le routeur
-
+const router = useRouter();
 const userStore = useUserStore();
+const isMenuOpen = ref(false); // Suivi de l'état du menu
 
-// Variable réactive pour suivre l'état du menu
-const isMenuOpen = ref(false);
-
-// Fonction pour basculer l'état du menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-
-// Fonction de déconnexion
 const logout = () => {
-  userStore.logout(); // Appeler la méthode logout du store
-  router.push({ name: 'Login' }); // Rediriger vers la page de login
+  userStore.logout();
+  router.push({ name: 'Login' });
 };
 </script>
 
-
-
 <template>
-   
-   <div class="user" @click="toggleMenu">
+  <!-- Propagation des attributs non-props via $attrs -->
+  <div class="user" v-bind="$attrs" @click="toggleMenu">
+    <!-- Bouton SVG -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      style="cursor: pointer;"
+      color="white"
+      width="2.5em"
+      height="2.5em"
+      viewBox="0 0 56 56"
+    >
+      <path
+        fill="#fb1d04"
+        fill-rule="evenodd"
+        d="M42.853 42.714q-.446-.06-.859-.125c-6.058-.963-6.667-3.117-7.457-4.768c-.642-.277-.957-.5-1.286-1.643c-.142-.488-.388-2.654-.284-3.498c.498-.467.876-1.653 1.04-2.204c.442-1.474.549-1.832.97-3.796c.06-.28.219-.394.348-.442c.392-.142.482-.457.61-.69c.303-.534.043-.774.516-2.077c.604-1.482.698-3.008.24-3.446c-.311-.277-.5-.07-.653-.014c-.102.04-.023-.215.069-.578c.363-1.493.365-2.758.463-4.288c.079-1.239-.004-2.369-.159-3.07c-.146-.145-.523-1.77-.955-2.72c-.738-1.632-2.95-1.885-3.708-2.212c-1.804-.755-4.06-1.778-6.734-.623c-1.19.513-2.775.563-4.5 2.504c-.408.456-1.136.064-1.949 1.84c-.825 1.74-.869 2.886-.681 4.13l-.057.003s.021 2.977.386 4.47c.09.364.167.617.067.579c-.152-.056-.361-.236-.672.042c-.46.438-.216 1.901.388 3.383c.476 1.303.159 1.691.665 2.377c.18.244.348.373.542.455c.13.052.313.068.398.34c.557 2.02.66 2.64 1.239 3.842c.25.519.531 1.818 1.049 2.322c.085.711-.003 2.76-.115 3.371c-.18.961-.517 1.239-1.422 1.643c-.492 1.6-1.797 3.048-7.255 4.722q-.28.086-.571.171q-.156.052-5.545 4.783A2 2 0 0 0 8.301 51h38.907a2 2 0 0 0 1.289-3.53z"
+      />
+    </svg>
+  </div>
 
-        <!-- Image SVG qui servira de bouton -->
-
-        <svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" color="white" width="2.5em" height="2.5em" viewBox="0 0 56 56"><path fill="#fb1d04" 
-          fill-rule="evenodd" d="M42.853 42.714q-.446-.06-.859-.125c-6.058-.963-6.667-3.117-7.457-4.768c-.642-.277-.957-.5-1.286-1.643c-.142-.488-.388-2.654-.284-3.498c.498-.467.876-1.653 1.04-2.204c.442-1.474.549-1.832.97-3.796c.06-.28.219-.394.348-.442c.392-.142.482-.457.61-.69c.303-.534.043-.774.516-2.077c.604-1.482.698-3.008.24-3.446c-.311-.277-.5-.07-.653-.014c-.102.04-.023-.215.069-.578c.363-1.493.365-2.758.463-4.288c.079-1.239-.004-2.369-.159-3.07c-.146-.145-.523-1.77-.955-2.72c-.738-1.632-2.95-1.885-3.708-2.212c-1.804-.755-4.06-1.778-6.734-.623c-1.19.513-2.775.563-4.5 2.504c-.408.456-1.136.064-1.949 1.84c-.825 1.74-.869 2.886-.681 4.13l-.057.003s.021 2.977.386 4.47c.09.364.167.617.067.579c-.152-.056-.361-.236-.672.042c-.46.438-.216 1.901.388 3.383c.476 1.303.159 1.691.665 2.377c.18.244.348.373.542.455c.13.052.313.068.398.34c.557 2.02.66 2.64 1.239 3.842c.25.519.531 1.818 1.049 2.322c.085.711-.003 2.76-.115 3.371c-.18.961-.517 1.239-1.422 1.643c-.492 1.6-1.797 3.048-7.255 4.722q-.28.086-.571.171q-.156.052-5.545 4.783A2 2 0 0 0 8.301 51h38.907a2 2 0 0 0 1.289-3.53z"/>
-        </svg>
-     
-      </div>
-
-       <!-- Menu qui est affiché ou caché en fonction de isMenuOpen -->
-
-       <div v-if="isMenuOpen" class="menu">
-      <!-- Contenu du menu -->
-          <div class="menu-item">Profil</div>
-          <div class="menu-item">Paramètres</div>
-          <div class="menu-item" @click="logout">Déconnexion</div>
-       </div>
-      
+  <!-- Menu affiché ou caché selon isMenuOpen -->
+  <div v-if="isMenuOpen" class="menu">
+    <div class="menu-item">Profil</div>
+    <div class="menu-item">Paramètres</div>
+    <div class="menu-item" @click="logout">Déconnexion</div>
+  </div>
 </template>
 
-
 <style scoped>
+.user {
+  background-color: white;
+  border-radius: 50%;
+  height: 3.5em;
+  width: 3.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 10000;
+}
 
-  
-  .user {
-    background-color: white;
-    border-radius: 50%;
-    height: 3.5em;
-    width: 3.5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    z-index: 10000
-  }
+.user:hover {
+  background-color: #f0f0f0;
+}
 
-  .user:hover{
-
-    background-color: #f0f0f0;
-  }
-
-  .menu {
+.menu {
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 1em;
   position: absolute;
-  top: 4em; /* Positionné juste en dessous du bouton */
-  right: 0; /* Aligner à droite */
+  top: 4em;
+  right: 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10000
-
-  }
-
-  .menu-item {
-  padding: 0.5em 1em; /* Espacement intérieur */
-  cursor: pointer; /* Change le curseur en forme de main */
+  z-index: 10000;
 }
 
-/* Styles de survol */
-.menu-item:hover {
-  background-color: #f0f0f0;
-  color: #fb1d04; /* Change la couleur du texte */
-}
-
-  svg {
+.menu-item {
+  padding: 0.5em 1em;
   cursor: pointer;
 }
 
-svg:hover{
-
+.menu-item:hover {
   background-color: #f0f0f0;
-
+  color: #fb1d04;
 }
 
+svg {
+  cursor: pointer;
+}
 
-  </style>
-  
+svg:hover {
+  background-color: #f0f0f0;
+}
+</style>

@@ -37,7 +37,9 @@
     "pas de commentaire": "no comment",
     "Réserver": "Book",
     "Évaluer": "Rate",
-    "Évaluation": "Rating"
+    "Évaluation": "Rating",
+    "Note Globale": "Global rate",
+    "Points": "Points"
   },
   
   "placeholder": {
@@ -90,4 +92,5 @@
      "Fermer": "Close"
 
   }
+
 }

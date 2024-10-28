@@ -19,7 +19,7 @@ export interface IEvaluation extends Document {
   commentaire?: string;
   dateEvaluation: Date; // Date d'ajout de l'évaluation
   idUtilisateur: string,  // L'utilisateur qui a laissé cette évaluation
-  idRestaurant: string  // Le restaurant évalué
+  restaurantId: string  // Le restaurant évalué
   
 }
 
@@ -36,7 +36,7 @@ const evaluationSchema: Schema = new Schema(
     commentaire: { type: String, required: true },
     dateEvaluation: { type: Date, default: Date.now }, // Date d'évaluation
     idUtilisateur: { type: String, required: true },
-    idRestaurant: { type: String, required: true }
+    restaurantId: { type: String, required: true }
   },
   { timestamps: true }
 );

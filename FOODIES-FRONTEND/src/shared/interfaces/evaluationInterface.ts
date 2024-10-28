@@ -4,7 +4,7 @@
 export interface Evaluation {
     _id?: string;  // attribué automatiquement par mongoDB
     idUtilisateur: string;
-    idRestaurant: string;
+    restaurantId: string;
     idReservation?: string;
     noteProprete: number;  // Note de propreté (1-5)
     noteQualite: number;   // Note de qualité (1-5)
@@ -13,6 +13,6 @@ export interface Evaluation {
     noteAmbiance: number;  // Note d’ambiance (1-5)
     noteEtoile: number;  // Nombre d'étoiles (1-5)
     commentaire?: string;  // Commentaire optionnel
-    DateEvaluation: string //createdAt: Date;  // Date de l'évaluation
+    dateEvaluation: string //createdAt: Date;  // Date de l'évaluation
   }
   

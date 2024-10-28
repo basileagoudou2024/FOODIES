@@ -56,7 +56,7 @@ const filteredRestaurants = computed(() => restaurantStore.filteredAndSortedRest
     </div>
 
     <div v-else>
-      <p>{{ t('RestaurantsPage.noRestaurants') }}</p>
+      <p>{{ t('RestaurantsPage.Aucun restaurant à afficher') }}</p>
     </div>
   </div>
 </template>

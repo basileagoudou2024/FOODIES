@@ -12,7 +12,7 @@ const sortOption = ref('alphabetical');
 
 function applyFilters() {
   restaurantStore.setCuisine(selectedCuisine.value);
-  restaurantStore.setMinStars(minStars.value);
+  restaurantStore.minStars = minStars.value;
   restaurantStore.setSortOption(sortOption.value);
   isModalOpen.value = false;
 }
