@@ -11,8 +11,8 @@ export interface IEvaluation extends Document {
   noteEtoile: number; // Note principale en étoile (1-5)
   commentaire?: string;
   dateEvaluation: Date;
-  utilisateurId: Types.ObjectId; // Référence à l'utilisateur
-  restaurantId: Types.ObjectId; // Référence au restaurant
+  utilisateurId: String; // Référence à l'utilisateur
+  restaurantId: String; // Référence au restaurant
 }
 
 // Schéma de l'évaluation
@@ -26,8 +26,8 @@ const evaluationSchema: Schema = new Schema(
     noteEtoile: { type: Number, required: true, min: 1, max: 5 }, // Note principale pour l'affichage des étoiles
     commentaire: { type: String, required: false }, // Le commentaire est facultatif
     dateEvaluation: { type: Date, default: Date.now }, // Date d'évaluation
-    utilisateurId: { type: Schema.Types.ObjectId, ref: 'Utilisateur', required: true }, // Référence utilisateur
-    restaurantId: { type: Schema.Types.ObjectId, ref: 'Restaurant', required: true }, // Référence restaurant
+    utilisateurId: { type: String, required: true }, // Référence utilisateur
+    restaurantId: { type: String, required: true }, // Référence restaurant
   },
   { timestamps: true } // Ajoute createdAt et updatedAt automatiquement
 );

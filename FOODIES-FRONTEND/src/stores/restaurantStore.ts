@@ -1,4 +1,7 @@
 
+  
+
+/*---------------------------IMPORTATIONS ET SETUP D'INITIALISATION-------------------------------------------*/
 
 import { defineStore } from 'pinia';
 import axios from 'axios';
@@ -13,9 +16,11 @@ export const useRestaurantStore = defineStore('restaurant', () => {
   const selectedCuisine = ref<string>('');
   const minStars = ref(0);
   const sortOption = ref('alphabetical');
-  const evaluations = ref([]);
+  const evaluations = ref<Record<string, any>>({});
+  const reservations = ref<Record<string, any>>({});
 
-  // **Watcher pour déclencher une re-computation**
+/*----------------------------------WATCHERS POUR LA RE-COMPUTATION--------------------------------------------*/
+
   watch([selectedCuisine, sortOption, minStars, searchText], ([newCuisine, newSortOption, newMinStars, newSearchText]) => {
     console.log(`Cuisine sélectionnée: ${newCuisine}`);
     console.log(`Option de tri: ${newSortOption}`);
@@ -23,30 +28,25 @@ export const useRestaurantStore = defineStore('restaurant', () => {
     console.log(`Texte de recherche: ${newSearchText}`);
   });
 
-  // Action pour mettre à jour la cuisine sélectionnée
+/*-----------------------------------FONCTIONS DE MISE À JOUR---------------------------------------------------*/
+
   function setCuisine(cuisine: string) {
     selectedCuisine.value = cuisine;
   }
 
-  // Action pour mettre à jour l'étoile minimum
   function setMinStars(stars: number) {
     minStars.value = stars;
   }
 
-
-  // Action pour mettre à jour le tri par ordre alphabétique
   function setSortOption(option: string) {
     sortOption.value = option;
   }
 
-  
+/*-----------------------------------------RESTAURANTS FILTRÉS ET TRIÉS----------------------------------------*/
 
   const filteredAndSortedRestaurants = computed(() => {
     let filtered = [...restaurantsAvecEvaluations.value];
 
-    
-
-    // **Filtrage par texte de recherche**
     if (searchText.value) {
       const searchLower = searchText.value.toLowerCase();
       filtered = filtered.filter(restaurant =>
@@ -56,15 +56,14 @@ export const useRestaurantStore = defineStore('restaurant', () => {
       );
     }
 
-    // **Filtrage par type de cuisine et étoiles**
     if (selectedCuisine.value) {
       filtered = filtered.filter(restaurant => restaurant.cuisine === selectedCuisine.value);
     }
+
     if (minStars.value > 0) {
       filtered = filtered.filter(restaurant => (restaurant.etoiles ?? 0) >= minStars.value);
     }
 
-    // **Tri selon l'option sélectionnée**
     switch (sortOption.value) {
       case 'alphabetical':
         filtered.sort((a, b) => a.nom.localeCompare(b.nom));
@@ -73,45 +72,97 @@ export const useRestaurantStore = defineStore('restaurant', () => {
         filtered.sort((a, b) => b.nom.localeCompare(a.nom));
         break;
       case 'rating':
-        filtered.sort((a, b) => (b.etoiles ?? 0) - (a.etoiles ?? 0)); // Meilleurs avis en premier
+        filtered.sort((a, b) => (b.etoiles ?? 0) - (a.etoiles ?? 0));
         break;
       case 'rating_desc':
-        filtered.sort((a, b) => (a.etoiles ?? 0) - (b.etoiles ?? 0)); // Pires avis en premier
+        filtered.sort((a, b) => (a.etoiles ?? 0) - (b.etoiles ?? 0));
         break;
-    
     }
     return filtered;
   });
 
-   /** Méthode pour récupérer les restaurants depuis l’API */
+/*------------------------------RÉCUPÉRATION DES DONNÉES-----------------------------------------------------*/
 
+  // Tous les restaurants
   const fetchRestaurants = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/restaurants');
-
-     // console.log('Données récupérées depuis l’API:', response.data);
       restaurants.value = response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des restaurants :', error);
     }
   };
 
+  // Toutes les évaluations d'un restaurant spécifique
 
-  // **Fonctions de calcul des évaluations**
-  function calculerPoints(evaluations: any[]) {
-    const total = evaluations.reduce((acc, evaluation) => {
-      const { noteAmbiance, notePrix, noteProprete, noteQualite, noteService } = evaluation;
-      return acc + noteAmbiance + notePrix + noteProprete + noteQualite + noteService;
-    }, 0);
+  const fetchEvaluations = async (restaurantId: string) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/evaluations/${restaurantId}`);
+      evaluations.value[restaurantId] = response.data;
+
+      console.log(`Les évaluations pour le restaurant ${restaurantId} sont:`, evaluations.value[restaurantId]);
+
+    } catch (error) {
+      console.error('Erreur lors de la récupération des évaluations :', error);
+      throw error;
+    }
+  };
+
+  // Toutes les réservations d'un restaurant spécifique
+
+  const fetchReservations = async (restaurantId: string) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/reservations/${restaurantId}`);
+
+      reservations.value[restaurantId] = response.data;
+      console.log(`Les réservations pour le restaurant ${restaurantId} sont:`, reservations.value)
+
+
+    } catch (error) {
+      console.error('Erreur lors de la récupération des réservations :', error);
+    }
+  };
+
+/*-------------------------------------ACTIONS ASYNCHRONES---------------------------------------------------*/
+
+  const addReservation = async (reservation: Reservation): Promise<void> => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/reservations', reservation);
+      if (response.status === 201) {
+        localStorage.setItem('reservationData', JSON.stringify({
+          idReservation: response.data.id,
+          restaurantId: reservation.restaurantId,
+        }));
+      }
+    } catch (error) {
+      console.error('Échec de la réservation:', error);
+      throw error;
+    }
+  };
+
+  const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/evaluations', evaluation);
+      if (response.status === 201) {
+        localStorage.removeItem('reservationData');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l’envoi de l’évaluation :', error);
+    }
+  };
+
+/*-----------------------------------CALCULS DES ÉVALUATIONS--------------------------------------------------*/
+
+  const calculerPoints = (evaluations: Evaluation[]) => {
+    const total = evaluations.reduce((acc, { noteAmbiance, notePrix, noteProprete, noteQualite, noteService }) =>
+      acc + noteAmbiance + notePrix + noteProprete + noteQualite + noteService, 0);
     return evaluations.length ? (total / (evaluations.length * 5)).toFixed(2) : 'Non évalué';
-  }
+  };
 
-  function calculerEtoiles(evaluations: any[]) {
-    const totalEtoiles = evaluations.reduce((acc, evaluation) => acc + evaluation.noteEtoile, 0);
-    return evaluations.length ? (totalEtoiles / evaluations.length).toFixed(1) : 'Non évalué';
-  }
+  const calculerEtoiles = (evaluations: Evaluation[]) =>
+    evaluations.length ? (evaluations.reduce((acc, { noteEtoile }) => acc + noteEtoile, 0) / evaluations.length).toFixed(1) : 'Non évalué';
 
-  function trouverMeilleurCommentaire(evaluations: any[]) {
+  const trouverMeilleurCommentaire = (evaluations: Evaluation[]): string => {
     if (!evaluations.length) return 'Pas de commentaire';
     const meilleurEval = evaluations.reduce((best, current) => {
       if (
@@ -125,69 +176,17 @@ export const useRestaurantStore = defineStore('restaurant', () => {
     });
     return meilleurEval.commentaire || 'Pas de commentaire';
   }
+  
+/*-----------------------------------COMPUTED PROPRIÉTÉS------------------------------------------------------*/
 
-  // Calculs appliqués à chaque restaurant au moment de la récupération
   const restaurantsAvecEvaluations = computed(() =>
     restaurants.value.map(restaurant => ({
       ...restaurant,
-      points: Number(calculerPoints(restaurant.evaluations)),
-      etoiles: Number(calculerEtoiles(restaurant.evaluations)),
-      meilleurCommentaire: trouverMeilleurCommentaire(restaurant.evaluations),
+      points: Number(calculerPoints(evaluations.value[restaurant._id] || [])),
+      etoiles: Number(calculerEtoiles(evaluations.value[restaurant._id] || [])),
+      meilleurCommentaire: trouverMeilleurCommentaire(evaluations.value[restaurant._id] || []),
     }))
   );
-
-  /** Méthode pour faire une nouvelle réservation depuis l'API et enregistrer */
-  const addReservation = async (reservation: Reservation): Promise<void> => {
-
-                console.log('la réservation à ajouer est:', reservation)
-    try {
-      const response = await axios.post('http://localhost:5000/api/reservations', reservation);
-      if (response.status === 201) {
-        localStorage.setItem(
-          'reservationData',
-          JSON.stringify({ idReservation: response.data.id, restaurantId: reservation.restaurantId })
-        );
-      } else {
-        throw new Error('Erreur lors de la réservation');
-      }
-    } catch (error) {
-      console.error('Échec de la réservation:', error);
-      throw error;
-    }
-  };
-
-   /** Méthode pour créer une nouvelle évaluation depuis l’API et enregistrer */
-  const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/evaluations', evaluation);
-      if (response.status === 201) {
-        localStorage.removeItem('reservationData');
-      } else {
-        throw new Error('Erreur lors de l’enregistrement de l’évaluation');
-      }
-    } catch (error) {
-      console.error('Erreur lors de l’envoi de l’évaluation :', error);
-    }
-  };
-
-  // **Méthode pour récupérer les évaluations des restaurants**
-
-  const fetchEvaluations = async (restaurantId: string) => {
-    try {
-      const response = await axios.get(`http://localhost:5000/api/evaluations/${restaurantId}`);
-
-       evaluations.value = response.data;
-       console.log('les évaluations sont:', evaluations.value);
-       
-      if (!response.data || response.data.length === 0) {
-        console.warn(`Aucune évaluation trouvée pour le restaurant : ${restaurantId}`);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des évaluations :', error);
-      throw error;
-    }
-  };
-  
 
   return {
     restaurants,
@@ -204,6 +203,8 @@ export const useRestaurantStore = defineStore('restaurant', () => {
     evaluations,
     fetchEvaluations,
     addReservation,
+    fetchReservations,
+    reservations,
     addEvaluation,
     updateSearchText: (text: string) => (searchText.value = text),
   };

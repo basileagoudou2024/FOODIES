@@ -29,7 +29,7 @@ onMounted(async () => {
 // Utilisation des restaurants filtrés
 const filteredRestaurants = computed(() => restaurantStore.filteredAndSortedRestaurants);
 
-  console.log('Restaurants filtrés :', restaurantStore.filteredAndSortedRestaurants);
+ // console.log('Restaurants filtrés :', restaurantStore.filteredAndSortedRestaurants);
 
   watch(filteredRestaurants, (newValue) => {
   console.log('Restaurants après filtrage:', newValue);

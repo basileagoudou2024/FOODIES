@@ -6,7 +6,7 @@ import mongoose, {Schema, Document, model } from 'mongoose';
 export interface IReservation extends Document{
     idReservation?:  mongoose.Types.ObjectId;    // ajout explicite de l'ID
     nombreDePlaces: number;
-    dateReservation: string;
+    dateReservation: Date;
     heureReservation: string;
     restaurantId: string;
     utilisateurId: string;
@@ -20,7 +20,7 @@ export interface IReservation extends Document{
 const ReservationSchema = new Schema({
 
    
-    dateReservation: { type: String, required: true }, // Ex: "2024-10-09"
+    dateReservation: { type: Date, default: Date.now }, // Ex: "2024-10-09"
     nombreDePlaces: { type: Number, required: true },  // Nombre entier de places réservées
     heureReservation: { type: String, required: true }, // Heure au format "HH:MM"
     utilisateurId: { type: String, required: true }, // Référence au client (ClientUserModel)

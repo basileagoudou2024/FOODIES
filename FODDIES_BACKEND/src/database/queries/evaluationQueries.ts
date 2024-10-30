@@ -1,5 +1,5 @@
 
-import Evaluation from '../models/EvaluationModel';
+import Evaluation, {IEvaluation} from '../models/EvaluationModel';
 
 
 
@@ -10,9 +10,11 @@ export const creerEvaluation = async (data: any) => {
 };
 
 // récupérer les évaluations d'un restaurant spécifique
-export const getEvaluationsByRestaurant = async (restaurantId: string) => {
+
+
+export const getEvaluationsByRestaurant = async (restaurantId: string): Promise<IEvaluation[]> => {
   try {
-    return await Evaluation.find({ restaurant: restaurantId });
+    return await Evaluation.find({ restaurantId }); // Correct field name
   } catch (error: any) {
     throw new Error(`Erreur lors de la récupération des évaluations: ${error.message}`);
   }

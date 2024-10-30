@@ -4,7 +4,7 @@ import {
   cancelReservation,
   updateReservation,
   getAllUserReservations,
-  getAllReservationsPerUserAndRestaurant,
+  getRestaurantReservations,
 } from '../database/queries/reservationQueries';
 
 // Ajouter une nouvelle réservation
@@ -14,6 +14,7 @@ export const createReservation = async (req: Request, res: Response) => {
 
   try {
     const reservationData = req.body;
+    console.log('Requête reçue :', req.body);
     const newReservation = await addReservation(reservationData);
     return res.status(201).json({
       message: 'Réservation créée avec succès',
@@ -86,3 +87,23 @@ export const getReservationsByUserAndRestaurant = async (req: Request, res: Resp
   };
 
 
+  // Récupérer toutes les réservations d'un restaurant spécifique
+
+export const recupererReservationsRestaurant = async (req: Request, res: Response) => {
+  const { restaurantId } = req.params; // Récupérer l'id du restaurant depuis les paramètre
+
+  try {
+
+    console.log('le ID du restaurant à récupérer les évaluations est:', req.params)
+    const reservations = await  getRestaurantReservations(restaurantId);
+
+    console.log('Reservations trouvées :', reservations);
+
+    if (!reservations|| reservations.length===0) {
+      return res.status(200).json([]);
+    }
+    res.status(200).json(reservations);
+  } catch (error: any) {
+    res.status(500).json({ error: `Erreur serveur: ${error.message}` });
+  }
+};

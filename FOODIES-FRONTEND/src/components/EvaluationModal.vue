@@ -65,9 +65,9 @@ const submitEvaluation = async () => {
   noteAmbiance: notes.value.ambiance,
   noteEtoile: notes.value.etoile,
   commentaire: commentaire.value,
-  DateEvaluation: new Date().toISOString(),
+  dateEvaluation: new Date().toISOString(),
   restaurantId: props.restaurantId,
-  idUtilisateur: userId,
+  utilisateurId: userId,
 };
     console.log('Envoi des données d’évaluation :', evaluationData);
     await restaurantStore.addEvaluation(evaluationData);

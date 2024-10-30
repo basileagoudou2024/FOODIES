@@ -7,6 +7,7 @@
 
 export interface Evaluation{
 
+  [key: string]: any; // add an index signature
  _id: string,
  utilisateurId: string,
  restaurant_id: string,

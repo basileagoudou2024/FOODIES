@@ -55,12 +55,12 @@ export const getAllUserReservations = async (userId: string) => {
 };
 
 // Fonction pour obtenir toutes les réservations d'un restaurant spécifique
-export const getAllRestaurantReservation = async (restaurantId: string) => {
+
+export const getRestaurantReservations = async (restaurantId: string) => {
   try {
-    const reservations = await Reservation.find({ restaurantId }).populate('userId');
-    return reservations;
+    return await Reservation.find({restaurantId });
   } catch (error: any) {
-    throw new Error(`Erreur lors de la récupération des réservations pour le restaurant ${restaurantId} : ${error.message}`);
+    throw new Error(`Erreur lors de la récupération des réservations: ${error.message}`);
   }
 };
 
