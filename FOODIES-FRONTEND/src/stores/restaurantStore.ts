@@ -17,7 +17,9 @@ export const useRestaurantStore = defineStore('restaurant', () => {
   const minStars = ref(0);
   const sortOption = ref('alphabetical');
   const evaluations = ref<Record<string, any>>({});
-  const reservations = ref<Record<string, any>>({});
+  const reservations = ref<{ [key: string]: Reservation[] }>({}); // Stockage par restaurantId
+  
+
 
 /*----------------------------------WATCHERS POUR LA RE-COMPUTATION--------------------------------------------*/
 
@@ -113,16 +115,13 @@ export const useRestaurantStore = defineStore('restaurant', () => {
   const fetchReservations = async (restaurantId: string) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/reservations/${restaurantId}`);
-
       reservations.value[restaurantId] = response.data;
-      console.log(`Les réservations pour le restaurant ${restaurantId} sont:`, reservations.value)
-
-
+      console.log('Fetched reservations for restaurant:', restaurantId, response.data);
     } catch (error) {
-      console.error('Erreur lors de la récupération des réservations :', error);
+      console.error('Error fetching reservations:', error);
     }
   };
-
+  
 /*-------------------------------------ACTIONS ASYNCHRONES---------------------------------------------------*/
 
   const addReservation = async (reservation: Reservation): Promise<void> => {

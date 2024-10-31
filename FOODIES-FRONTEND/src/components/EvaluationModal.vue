@@ -65,7 +65,7 @@ const submitEvaluation = async () => {
   noteAmbiance: notes.value.ambiance,
   noteEtoile: notes.value.etoile,
   commentaire: commentaire.value,
-  dateEvaluation: new Date().toISOString(),
+  dateEvaluation: new Date,
   restaurantId: props.restaurantId,
   utilisateurId: userId,
 };

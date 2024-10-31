@@ -1,31 +1,4 @@
 
-// Déclaration d'une interface pour le type `Restaurant`
-// Ceci assure une meilleure vérification de type et intellisense
-// Interface représentant la structure d'un restaurant
-
-
-
-export interface Evaluation{
-
-  [key: string]: any; // add an index signature
- _id: string,
- utilisateurId: string,
- restaurant_id: string,
- idReservation: string,
- notePrix:number,
- noteQualite:number,
- noteService :number,
- noteProprete:number,
- noteEtoile:number,
- noteAmbiance:number,
- commentaire: string,
- createdAt: string,
- dateEvaluation: string,
- updatedAt: string,
- __v: number,
- }
-
-
 
 export interface Restaurant {
   _id: string;   // attribuée explicitement par la base de donnée

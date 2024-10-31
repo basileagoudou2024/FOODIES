@@ -1,57 +1,83 @@
 <script setup lang="ts">
-import { PropType, ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
 import { useI18n } from 'vue-i18n';
 import ReservationModal from './ReservationModal.vue';
 import EvaluationModal from './EvaluationModal.vue';
 import { useRestaurantStore } from '../stores/restaurantStore';
+import { Reservation } from '@/shared/interfaces/reservationInterface';
+
 
 const { t } = useI18n();
 const restaurantStore = useRestaurantStore();
 const showReservationForm = ref(false);
 const showEvaluationForm = ref(false);
 const hasReservation = ref(false);
-const evaluationSubmitted = ref(false); // Nouveau : pour gérer la soumission de l'évaluation
+const evaluationSubmitted = ref(false);
+const showEvaluationButton = ref(false);
+const hasEligibleReservation = ref(false);
 
-const props = defineProps({
-  restaurant: {
-    type: Object as PropType<Restaurant>,
-    required: true,
-  },
-});
+const props = defineProps<{ restaurant: Restaurant }>();
 
-// **Vérifier si le restaurant a une réservation active**
+
+
+// Vérifier le statut de toutes les réservations d'un restaurant
 const checkReservationStatus = () => {
-  const reservation = restaurantStore.reservations?.value?.[props.restaurant._id];
-  hasReservation.value = Boolean(reservation);
-  console.log('Has Reservation:', hasReservation.value);
+  const reservations = restaurantStore.reservations.value?.[props.restaurant._id as keyof typeof restaurantStore.reservations.value] || [];
+  console.log('Reservations for check:', reservations);
+  const today = new Date();
+  if (Array.isArray(reservations)) {
+    hasEligibleReservation.value = reservations.some((reservation: Reservation) => {
+      const reservationDate = new Date(reservation.dateReservation);
+      const timeDiff = today.getTime() - reservationDate.getTime();
+      const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      console.log(`Reservation Date: ${reservationDate}, Days Difference: ${daysDiff}`);
+      return daysDiff >= 0 && daysDiff <= 7 && !reservation.hasBeenEvaluated;
+    });
+  } else {
+    console.error('Reservations is not an array');
+  }
+  showEvaluationButton.value = hasEligibleReservation.value;
+  console.log('Show Evaluation Button:', showEvaluationButton.value);
 };
 
-// **Vérifier si une évaluation a été soumise pour ce restaurant**
+// Vérifier si une évaluation a été soumise pour ce restaurant
 const checkEvaluationStatus = () => {
   const evaluation = restaurantStore.evaluations?.value?.[props.restaurant._id];
   evaluationSubmitted.value = evaluation && evaluation.length > 0;
   console.log('Evaluation Submitted:', evaluationSubmitted.value);
 };
 
-// **Montage du composant : récupérer réservations et évaluations**
+// Montage du composant : récupérer réservations et évaluations
 onMounted(async () => {
-  await restaurantStore.fetchEvaluations(props.restaurant._id);
-  await restaurantStore.fetchReservations(props.restaurant._id);
-  checkReservationStatus();
-  checkEvaluationStatus();
+  // Check if the restaurant ID is present before proceeding
+  if (!props.restaurant || !props.restaurant._id) {
+    console.error('Restaurant ID is missing or undefined.');
+    return; // Exit the function if the restaurant ID is not defined
+  }
+
+  console.log('Component mounted. Restaurant ID:', props.restaurant._id);
+  try {
+    await restaurantStore.fetchEvaluations(props.restaurant._id);
+    await restaurantStore.fetchReservations(props.restaurant._id);
+   
+    checkReservationStatus();
+  } catch (error) {
+    console.error('Error during onMounted:', error);
+  }
 });
 
-// **Observer les changements des réservations dans le store**
-watch(
-  () => restaurantStore.reservations?.value?.[props.restaurant._id],
-  (newReservation) => {
-    hasReservation.value = Boolean(newReservation);
-    console.log('Reservation Data Updated:', newReservation);
-  }
-);
 
-// **Gérer la complétion de la réservation**
+
+// Observer les changements des réservations dans le store
+watch(() => restaurantStore.reservations.value?.[props.restaurant._id as keyof typeof restaurantStore.reservations.value] , (newReservation) => {
+  console.log('Watcher triggered. New reservations:', newReservation);
+  hasReservation.value = Boolean(newReservation);
+  checkReservationStatus();
+});
+
+
+// Gérer la complétion de la réservation
 async function handleReservationComplete(idReservation: string) {
   showReservationForm.value = false;
   const reservation = {
@@ -66,12 +92,13 @@ async function handleReservationComplete(idReservation: string) {
   try {
     await restaurantStore.addReservation(reservation);
     hasReservation.value = true;
+    checkReservationStatus(); // Update status after reservation is completed
   } catch (error) {
     console.error('Error during reservation completion:', error);
   }
 }
 
-// **Gérer la soumission de l'évaluation**
+// Gérer la soumission de l'évaluation
 async function handleEvaluationComplete() {
   showEvaluationForm.value = false;
   const evaluation = {
@@ -91,6 +118,7 @@ async function handleEvaluationComplete() {
   try {
     await restaurantStore.addEvaluation(evaluation);
     evaluationSubmitted.value = true;
+    checkEvaluationStatus(); // Update status after evaluation is submitted
   } catch (error) {
     console.error('Error during evaluation submission:', error);
   }
@@ -123,14 +151,14 @@ async function handleEvaluationComplete() {
         {{ t('restaurant.Réserver') }}
       </button>
       <button
-        v-if="hasReservation && !evaluationSubmitted"
+        v-if="showEvaluationButton"
         @click="showEvaluationForm = true"
         class="evaluate-button">
         {{ t('restaurant.Évaluer') }}
       </button>
-      <p v-else-if="hasReservation && evaluationSubmitted">
+      <!---<p v-else-if="hasReservation && evaluationSubmitted">
         {{ t('restaurant.Évaluation déjà soumise') }}
-      </p>
+      </p>-->
       <ReservationModal
         v-if="showReservationForm"
         :restaurant="restaurant"
