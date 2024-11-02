@@ -1,6 +1,3 @@
-
-  
-
 /*---------------------------IMPORTATIONS ET SETUP D'INITIALISATION-------------------------------------------*/
 
 import { defineStore } from 'pinia';
@@ -16,10 +13,8 @@ export const useRestaurantStore = defineStore('restaurant', () => {
   const selectedCuisine = ref<string>('');
   const minStars = ref(0);
   const sortOption = ref('alphabetical');
-  const evaluations = ref<Record<string, any>>({});
+  const evaluations = ref<{ [key: string]: Evaluation[] }>({});
   const reservations = ref<{ [key: string]: Reservation[] }>({}); // Stockage par restaurantId
-  
-
 
 /*----------------------------------WATCHERS POUR LA RE-COMPUTATION--------------------------------------------*/
 
@@ -96,14 +91,11 @@ export const useRestaurantStore = defineStore('restaurant', () => {
   };
 
   // Toutes les évaluations d'un restaurant spécifique
-
   const fetchEvaluations = async (restaurantId: string) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/evaluations/${restaurantId}`);
       evaluations.value[restaurantId] = response.data;
-
       console.log(`Les évaluations pour le restaurant ${restaurantId} sont:`, evaluations.value[restaurantId]);
-
     } catch (error) {
       console.error('Erreur lors de la récupération des évaluations :', error);
       throw error;
@@ -111,16 +103,20 @@ export const useRestaurantStore = defineStore('restaurant', () => {
   };
 
   // Toutes les réservations d'un restaurant spécifique
-
   const fetchReservations = async (restaurantId: string) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/reservations/${restaurantId}`);
+      // Remove old reservations from localStorage
+      localStorage.removeItem('reservationsData');
+      // Store new reservations in localStorage
+      localStorage.setItem('reservationsData', JSON.stringify({ [restaurantId]: response.data }));
       reservations.value[restaurantId] = response.data;
       console.log('Fetched reservations for restaurant:', restaurantId, response.data);
     } catch (error) {
       console.error('Error fetching reservations:', error);
     }
   };
+
   
 /*-------------------------------------ACTIONS ASYNCHRONES---------------------------------------------------*/
 
@@ -141,12 +137,15 @@ export const useRestaurantStore = defineStore('restaurant', () => {
 
   const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
     try {
+      console.log('l\'évaluation à soumettre est:', evaluation);
       const response = await axios.post('http://localhost:5000/api/evaluations', evaluation);
       if (response.status === 201) {
         localStorage.removeItem('reservationData');
       }
     } catch (error) {
+      console.log(error)
       console.error('Erreur lors de l’envoi de l’évaluation :', error);
+      ;
     }
   };
 

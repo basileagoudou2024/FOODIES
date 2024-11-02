@@ -6,7 +6,7 @@ import { ajouterEvaluation, recupererEvaluations } from '../controllers/evaluati
 
 const router = express.Router();
 
-router.post('/evaluation', ajouterEvaluation); // Route pour créer une nouvelle évaluation
+router.post('/', ajouterEvaluation); // Route pour créer une nouvelle évaluation
 router.get('/:restaurantId', recupererEvaluations);
 
 export default router;

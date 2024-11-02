@@ -1,13 +1,24 @@
 
 import Evaluation, {IEvaluation} from '../models/EvaluationModel';
 
-
-
-
 // Créer une nouvelle évaluation
+
 export const creerEvaluation = async (data: any) => {
-  return await Evaluation.create(data);
+  try {
+    // Validate data (you can add more validation logic as needed)
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid data');
+    }
+
+    // Create the evaluation
+    const evaluation = await Evaluation.create(data);
+    return evaluation;
+  } catch (error) {
+    console.error('Error creating evaluation:', error);
+    throw error;
+  }
 };
+
 
 // récupérer les évaluations d'un restaurant spécifique
 

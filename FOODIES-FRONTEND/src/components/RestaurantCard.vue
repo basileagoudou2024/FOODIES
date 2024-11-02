@@ -7,7 +7,6 @@ import EvaluationModal from './EvaluationModal.vue';
 import { useRestaurantStore } from '../stores/restaurantStore';
 import { Reservation } from '@/shared/interfaces/reservationInterface';
 
-
 const { t } = useI18n();
 const restaurantStore = useRestaurantStore();
 const showReservationForm = ref(false);
@@ -19,13 +18,14 @@ const hasEligibleReservation = ref(false);
 
 const props = defineProps<{ restaurant: Restaurant }>();
 
-
-
 // Vérifier le statut de toutes les réservations d'un restaurant
 const checkReservationStatus = () => {
-  const reservations = restaurantStore.reservations.value?.[props.restaurant._id as keyof typeof restaurantStore.reservations.value] || [];
+  const restaurantId = props.restaurant._id;
+  const storedReservations = localStorage.getItem('reservationsData');
+  const reservations = storedReservations ? JSON.parse(storedReservations)[restaurantId] || [] : [];
   console.log('Reservations for check:', reservations);
   const today = new Date();
+
   if (Array.isArray(reservations)) {
     hasEligibleReservation.value = reservations.some((reservation: Reservation) => {
       const reservationDate = new Date(reservation.dateReservation);
@@ -37,13 +37,14 @@ const checkReservationStatus = () => {
   } else {
     console.error('Reservations is not an array');
   }
+
   showEvaluationButton.value = hasEligibleReservation.value;
   console.log('Show Evaluation Button:', showEvaluationButton.value);
 };
 
 // Vérifier si une évaluation a été soumise pour ce restaurant
 const checkEvaluationStatus = () => {
-  const evaluation = restaurantStore.evaluations?.value?.[props.restaurant._id];
+  const evaluation = restaurantStore.evaluations?.[props.restaurant._id];
   evaluationSubmitted.value = evaluation && evaluation.length > 0;
   console.log('Evaluation Submitted:', evaluationSubmitted.value);
 };
@@ -59,22 +60,19 @@ onMounted(async () => {
   console.log('Component mounted. Restaurant ID:', props.restaurant._id);
   try {
     await restaurantStore.fetchEvaluations(props.restaurant._id);
-    await restaurantStore.fetchReservations(props.restaurant._id);
-   
     checkReservationStatus();
   } catch (error) {
     console.error('Error during onMounted:', error);
   }
 });
 
-
-
 // Observer les changements des réservations dans le store
-watch(() => restaurantStore.reservations.value?.[props.restaurant._id as keyof typeof restaurantStore.reservations.value] , (newReservation) => {
+watch(() => localStorage.getItem('reservationsData'), (newReservation) => {
   console.log('Watcher triggered. New reservations:', newReservation);
   hasReservation.value = Boolean(newReservation);
   checkReservationStatus();
 });
+
 
 
 // Gérer la complétion de la réservation
@@ -92,6 +90,12 @@ async function handleReservationComplete(idReservation: string) {
   try {
     await restaurantStore.addReservation(reservation);
     hasReservation.value = true;
+    // Mettre à jour les réservations dans le localStorage
+    const storedReservations = localStorage.getItem('reservationsData');
+    const reservations = storedReservations ? JSON.parse(storedReservations) : {};
+    reservations[props.restaurant._id] = reservations[props.restaurant._id] || [];
+    reservations[props.restaurant._id].push(reservation);
+    localStorage.setItem('reservationsData', JSON.stringify(reservations));
     checkReservationStatus(); // Update status after reservation is completed
   } catch (error) {
     console.error('Error during reservation completion:', error);
@@ -187,7 +191,6 @@ async function handleEvaluationComplete() {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background-color: #8d99ae;
 }
-
 
 .restaurant-image {
   width: 100%;
