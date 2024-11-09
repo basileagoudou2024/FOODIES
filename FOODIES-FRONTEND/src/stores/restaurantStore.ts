@@ -117,93 +117,100 @@ export const useRestaurantStore = defineStore('restaurant', () => {
     }
   };
 
-  
+
 /*-------------------------------------ACTIONS ASYNCHRONES---------------------------------------------------*/
 
-  const addReservation = async (reservation: Reservation): Promise<void> => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/reservations', reservation);
-      if (response.status === 201) {
-        localStorage.setItem('reservationData', JSON.stringify({
-          idReservation: response.data.id,
-          restaurantId: reservation.restaurantId,
-        }));
-      }
-    } catch (error) {
-      console.error('Échec de la réservation:', error);
-      throw error;
-    }
-  };
+const addReservation = async (reservation: Reservation): Promise<boolean> => {
+  try {
+    const response = await axios.post('http://localhost:5000/api/reservations', reservation);
+    console.log('Réponse du serveur dans le store:', response.data);
 
-  const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
-    try {
-      console.log('l\'évaluation à soumettre est:', evaluation);
-      const response = await axios.post('http://localhost:5000/api/evaluations', evaluation);
-      if (response.status === 201) {
-        localStorage.removeItem('reservationData');
-      }
-    } catch (error) {
-      console.log(error)
-      console.error('Erreur lors de l’envoi de l’évaluation :', error);
-      ;
+    if (response.status === 201) {
+      localStorage.setItem(`reservation_${reservation.restaurantId}`, JSON.stringify({
+        idReservation: response.data.id,
+        restaurantId: reservation.restaurantId,
+      }));
     }
-  };
+
+    return true;
+    
+  } catch (error) {
+    console.error('Échec de la réservation:', error);
+    throw error;
+  }
+};
+
+
+const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
+  try {
+    console.log('l\'évaluation à soumettre est:', evaluation);
+    const response = await axios.post('http://localhost:5000/api/evaluations', evaluation);
+    if (response.status === 201) {
+      localStorage.removeItem('reservationData');
+      // Fetch evaluations again to update the state
+      await fetchEvaluations(evaluation.restaurantId);
+    }
+  } catch (error) {
+    console.log(error);
+    console.error('Erreur lors de l’envoi de l’évaluation :', error);
+  }
+};
 
 /*-----------------------------------CALCULS DES ÉVALUATIONS--------------------------------------------------*/
 
-  const calculerPoints = (evaluations: Evaluation[]) => {
-    const total = evaluations.reduce((acc, { noteAmbiance, notePrix, noteProprete, noteQualite, noteService }) =>
-      acc + noteAmbiance + notePrix + noteProprete + noteQualite + noteService, 0);
-    return evaluations.length ? (total / (evaluations.length * 5)).toFixed(2) : 'Non évalué';
-  };
+const calculerPoints = (evaluations: Evaluation[]) => {
+  const total = evaluations.reduce((acc, { noteAmbiance, notePrix, noteProprete, noteQualite, noteService }) =>
+    acc + noteAmbiance + notePrix + noteProprete + noteQualite + noteService, 0);
+  return evaluations.length ? (total / (evaluations.length * 5)).toFixed(2) : 'Non évalué';
+};
 
-  const calculerEtoiles = (evaluations: Evaluation[]) =>
-    evaluations.length ? (evaluations.reduce((acc, { noteEtoile }) => acc + noteEtoile, 0) / evaluations.length).toFixed(1) : 'Non évalué';
+const calculerEtoiles = (evaluations: Evaluation[]) =>
+  evaluations.length ? (evaluations.reduce((acc, { noteEtoile }) => acc + noteEtoile, 0) / evaluations.length).toFixed(1) : 'Non évalué';
 
-  const trouverMeilleurCommentaire = (evaluations: Evaluation[]): string => {
-    if (!evaluations.length) return 'Pas de commentaire';
-    const meilleurEval = evaluations.reduce((best, current) => {
-      if (
-        current.noteEtoile > best.noteEtoile ||
-        (current.noteEtoile === best.noteEtoile &&
-          new Date(current.dateEvaluation) > new Date(best.dateEvaluation))
-      ) {
-        return current;
-      }
-      return best;
-    });
-    return meilleurEval.commentaire || 'Pas de commentaire';
-  }
-  
+const trouverMeilleurCommentaire = (evaluations: Evaluation[]): string => {
+  if (!evaluations.length) return 'Pas de commentaire';
+  const meilleurEval = evaluations.reduce((best, current) => {
+    if (
+      current.noteEtoile > best.noteEtoile ||
+      (current.noteEtoile === best.noteEtoile &&
+        new Date(current.dateEvaluation) > new Date(best.dateEvaluation))
+    ) {
+      return current;
+    }
+    return best;
+  });
+  return meilleurEval.commentaire || 'Pas de commentaire';
+}
+
 /*-----------------------------------COMPUTED PROPRIÉTÉS------------------------------------------------------*/
 
-  const restaurantsAvecEvaluations = computed(() =>
-    restaurants.value.map(restaurant => ({
-      ...restaurant,
-      points: Number(calculerPoints(evaluations.value[restaurant._id] || [])),
-      etoiles: Number(calculerEtoiles(evaluations.value[restaurant._id] || [])),
-      meilleurCommentaire: trouverMeilleurCommentaire(evaluations.value[restaurant._id] || []),
-    }))
-  );
+const restaurantsAvecEvaluations = computed(() =>
+  restaurants.value.map(restaurant => ({
+    ...restaurant,
+    points: Number(calculerPoints(evaluations.value[restaurant._id] || [])),
+    etoiles: Number(calculerEtoiles(evaluations.value[restaurant._id] || [])),
+    meilleurCommentaire: trouverMeilleurCommentaire(evaluations.value[restaurant._id] || []),
+  }))
+);
 
-  return {
-    restaurants,
-    restaurantsAvecEvaluations,
-    searchText,
-    selectedCuisine,
-    setCuisine,
-    minStars,
-    setMinStars,
-    sortOption,
-    setSortOption,
-    filteredAndSortedRestaurants,
-    fetchRestaurants,
-    evaluations,
-    fetchEvaluations,
-    addReservation,
-    fetchReservations,
-    reservations,
-    addEvaluation,
-    updateSearchText: (text: string) => (searchText.value = text),
-  };
+return {
+  restaurants,
+  restaurantsAvecEvaluations,
+  searchText,
+  selectedCuisine,
+  setCuisine,
+  minStars,
+  setMinStars,
+  sortOption,
+  setSortOption,
+  filteredAndSortedRestaurants,
+  fetchRestaurants,
+  evaluations,
+  fetchEvaluations,
+  addReservation,
+  fetchReservations,
+  reservations,
+  addEvaluation,
+  updateSearchText: (text: string) => (searchText.value = text),
+};
 });

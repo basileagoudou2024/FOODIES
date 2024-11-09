@@ -57,25 +57,25 @@ const submitEvaluation = async () => {
 
   try {
     const evaluationData: Evaluation = {
-  ...notes.value,
-  noteProprete: notes.value.proprete,
-  noteQualite: notes.value.qualite,
-  noteService: notes.value.service,
-  notePrix: notes.value.prix,
-  noteAmbiance: notes.value.ambiance,
-  noteEtoile: notes.value.etoile,
-  commentaire: commentaire.value,
-  dateEvaluation: new Date,
-  restaurantId: props.restaurantId,
-  utilisateurId: userId,
-};
-    console.log('Envoi des données d’évaluation :', evaluationData);
+      ...notes.value,
+      noteProprete: notes.value.proprete,
+      noteQualite: notes.value.qualite,
+      noteService: notes.value.service,
+      notePrix: notes.value.prix,
+      noteAmbiance: notes.value.ambiance,
+      noteEtoile: notes.value.etoile,
+      commentaire: commentaire.value,
+      dateEvaluation: new Date(),
+      restaurantId: props.restaurantId,
+      utilisateurId: userId,
+    };
+    console.log('Envoi des données d’évaluation :', evaluationData);  
     await restaurantStore.addEvaluation(evaluationData);
 
     console.log('Évaluation envoyée avec succès');
     setTimeout(() => {
       resetForm();
-      emit('evaluationComplete');  // Émettre l'événement pour signaler la soumission
+      emit('evaluationComplete', evaluationData);  // Émettre l'événement avec les données d'évaluation
       emit('close');
     }, 1500);
   } catch (error) {
@@ -220,4 +220,3 @@ textarea {
   text-align: center;
 }
 </style>
-

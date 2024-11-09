@@ -90,7 +90,8 @@
     "Commentaire": "Comment",
     "Envoyer": "Submit",
     "Echec": "Failed",
-     "Fermer": "Close"
+     "Fermer": "Close",
+     "En cours...":"In progress..."
 
   }
 

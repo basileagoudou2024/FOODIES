@@ -65,8 +65,14 @@ const submitReservation = async () => {
     console.log('Sending reservation data:', reservationData);
     const response = await restaurantStore.addReservation(reservationData);
 
-    console.log('Server response:', response);
+    if (response) {
+    console.log('Server response in ReservationModal:', response);
     confirmationMessage.value = t('reservation.Confirmation');
+    } else {
+      console.warn('Failed to add reservation in ReservationModal');
+    }
+
+
 
     // Reset the form and close the modal after a short delay
     setTimeout(() => {

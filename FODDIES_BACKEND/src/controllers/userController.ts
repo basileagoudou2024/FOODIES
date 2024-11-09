@@ -9,8 +9,12 @@ dotenv.config();           // Chargement des variables d'environnement depuis le
 import mongoose from 'mongoose';
 
 
-// Validation des formats d'email et de mot de passe
+// Génération de code de confirmation à 6 chiffres
+const generateConfirmationCode = (): string => {
+  return Math.floor(100000 + Math.random() * 900000).toString();  // Génère un code entre 100000 et 999999
+};
 
+// Validation des formats d'email et de mot de passe
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -22,11 +26,7 @@ const validatePassword = (password: string): boolean => {
 };
 
 // Fonction d'envoi de courriel de confirmation
-const sendConfirmationEmail = async (email: string) => {
-
-  console.log('EMAIL_USER:', process.env.EMAIL_USER);
-  console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
-
+const sendConfirmationEmail = async (email: string, confirmationCode: string) => {
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -36,7 +36,6 @@ const sendConfirmationEmail = async (email: string) => {
       pass: process.env.EMAIL_PASSWORD,
     },
   });
-  
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -45,13 +44,15 @@ const sendConfirmationEmail = async (email: string) => {
     text: `Bonjour,
 
 Votre compte a été créé avec succès sur Foodies!
+Pour confirmer votre inscription, veuillez entrer le code suivant sur la page de confirmation :
 
-Accéeder à votre compte en vous authentifiant sur la page suivante :http://localhost:5173
+Code de confirmation : ${confirmationCode}
+
+Ce code est valide pour les 15 prochaines minutes.
 
 Merci d'utiliser Foodies!
 
 Cordialement,
-
 L'équipe Foodies`,
   };
 
@@ -60,7 +61,6 @@ L'équipe Foodies`,
     console.log(`Email de confirmation envoyé à ${email}`);
   } catch (error) {
     console.log('Erreur lors de l\'envoi du courriel :', error);
-    console.error(`Erreur lors de l'envoi du courriel : ${error}`);
     throw new Error(`Erreur lors de l'envoi du courriel de confirmation à ${email}`);
   }
 };
@@ -71,8 +71,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-     // 1. Validation des entrées utilisateur
-
+    // 1. Validation des entrées utilisateur
     if (!validateEmail(email)) {
       res.status(400).json({
         message: 'Format de l\'email invalide. Veuillez fournir un email valide.',
@@ -88,17 +87,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 
     // 2. Création de l'utilisateur dans la base de données
-
     const newUserInfo = await registerUser(req.body);
     console.log(`Utilisateur ${newUserInfo.email} créé avec succès dans la base de données.`);
 
-     // 3. Envoi du courriel de confirmation
+    // 3. Génération du code de confirmation et envoi du courriel
+    const confirmationCode = generateConfirmationCode();
+    await sendConfirmationEmail(newUserInfo.email, confirmationCode);
 
-    await sendConfirmationEmail(newUserInfo.email);
+    // 4. Stockage du code de confirmation et de sa date d'expiration dans la base de données (exemple)
+    newUserInfo.confirmationCode = confirmationCode;
+    newUserInfo.confirmationCodeExpiration = Date.now() + 15 * 60 * 1000; // Expiration dans 15 minutes
+    await newUserInfo.save();
 
-
-     // 4. Envoi de la réponse HTTP avec statut 201 (Créé)
-
+    // 5. Envoi de la réponse HTTP avec statut 201 (Créé)
     res.status(201).json({
       message: 'Utilisateur créé avec succès et email de confirmation envoyé.',
       user: newUserInfo,
