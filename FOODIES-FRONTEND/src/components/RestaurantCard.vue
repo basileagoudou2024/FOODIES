@@ -26,17 +26,6 @@ const checkReservationStatus = () => {
   console.log('Reservations for check:', reservations);
   const today = new Date();
 
-  if (Array.isArray(reservations)) {
-    hasEligibleReservation.value = reservations.some((reservation: Reservation) => {
-      const reservationDate = new Date(reservation.dateReservation);
-      const timeDiff = today.getTime() - reservationDate.getTime();
-      const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      console.log(`Reservation Date: ${reservationDate}, Days Difference: ${daysDiff}`);
-      return daysDiff >= 0 && daysDiff <= 7 && !reservation.hasBeenEvaluated;
-    });
-  } else {
-    console.error('Reservations is not an array');
-  }
 
   showEvaluationButton.value = hasEligibleReservation.value;
   console.log('Show Evaluation Button:', showEvaluationButton.value);
