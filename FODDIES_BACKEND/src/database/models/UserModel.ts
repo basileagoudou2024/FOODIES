@@ -20,6 +20,9 @@ export interface IBaseUser extends Document {
   typeDeCompte: UserType;
   adresse: string;
   dateInscription: Date; // Date de création attribuée par Mongoose
+  confirmationCode?: number;
+  confirmationCodeExpiration?: Date; // date d'expiration du code de confirmation
+  isConfirmed: boolean;
 }
 
 // Interface pour un Admin
@@ -52,6 +55,9 @@ const baseUserSchema = new Schema<IBaseUser>({
   typeDeCompte: { type: String, required: true, enum: Object.values(UserType) },
   adresse: { type: String, required: true },
   dateInscription: { type: Date, default: Date.now },
+  confirmationCode: { type: Number }, // Stockage temporaire du code de confirmation
+  confirmationCodeExpiration: { type: Date },
+  isConfirmed: { type: Boolean, default: false },
 }, { 
   discriminatorKey: 'type', // Utilisé pour différencier les sous-modèles
   collection: 'users' // Nom de la collection MongoDB

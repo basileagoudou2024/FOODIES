@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginPage from '@/views/LoginPage.vue';
 import RegisterPage from '@/views/RegisterPage.vue';
 import RestaurantsPage from '../views/RestaurantsPage.vue';
+import RegisterConfirmPage from '../views/RegisterConfirmPage.vue';
 
 // Définir les routes
 const routes = [
@@ -23,6 +24,13 @@ const routes = [
     component: RestaurantsPage,
     meta: { requiresAuth: true },
   },
+
+  {
+    path: '/registerConfirm',
+    name: 'RegisterConfirm',
+    component: RegisterConfirmPage,
+    meta: { requiresAuth: false },
+  }
 ];
 
 // Créer le router
@@ -33,13 +41,15 @@ const router = createRouter({
 
 // Middleware de vérification d'authentification
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = Boolean(localStorage.getItem('userToken')); // Modifier cette ligne selon votre logique d'authentification
+  const isAuthenticated = Boolean(localStorage.getItem('userToken'));
+  const hasValidatedCode = Boolean(localStorage.getItem('validatedCode'));
 
-  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated && !hasValidatedCode) {
     next({ name: 'Login' });
   } else {
     next();
   }
 });
+
 
 export default router;

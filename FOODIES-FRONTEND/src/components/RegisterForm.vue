@@ -3,10 +3,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUserStore } from '../stores/userStore';
-import axios from 'axios';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const userStore = useUserStore();
-const form = ref<{ email: string; password: string }>({ email: '', password: '' });
+//const form = ref<{ email: string; password: string }>({ email: '', password: '' });
 const message = ref('');
 
 // Champs de base du formulaire
@@ -68,21 +69,13 @@ const handleSubmit = async () => {
       userStore.userInfo.dateDebutForfait = null;
       userStore.userInfo.dateFinForfait = null;
     }
-  }
-/*
-  try {
-    const response = await axios.post('/api/register', form.value);
-    message.value = response.data.message;
-    resetForm(); // Réinitialiser le formulaire après l'enregistrement
-  } catch (error: any) {
-    message.value = `Erreur lors de l'enregistrement: ${error.response?.data?.message || error.message}`;
-  }  */
+  };
 
-  // Appel de la fonction d'enregistrement
-  await userStore.registerUser();
-};
+//réinitialiser les champs email et mot de passe
 
-// réinitialiser les champs email et mot de passe
+//userStore.resetForm();
+
+
 const resetForm = () => {
   form.value = { email: '', password: '' };
   typeDeCompte.value = '';
@@ -104,17 +97,26 @@ const resetForm = () => {
   forfait.value = '';
   dateDebutForfait.value = null;
   dateFinForfait.value = null;
+};  
+
+const handleRegister = async () => {
+  try {
+    const success = await userStore.registerUser(); // Enregistrement dans le store, l'ID est sauvegardé
+
+   // Redirection si l'inscription est réussie
+   if (success && localStorage.getItem('utilisateurId')) {
+      router.push({ name: 'RegisterConfirm' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'enregistrement:', error);
+  }
+}
+
+await handleRegister();
+
 };
 
-// redirection vers la page de connexion
-const openLoginForm = () => {
-  console.log('Ouverture du formulaire de connexion');
-};
 </script>
-
-
-
-
 
 
 <template>
@@ -206,12 +208,12 @@ const openLoginForm = () => {
     <div class="button-group">
 
     <button type="submit">Soumettre</button>
-    <button type="button" @click="resetForm">Réinitialiser</button>
+    <button type="button" @click="userStore.resetForm()">Réinitialiser</button>
 
     </div>
-
-    
   </form>
+
+  
 </template>
 
 

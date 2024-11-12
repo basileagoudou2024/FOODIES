@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 
 
 // Génération de code de confirmation à 6 chiffres
-const generateConfirmationCode = (): string => {
+export const generateConfirmationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();  // Génère un code entre 100000 et 999999
 };
 
@@ -69,7 +69,10 @@ L'équipe Foodies`,
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
+
     const { email, password } = req.body;
+
+    console.log('ientifiants fournis pour l\'inscription utilisateur:', {email, password});
 
     // 1. Validation des entrées utilisateur
     if (!validateEmail(email)) {
@@ -229,3 +232,81 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Erreur lors de la suppression de l\'utilisateur.' });
   }
 };
+
+//----------------------- Contrôleur pour la validation du code de confirmation-----------------------------------------------------*/
+
+export const confirmCode = async (req: Request, res: Response): Promise<void> => {
+  const  code  = req.body.code;
+  const  utilisateurId  = req.params.utilisateurId;
+  console.log('le code de confirmation à valider est:', code);
+  console.log('l\'ID utilisateur à valider est:', utilisateurId);
+
+  try {
+    const user = await getUserById(new mongoose.Types.ObjectId(utilisateurId));
+    if (!user) {
+      res.status(404).json({ message: 'Utilisateur non trouvé.' });     // 
+      return;
+    }
+
+    // Vérification du code et de sa date d'expiration
+    if (user.confirmationCode !== code) {
+      res.status(400).json({ message: 'Code de confirmation invalide.' });  // code non valide
+      return;
+    }
+
+    if (user.isConfirmed) {
+     res.status(400).json({ message: "Utilisateur déjà confirmé." });
+      return;
+    }
+
+    if (user.confirmationCodeExpiration < Date.now()) {
+      res.status(400).json({ message: 'Code de confirmation expiré.' });    // code expiré
+      return;
+    }
+
+    // Mise à jour du statut de confirmation de l'utilisateur
+    user.isConfirmed = true;
+    user.confirmationCode = undefined;
+    user.confirmationCodeExpiration = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'Code de confirmation validé avec succès.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la validation du code de confirmation.' });
+  }
+};
+
+//----------------------- Contrôleur pour renvoi par courriel d'un nouveau  code de confirmation---------------------------------------*/
+
+
+// Fonction de renvoi de code de confirmation
+export const resendConfirmationCode = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { utilisateurId } = req.params;
+
+    // 1. Vérification de l'existence de l'utilisateur
+    const user = await getUserById(new mongoose.Types.ObjectId(utilisateurId));
+    if (!user) {
+      res.status(404).json({ message: 'Utilisateur non trouvé.' });
+      return;
+    }
+
+    // 2. Génération d'un nouveau code de confirmation
+    const newConfirmationCode = generateConfirmationCode();
+
+    // 3. Envoi du nouveau code par courriel
+    await sendConfirmationEmail(user.email, newConfirmationCode);
+
+    // 4. Mise à jour du code de confirmation et de sa date d'expiration dans la base de données
+    user.confirmationCode = newConfirmationCode;
+    user.confirmationCodeExpiration = Date.now() + 15 * 60 * 1000; // Expire dans 15 minutes
+    await user.save();
+
+    // 5. Réponse HTTP avec un message de succès
+    res.status(200).json({ message: 'Nouveau code de confirmation envoyé avec succès.' });
+  } catch (error) {
+    console.error(`Erreur lors du renvoi du code de confirmation : ${error}`);
+    res.status(500).json({ message: 'Une erreur interne est survenue. Veuillez réessayer plus tard.' });
+  }
+};
+

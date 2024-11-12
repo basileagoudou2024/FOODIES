@@ -14,37 +14,25 @@ const errorMessage = ref('');
 const login = async () => {
 
   try {
-             await userStore.login({ email: email.value, password: password.value });
+        await userStore.login({ email: email.value, password: password.value });
+        console.log("Authentification réussie !");
+      } catch (error: any) {
 
-            const token = localStorage.getItem('userToken');
+        console.error("Erreur lors de la connexion :", error.message);
+        errorMessage.value = error.message || "Échec de la connexion.";
+      };
+    };
+    
 
-            console.log('la valeur du token est:', token);
-
-            if (token) {
-              
-              console.log('Authentification reussie!');
-
-              router.push('/restaurants');
-
-              console.log('Redirecting to RestaurantsPage...');
-            } else{
-
-              console.log('Authentification echouée!');
-            }
-
-
-
-      } catch (error:any) {
+  const goToCreateAccount = () => {
+      router.push('/register');
+      console.log("Redirection vers la page de création de compte...");
+    };
   
-    console.error('Erreur lors de la connexion :', error.message);
-    errorMessage.value = error.message || "Échec de la connexion.";
-  }
-};
 
-const goToCreateAccount = () => {
-  router.push('/register');
-  console.log('Redirecting to create account page...');
-};
+
+
+
 </script>
 
 <template>
