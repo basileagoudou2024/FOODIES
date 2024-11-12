@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
-//const form = ref<{ email: string; password: string }>({ email: '', password: '' });
+const form = ref<{ email: string; password: string }>({ email: '', password: '' });
 const message = ref('');
 
 // Champs de base du formulaire
