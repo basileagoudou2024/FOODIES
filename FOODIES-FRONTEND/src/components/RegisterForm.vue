@@ -103,9 +103,16 @@ const handleRegister = async () => {
   try {
     const success = await userStore.registerUser(); // Enregistrement dans le store, l'ID est sauvegardé
 
+    console.log('l\'enregistrement de l\'utilisateur est un: ', success);
+
    // Redirection si l'inscription est réussie
-   if (success && localStorage.getItem('utilisateurId')) {
-      router.push({ name: 'RegisterConfirm' });
+
+   const utilisateurId = localStorage.getItem('utilisateurId')
+
+   console.log(utilisateurId)
+
+   if (utilisateurId) {
+      router.push('/registerConfirm');
     }
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement:', error);
@@ -113,6 +120,7 @@ const handleRegister = async () => {
 }
 
 await handleRegister();
+resetForm(); // Call the resetForm function after form submission
 
 };
 

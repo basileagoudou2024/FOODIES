@@ -1,7 +1,7 @@
 
 
 <script setup lang="ts">
-import RegisterForm from '@/components/RegisterForm.vue';
+import RegisterConfirm from '../components/RegisterConfirm.vue';
 import NavigatorBarForAuth from '@/components/NavigatorBarForAuth.vue';
 import Carousel from '@/components/BootstrapCarousel.vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
@@ -13,7 +13,7 @@ import MessageDisplay from '@/components/MessageDisplay.vue';
   <NavigatorBarForAuth/>
   <Carousel/>
   <MessageDisplay/>
-    <RegisterForm/>
+    <RegisterConfirm/>
 </template>
 
 <style scoped>

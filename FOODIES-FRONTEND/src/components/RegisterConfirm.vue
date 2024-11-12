@@ -1,13 +1,16 @@
-
 <script setup lang="ts">
-import { ref} from 'vue';
+import { ref, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 
 const userStore = useUserStore();
-const isModalOpen = ref(true);
 const userCodeInput = ref<number | null>(null);
 const errorMessage = ref<string | null>(null);
 const isResendDisabled = ref(true); // Désactivé par défaut
+
+// Log statement to verify component mounting
+onMounted(() => {
+  console.log('RegisterConfirm component mounted');
+});
 
 // Fonction de validation du code de confirmation
 const handleConfirmCode = async () => {
@@ -19,10 +22,10 @@ const handleConfirmCode = async () => {
   }
 
   try {
-        await userStore.validateConfirmationCode(userCodeInput.value);
-        localStorage.removeItem('utilisateurId'); // Supprimer l'ID après la validation réussie
-        userStore.redirectToRestaurantsPage(); // Redirection vers la page Restaurants
-      } catch (error: any) {
+    await userStore.validateConfirmationCode(userCodeInput.value);
+    localStorage.removeItem('utilisateurId'); // Supprimer l'ID après la validation réussie
+    userStore.redirectToRestaurantsPage(); // Redirection vers la page Restaurants
+  } catch (error: any) {
     // Si le code est expiré, active le bouton "Nouveau code"
     if (error.message === "Code de confirmation expiré.") {
       isResendDisabled.value = false;
@@ -43,11 +46,11 @@ const handleResendCode = async () => {
     errorMessage.value = error.message;
   }
 };
-
 </script>
 
+
 <template>
-  <div v-if="isModalOpen" class="modal">
+  <div class="modal">
     <h2>Confirmation d'inscription</h2>
     <p>Veuillez entrer le code de confirmation envoyé par courriel.</p>
     <input
@@ -72,14 +75,14 @@ const handleResendCode = async () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90%;
-  max-height: 80%;
+  width: 80%;
+  max-height: 70%;
   max-width: 400px;
   background-color: #dee2e6;
   padding: 100px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+
 }
 
 .modal h2 {
@@ -117,20 +120,6 @@ const handleResendCode = async () => {
 
 .modal button:hover {
   background-color: #90a955;
-}
-
-.modal .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.6em;
-  cursor: pointer;
-  color: #999;
-  transition: color 0.3s ease;
-}
-
-.modal .close-btn:hover {
-  color: #333;
 }
 
 .modal button:disabled {
