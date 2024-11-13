@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, defineProps, PropType } from 'vue';
+import { ref, PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Restaurant } from '../shared/interfaces/restaurantInterface';
 import { useRestaurantStore } from '../stores/restaurantStore';
 import { Reservation } from '@/shared/interfaces/reservationInterface';
 import {jwtDecode} from 'jwt-decode'; // Fix: No curly braces needed
-import { defineEmits } from 'vue';
 
 const { t } = useI18n();
 const restaurantStore = useRestaurantStore();

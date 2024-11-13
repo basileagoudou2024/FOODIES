@@ -293,7 +293,7 @@ const reservationsData: Partial<IReservation>[] = [
     idReservation: new Types.ObjectId(),
     utilisateurId: usersData[0]._id.toString(),  // Jean-jaurey
     restaurantId: restaurantsData[0]._id.toString(),  // Le Gourmet
-    dateReservation: new Date('2024-10-20').toISOString(),
+    dateReservation: new Date('2024-10-20'),
     heureReservation: '19:00',
     nombreDePlaces: 2,
     commentaires: 'J\'aime ce restaurant',
@@ -303,7 +303,7 @@ const reservationsData: Partial<IReservation>[] = [
     idReservation: new Types.ObjectId(),
     utilisateurId: usersData[1]._id.toString(), // Jane Smith
     restaurantId: restaurantsData[0]._id.toString(),   // Sushi Place
-    dateReservation: new Date('2024-10-21').toISOString(),
+    dateReservation: new Date('2024-10-21'),
     heureReservation: '12:30',
     nombreDePlaces: 4,
     commentaires: 'préférence pour la mezanine',
@@ -313,7 +313,7 @@ const reservationsData: Partial<IReservation>[] = [
     idReservation: new Types.ObjectId(),
     utilisateurId: usersData[0]._id.toString(), // Jean-jaurey
     restaurantId: restaurantsData[8]._id.toString(),   // Le Bananier Antillais
-    dateReservation: new Date('2024-10-26').toISOString(),
+    dateReservation: new Date('2024-10-26'),
     heureReservation: '20:30',
     nombreDePlaces: 3,
     commentaires: '1 personne à mobilité réduite',
@@ -324,7 +324,7 @@ const reservationsData: Partial<IReservation>[] = [
     idReservation: new Types.ObjectId(),
     utilisateurId: usersData[1]._id.toString(), // Jane Smith
     restaurantId: restaurantsData[4]._id.toString(),   // La Cuisine Santé
-    dateReservation: new Date('2024-11-02').toISOString(),
+    dateReservation: new Date('2024-11-02'),
     heureReservation: '20:00',
     nombreDePlaces: 1,
     commentaires: 'prévoir poivre blanc',
@@ -335,7 +335,7 @@ const reservationsData: Partial<IReservation>[] = [
     idReservation: new Types.ObjectId(),
     utilisateurId: usersData[0]._id.toString(), // Jean-jaurey
     restaurantId: restaurantsData[11]._id.toString(), // Burritos Comesticos
-    dateReservation: new Date('2024-10-24').toISOString(),
+    dateReservation: new Date('2024-10-24'),
     heureReservation: '13:00',
     nombreDePlaces: 5,
     commentaires: 'nous aimons vos plats! ',

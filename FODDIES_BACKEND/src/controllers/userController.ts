@@ -7,6 +7,7 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';   
 dotenv.config();           // Chargement des variables d'environnement depuis le fichier .env
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 
 // Génération de code de confirmation à 6 chiffres
@@ -233,7 +234,11 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-//----------------------- Contrôleur pour la validation du code de confirmation-----------------------------------------------------*/
+//----------------------- Contrôleur pour la validation du code de confirmation et génération de token temporaire de connexion-------------------------*/
+
+
+// Clé secrète pour signer le token JWT. Assurez-vous de la garder sécurisée et de préférence dans un fichier d’environnement.
+const JWT_SECRET = process.env.JWT_SECRET || 'votre_clé_secrète';
 
 export const confirmCode = async (req: Request, res: Response): Promise<void> => {
   const  code  = req.body.code;
@@ -269,8 +274,28 @@ export const confirmCode = async (req: Request, res: Response): Promise<void> =>
     user.confirmationCode = undefined;
     user.confirmationCodeExpiration = undefined;
     await user.save();
+  
 
-    res.status(200).json({ message: 'Code de confirmation validé avec succès.' });
+    // Génération d'un token JWT
+
+        const token = jwt.sign(
+          {
+            id: user._id,
+            email: user.email,
+            isConfirmed: user.isConfirmed
+          },
+          JWT_SECRET,
+          { expiresIn: '1h' }  // Le token est valable pendant 1 heure
+        );
+    
+        // Envoi de la réponse avec le token JWT
+        res.status(200).json({
+          message: 'Code de confirmation validé avec succès.',
+          token: token,
+             id: user._id,
+        });
+
+   
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la validation du code de confirmation.' });
   }

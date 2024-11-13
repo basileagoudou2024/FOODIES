@@ -42,9 +42,9 @@ const router = createRouter({
 // Middleware de vérification d'authentification
 router.beforeEach((to, from, next) => {
   const isAuthenticated = Boolean(localStorage.getItem('userToken'));
-  const hasValidatedCode = Boolean(localStorage.getItem('validatedCode'));
+ // const hasValidatedCode = Boolean(localStorage.getItem('validatedCode'));
 
-  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated && !hasValidatedCode) {
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated /*&& !hasValidatedCode*/) {
     next({ name: 'Login' });
   } else {
     next();

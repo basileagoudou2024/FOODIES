@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, PropType } from 'vue';
+import { ref, PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Evaluation } from '../shared/interfaces/evaluationInterface';
 import { useRestaurantStore } from '../stores/restaurantStore';

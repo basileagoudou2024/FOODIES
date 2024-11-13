@@ -151,16 +151,24 @@ export const useUserStore = defineStore('userStore', {
         console.log('le code de confirmation à valider est:', code)
 
         localStorage.removeItem('validatedCode');  // supprimer du localstorage, tout code de confirmation avant d'en valider un nouveau
+        localStorage.removeItem('userToken');  // supprimer du localStorage, tout userToken avant génération d'un nouveau
 
         const response = await axios.post(`http://localhost:5000/api/users/validateCode/${utilisateurId}`, { code });
 
         console.log('Réponse pour validation code de confirmation, reçue du backend :', response.data);
+
+        const token = response.data.token;
 
         if (response.data.message === 'Code de confirmation validé avec succès.') {
           console.log("Code validé, redirection vers la page des restaurants.");
 
             // Enregistrer le code de confirmation dans le localStorage comme preuve temporaire d'authentification
                 localStorage.setItem('validatedCode', code.toString());
+
+                // Enregistrer le token dans le localStorage comme preuve temporaire d'authentification
+                localStorage.setItem('userToken', token);
+
+                console.log("Authentification temporaire avec succès !");
 
           this.redirectToRestaurantsPage(); // Appel de la nouvelle méthode de redirection
         } else {
