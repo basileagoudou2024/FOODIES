@@ -3,7 +3,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-
+import dotenv from 'dotenv';
+dotenv.config();
 import restaurantRoutes from './router/restaurantRoutes';
 import userRoutes from './router/userRoutes';
 import evaluationRoutes from './router/evaluationRoutes';

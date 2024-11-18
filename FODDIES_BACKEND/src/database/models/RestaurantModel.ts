@@ -18,7 +18,7 @@ const restaurantSchema: Schema = new Schema({
   cuisine: { type: String, required: true },
   heuresOuverture: { type: String, required: true },
   image: { type: String, required: true },
-  utilisateurs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' }],
+  utilisateurs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   evaluations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Evaluation' }],
  
 },

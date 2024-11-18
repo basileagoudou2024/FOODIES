@@ -7,7 +7,7 @@ import RegisterConfirmPage from '../views/RegisterConfirmPage.vue';
 // Définir les routes
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'Login',
     component: LoginPage,
     meta: { requiresAuth: false },

@@ -16,4 +16,10 @@ export interface User {
     heuresOuverture?: string;
     createdAt?: Date | string;
     confirmationCode?: number;
+    isConfirmed?: boolean;
+    confirmationCodeExpiration?: Date;
+    restaurantsUtilises?: string[];
+    listeDesReservations?: string[];
+    langueParlee?: string;
+    restaurantsDetenus?: string[];
   }

@@ -101,6 +101,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // 4. Stockage du code de confirmation et de sa date d'expiration dans la base de données (exemple)
     newUserInfo.confirmationCode = confirmationCode;
     newUserInfo.confirmationCodeExpiration = Date.now() + 15 * 60 * 1000; // Expiration dans 15 minutes
+    console.log('L\'expiration du Code de confirmation est:', newUserInfo.confirmationCodeExpiration); // Affichage de la date d'expiration du code de confirmation;
     await newUserInfo.save();
 
     // 5. Envoi de la réponse HTTP avec statut 201 (Créé)
@@ -280,21 +281,21 @@ export const confirmCode = async (req: Request, res: Response): Promise<void> =>
 
         const token = jwt.sign(
           {
-            id: user._id,
-            email: user.email,
-            isConfirmed: user.isConfirmed
+            userId: user._id,
+            typeDeCompte: user.typeDeCompte,
           },
-          JWT_SECRET,
+          process.env.JWT_SECRET || 'secret_key',
           { expiresIn: '1h' }  // Le token est valable pendant 1 heure
         );
+
+        console.log('le ID de l\'utilisateur authentifié est:', user._id);
     
         // Envoi de la réponse avec le token JWT
         res.status(200).json({
           message: 'Code de confirmation validé avec succès.',
-          token: token,
-             id: user._id,
+          token,
+          isConfirmed: user.isConfirmed
         });
-
    
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la validation du code de confirmation.' });

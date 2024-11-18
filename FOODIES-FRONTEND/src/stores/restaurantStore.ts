@@ -120,6 +120,8 @@ export const useRestaurantStore = defineStore('restaurant', () => {
 
 /*-------------------------------------ACTIONS ASYNCHRONES---------------------------------------------------*/
 
+
+// Créer une réservation
 const addReservation = async (reservation: Reservation): Promise<boolean> => {
   try {
     const response = await axios.post('http://localhost:5000/api/reservations', reservation);
@@ -140,7 +142,7 @@ const addReservation = async (reservation: Reservation): Promise<boolean> => {
   }
 };
 
-
+// Créer une évaluation
 const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
   try {
     console.log('l\'évaluation à soumettre est:', evaluation);
@@ -153,6 +155,26 @@ const addEvaluation = async (evaluation: Evaluation): Promise<void> => {
   } catch (error) {
     console.log(error);
     console.error('Erreur lors de l’envoi de l’évaluation :', error);
+  }
+};
+
+// Supprimer un restaurant
+const deleteRestaurant = async (restaurantId: string): Promise<void> => {
+  try {
+    await axios.delete(`http://localhost:5000/api/restaurants/${restaurantId}`);
+
+    await fetchRestaurants();
+  } catch (error) {
+    console.error('Erreur lors de la suppression du restaurant :', error);
+  }
+};
+
+// Ajouter un nouveau restaurant (à la base de données)
+const addRestaurant = async (restaurant: Restaurant): Promise<void> => {
+  try {
+    await axios.post('http://localhost:5000/api/restaurants', restaurant);
+  } catch (error) {
+    console.error('Erreur lors de l’ajout du restaurant :', error);
   }
 };
 
@@ -207,6 +229,8 @@ return {
   fetchRestaurants,
   evaluations,
   fetchEvaluations,
+  addRestaurant,
+  deleteRestaurant,
   addReservation,
   fetchReservations,
   reservations,

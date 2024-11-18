@@ -22,7 +22,7 @@ export interface IBaseUser extends Document {
   dateInscription: Date; // Date de création attribuée par Mongoose
   confirmationCode?: number;
   confirmationCodeExpiration?: Date; // date d'expiration du code de confirmation
-  isConfirmed: boolean;
+  isConfirmed?: boolean;
 }
 
 // Interface pour un Admin
@@ -38,7 +38,7 @@ export interface IClientUser extends IBaseUser {
 
 // Interface pour un Propriétaire
 export interface IProprietaireUser extends IBaseUser {
-  restaurantsDetenus: mongoose.Types.ObjectId[]; // Renommé depuis listeRestaurants
+  restaurantsDetenus?: mongoose.Types.ObjectId[]; // Renommé depuis listeRestaurants
   servicePremium?: boolean;
   forfait?: string;
   dateDebutForfait?: Date;

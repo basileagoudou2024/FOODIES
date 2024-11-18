@@ -14,7 +14,7 @@ const restaurantsData = [
     cuisine: 'Française',
     heuresOuverture: '08:00 - 22:00',
     etoiles: 5,
-    image: '/images/image1.jpg',
+    image: '/images/image4.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
 
   },
@@ -26,7 +26,7 @@ const restaurantsData = [
     cuisine: 'Japonaise',
     heuresOuverture: '10:00 - 23:00',
     etoiles: 4.5,
-    image: '/images/image3.jpg',
+    image: '/images/image1.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -50,7 +50,7 @@ const restaurantsData = [
     cuisine: 'Québécoise',
     heuresOuverture: '11:00 - 22:00',
     etoiles: 4.6,
-    image: '/images/image3.jpg',
+    image: '/images/image5.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -62,7 +62,7 @@ const restaurantsData = [
     cuisine: 'végétarienne',
     heuresOuverture: '10:00 - 22:00',
     etoiles: 4.5,
-    image: '/images/image3.jpg',
+    image: '/images/image2.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -86,7 +86,7 @@ const restaurantsData = [
     cuisine: 'Coréenne',
     heuresOuverture: '9:00 - 22:00',
     etoiles: 4.2,
-    image: '/images/image3.jpg',
+    image: '/images/image4.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -98,7 +98,7 @@ const restaurantsData = [
     cuisine: 'mixte',
     heuresOuverture: '10:00 - 23:00',
     etoiles: 4.3,
-    image: '/images/image3.jpg',
+    image: '/images/image1.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -110,7 +110,7 @@ const restaurantsData = [
     cuisine: 'antillaise',
     heuresOuverture: '9:00 - 21:00',
     etoiles: 4.2,
-    image: '/images/image3.jpg',
+    image: '/images/image5.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -122,7 +122,7 @@ const restaurantsData = [
     cuisine: 'Africaine',
     heuresOuverture: '11:00 - 22:00',
     etoiles: 4.7,
-    image: '/images/image3.jpg',
+    image: '/images/image2.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -134,7 +134,7 @@ const restaurantsData = [
     cuisine: 'française',
     heuresOuverture: '11:00 - 22:00',
     etoiles: 4.5,
-    image: '/images/image3.jpg',
+    image: '/images/image4.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   },
 
@@ -158,7 +158,7 @@ const restaurantsData = [
     cuisine: 'africaine',
     heuresOuverture: '9:00 - 21:00',
     etoiles: 4.6,
-    image: '/images/image3.jpg',
+    image: '/images/image1.jpg',
     utilisateurs: [] as Types.ObjectId[], // Explicitly define the type as ObjectId[]
   }
 ];
@@ -166,16 +166,23 @@ const restaurantsData = [
 // Définir les données pour les utilisateurs
 
 interface UserData {
-  _id: Types.ObjectId;
+  _id?: Types.ObjectId;
   nom: string;
   typeDeCompte: UserType,
   prenom: string;
   email: string;
   password: string;
   adresse: string;
-  langueParlee: string;
+  isConfirmed?: boolean;
+  langueParlee?: string;
   dateInscription: Date;
-  restaurantsUtilises: any[];
+  restaurantsUtilises?: any[];
+  listeDesReservations?: any[];
+  restaurantsDetenus?: any[];
+  servicePremium?: boolean; 
+  forfait?: any; 
+  dateDebutForfait?: Date | null | undefined;
+  dateFinForfait?:Date | null | undefined
 }
 
 
@@ -187,30 +194,66 @@ const usersData: UserData[] = [
     nom: 'Amary',
     prenom: 'Jean-jaurey',
     email: 'jj@hotmail.com',
-    typeDeCompte: UserType.Client, 
     password: 'jean2024',
+    typeDeCompte: UserType.Client, 
     adresse: '789 avenue des courges, St-Lambert, Québec, Canada',
-    langueParlee: 'fr',
+    isConfirmed: true,
+    langueParlee: 'francais',
     dateInscription: new Date(),
-    restaurantsUtilises: []
+    restaurantsUtilises: [],
+    listeDesReservations: [],
   },
+
   {
     _id: new Types.ObjectId(),
     nom: 'Smith',
     prenom: 'Jane',
-    typeDeCompte: UserType.Client ,
     email: 'jane.smith@gmail.com',
     password: 'jane2023',
+    typeDeCompte: UserType.Client ,
     adresse: '101 Rue de Berlin, Montreal E, H2K 8L5, Québec, Canada',
-    langueParlee: 'en',
+    isConfirmed: false,
+    langueParlee: 'anglais',
     dateInscription: new Date(),
-    restaurantsUtilises: []
+    restaurantsUtilises: [],
+    listeDesReservations: [],
+  },
+
+  {
+    _id: new Types.ObjectId(), // Génération automatique d'un ObjectId
+    nom: " Godbout",
+    prenom: "joanie",
+    email: "gjoanie@gmail",
+    password: 'gj12345678', // Haché avec bcrypt
+    typeDeCompte: UserType.Proprietaire,
+    adresse: "405 mission catholique, Saint-Hyacinthe, Québec, Canada J2S 5M6",
+    dateInscription: new Date(),
+    isConfirmed: true,
+    langueParlee: "francais",
+    restaurantsDetenus: [restaurantsData[0]._id, restaurantsData[3]._id], // Références à des restaurants
+    servicePremium: false,
+    forfait: null,
+    dateDebutForfait: null,
+    dateFinForfait: null,
+  },
+
+  {
+    _id: new Types.ObjectId(), // Génération automatique d'un ObjectId
+    nom: "Borgson",
+    prenom: "John",
+    email: "admin@gmail.com",
+    password: "admin12345678", // Haché avec bcrypt
+    typeDeCompte: UserType.Admin,
+    adresse: "123 Admin Street, Montréal, Québec, Canada",
+    dateInscription: new Date(),
+    isConfirmed: true,
   }
+  
 ];
 
 // Définir les données pour les évaluations
 const evaluationsData = [
-  {
+  { _id: new Types.ObjectId(),
     noteQualite: 5,
     noteProprete: 5,
     notePrix: 4,
@@ -218,9 +261,11 @@ const evaluationsData = [
     noteAmbiance: 5,
     noteEtoile: 5,
     commentaire: 'Excellent service!',
-    credibilite: 10,
-    utilisateurId: usersData[0]._id,
-    restaurantId: restaurantsData[0]._id
+    dateEvaluation: new Date('2024-10-22'),
+    utilisateurId: usersData[0]?._id,
+    restaurantId: restaurantsData[3]?._id,
+    createAt: new Date(),
+    updatedAt: new Date()
   },
   {
     noteQualite: 3,
@@ -230,59 +275,11 @@ const evaluationsData = [
     noteAmbiance: 3,
     noteEtoile: 3,
     commentaire: 'Un peu cher pour ce que c\'est.',
-    credibilite: 5,
-    utilisateurId: usersData[1]._id,
-    restaurantId: restaurantsData[1]._id
-  },
-
-  {
-    noteQualite: 5,
-    noteProprete: 5,
-    notePrix: 4,
-    noteService: 4,
-    noteAmbiance: 5,
-    noteEtoile: 5,
-    commentaire: ' service à améliorer!',
-    credibilite: 10,
-    utilisateurId: usersData[0]._id,
-    restaurantId: restaurantsData[8]._id
-  },
-  {
-    noteQualite: 3,
-    noteProprete: 3,
-    notePrix: 2,
-    noteService: 3,
-    noteAmbiance: 3,
-    noteEtoile: 4,
-    commentaire: 'Les plats sont un peu trop salés!',
-    credibilite: 5,
-    utilisateurId: usersData[1]._id,
-    restaurantId: restaurantsData[10]._id
-  },
-
-  {
-    noteQualite: 5,
-    noteProprete: 5,
-    notePrix: 4,
-    noteService: 4,
-    noteAmbiance: 5,
-    noteEtoile: 5,
-    commentaire: 'Service un peu lent!',
-    credibilite: 10,
-    utilisateurId: usersData[1]._id,
-    restaurantId: restaurantsData[12]._id
-  },
-  {
-    noteQualite: 3,
-    noteProprete: 3,
-    notePrix: 2,
-    noteService: 3,
-    noteAmbiance: 3,
-    noteEtoile: 3.5,
-    commentaire: 'Ambiance à améliorer.',
-    credibilite: 5,
-    utilisateurId: usersData[0]._id,
-    restaurantId: restaurantsData[9]._id
+    dateEvaluation: new Date('2024-10-21'),
+    utilisateurId: usersData[1]?._id,
+    restaurantId: restaurantsData[2]?._id,
+    createAt: new Date(),
+    updatedAt: new Date()
   }
 ];
 
@@ -290,63 +287,34 @@ const evaluationsData = [
 
 const reservationsData: Partial<IReservation>[] = [
   {
-    idReservation: new Types.ObjectId(),
-    utilisateurId: usersData[0]._id.toString(),  // Jean-jaurey
-    restaurantId: restaurantsData[0]._id.toString(),  // Le Gourmet
+    _id: new Types.ObjectId(),
+    utilisateurId: usersData[1]?._id?.toString(),  // Jean-jaurey
+    restaurantId: restaurantsData[2]?._id?.toString(),  // Le Gourmet
     dateReservation: new Date('2024-10-20'),
     heureReservation: '19:00',
     nombreDePlaces: 2,
     commentaires: 'J\'aime ce restaurant',
+    createdAt: new Date('2024-10-20T05:04:20.383+00:00'),
+    updatedAt: new Date('2024-10-20T05:04:20.383+00:00'),
   },
 
   { 
-    idReservation: new Types.ObjectId(),
-    utilisateurId: usersData[1]._id.toString(), // Jane Smith
-    restaurantId: restaurantsData[0]._id.toString(),   // Sushi Place
+    _id: new Types.ObjectId(),
+    utilisateurId: usersData[0]?._id?.toString(), // Jane Smith
+    restaurantId: restaurantsData[3]?._id?.toString(),   // Sushi Place
     dateReservation: new Date('2024-10-21'),
     heureReservation: '12:30',
     nombreDePlaces: 4,
     commentaires: 'préférence pour la mezanine',
-  },
- 
-  {
-    idReservation: new Types.ObjectId(),
-    utilisateurId: usersData[0]._id.toString(), // Jean-jaurey
-    restaurantId: restaurantsData[8]._id.toString(),   // Le Bananier Antillais
-    dateReservation: new Date('2024-10-26'),
-    heureReservation: '20:30',
-    nombreDePlaces: 3,
-    commentaires: '1 personne à mobilité réduite',
-
-},
-  
-{
-    idReservation: new Types.ObjectId(),
-    utilisateurId: usersData[1]._id.toString(), // Jane Smith
-    restaurantId: restaurantsData[4]._id.toString(),   // La Cuisine Santé
-    dateReservation: new Date('2024-11-02'),
-    heureReservation: '20:00',
-    nombreDePlaces: 1,
-    commentaires: 'prévoir poivre blanc',
-},
-
-  {
-
-    idReservation: new Types.ObjectId(),
-    utilisateurId: usersData[0]._id.toString(), // Jean-jaurey
-    restaurantId: restaurantsData[11]._id.toString(), // Burritos Comesticos
-    dateReservation: new Date('2024-10-24'),
-    heureReservation: '13:00',
-    nombreDePlaces: 5,
-    commentaires: 'nous aimons vos plats! ',
-},
-
+    createdAt: new Date('2024-10-21T05:04:20.383+00:00'),
+    updatedAt: new Date('2024-10-21T05:04:20.383+00:00'),
+  }
 ];
 
 
 // Associer les utilisateurs aux restaurants
-restaurantsData[0].utilisateurs.push(usersData[0]._id, usersData[1]._id);
-restaurantsData[1].utilisateurs.push(usersData[1]._id);
+restaurantsData[2].utilisateurs.push(usersData[1]?._id ?? new Types.ObjectId());
+restaurantsData[3].utilisateurs.push(usersData[0]?._id ?? new Types.ObjectId());
 
 // Exporter les données de démonstration
 export { restaurantsData, usersData, evaluationsData,reservationsData  };

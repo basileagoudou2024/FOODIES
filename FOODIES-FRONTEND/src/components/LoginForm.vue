@@ -15,7 +15,7 @@ const login = async () => {
 
   try {
         await userStore.login({ email: email.value, password: password.value });
-        console.log("Authentification réussie !");
+  
       } catch (error: any) {
 
         console.error("Erreur lors de la connexion :", error.message);

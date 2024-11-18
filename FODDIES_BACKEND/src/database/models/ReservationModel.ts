@@ -11,9 +11,11 @@ export interface IReservation extends Document{
     restaurantId: string;
     utilisateurId: string;
     commentaires: string 
-    statut?: 'En attente' | 'Confirmée' | 'Annulée';  // Statut géré par le système 
+    statut?: 'En attente' | 'Confirmée' | 'Annulée';  // Statut géré par le système
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 
-} 
 
 
 // Schéma de la Réservation
