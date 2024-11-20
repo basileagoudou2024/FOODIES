@@ -1,9 +1,16 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import { BaseUserModel, AdminUserModel, ClientUserModel, ProprietaireUserModel, UserType } from './src/database/models/UserModel';
 import Restaurant from './src/database/models/RestaurantModel';
 import Evaluation from './src/database/models/EvaluationModel';
 import Reservation from './src/database/models/ReservationModel';
 import { restaurantsData, usersData, evaluationsData, reservationsData } from './seedData';
+
+// Fonction de hachage de mot de passe
+const hashPassword = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
 
 const MONGO_URI = 'mongodb://localhost:27017/foodies';
 
@@ -25,6 +32,11 @@ async function seedDatabase() {
     ]);
 
     console.log('Base de données nettoyée.');
+
+    // Hachage des mots de passe des utilisateurs
+    for (const user of usersData) {
+      user.password = await hashPassword(user.password);
+    }
 
     // Insertion des données
     await Restaurant.insertMany(restaurantsData);

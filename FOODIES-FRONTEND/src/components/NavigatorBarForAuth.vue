@@ -1,46 +1,33 @@
-<script setup lang="ts"> 
-import { useNavigatorStore } from '../stores/navigatorStore'
+<script setup lang="ts">
+import { useNavigatorStore } from '../stores/navigatorStore';
 import LogoComponent from './LogoComponent.vue';
 import LanguageSelect from './LanguageSelect.vue';
-import { ref } from 'vue';
 import ConnexionButton from './ConnexionButton.vue';
 const navigatorStore = useNavigatorStore();
 import { useRouter } from 'vue-router';
 
-const isMenuOpen = ref(true); // Initialisation de l'état du menu pour ordinateur
-
 const router = useRouter(); // Initialiser le routeur
-
-// Fonction pour basculer l'affichage du menu
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
 
 const goToLogin = () => {
   router.push({ name: 'Login' }); // Redirige vers la page de connexion
 };
-
 </script>
 
 <template>
   <div class="navigator-bar">
     <LogoComponent class="logo" />
     <ConnexionButton @click="goToLogin" class="buttonConnect"/>
-    <button class="mobile-menu-button" @click="toggleMenu">☰</button> <!-- Bouton pour le menu sur mobile -->
-    <div class="left-section" :class="{ 'mobile-hidden': !isMenuOpen }"> <!-- Appliquer la classe mobile-hidden si le menu est masqué -->
-     
+    <div class="left-section">
       <LanguageSelect :selectedLanguage="navigatorStore.selectedLanguage" @updateLanguage="navigatorStore.updateSelectedLanguage" />
     </div>
   </div>
 </template>
 
-
-
 <style scoped>
 .navigator-bar {
   display: flex;
   flex-direction: row;
-  gap:35em;
+  gap: 35em;
   align-items: center;
   justify-content: space-between; /* Espace entre LogoComponent et UserProfileComponent */
   width: 100vw;
@@ -64,16 +51,6 @@ const goToLogin = () => {
   margin-left: 15px; /* Garde le profil utilisateur à droite */
 }
 
-/* Bouton menu pour mobile */
-.mobile-menu-button {
-  display: none; /* Masqué par défaut */
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
 /* Ajustements sur les écrans de petite taille */
 @media (max-width: 768px) {
   .navigator-bar {
@@ -85,21 +62,11 @@ const goToLogin = () => {
     width: 80px; /* Réduire la taille du logo */
   }
 
-  /* Afficher le bouton du menu sur mobile */
-  .mobile-menu-button {
-    display: block; /* Affiché uniquement sur mobile */
-  }
-
   .left-section {
     flex-direction: column; /* Empiler verticalement */
     gap: 15px; /* Réduire l'espacement */
     padding: 10px;
     width: 100%; /* Prendre toute la largeur */
-  }
-
-  /* Afficher le menu seulement quand isMenuOpen est vrai */
-  .left-section.mobile-hidden {
-    display: none; /* Masquer sur mobile si menu non ouvert */
   }
 
   /* Ajustement de la taille du champ de recherche */
@@ -109,6 +76,44 @@ const goToLogin = () => {
 
   .user-profile {
     margin: 0; /* Réinitialiser le margin */
+  }
+}
+
+
+/* Media Queries pour les différents appareils */
+@media (max-width: 456px), (max-width: 412px), (max-width: 390px), (max-width: 360px) {
+  .navigator-bar {
+    flex-direction: column;
+    align-items: center;
+    /*justify-content: space-between;*/
+    column-gap: 2px;
+    padding: 10px;
+    padding-right:70px;
+    height: 20vh; /* Ajuster la hauteur pour mobile */
+  }
+
+  .logo {
+    margin-bottom: 10px; /* Ajouter un espace sous le logo */
+  }
+
+  .buttonConnect,
+  .left-section {
+    margin-bottom: 10px; /* Ajouter un espace entre les éléments */
+  }
+
+  .left-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Réduire l'espacement entre les éléments */
+  }
+}
+
+
+/* Media Queries pour les différents appareils */
+@media (min-width: 1323px) {
+  .navigator-bar {
+    gap: 30em;
+  
   }
 }
 </style>

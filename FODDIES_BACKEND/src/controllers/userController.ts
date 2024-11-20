@@ -146,6 +146,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // 2. Tentative de connexion
     const token = await loginUser(email, password);
+    console.log('Identifiants fournis pour la de connexion:', { email, password });
     res.status(200).json({ message: 'Connexion réussie.', token });
   } catch (error: any) {
     res.status(500).json({ message: `Erreur de connexion : ${error.message}. Vérifiez vos identifiants.` });

@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post('/registerUser',  register);       
 
-// Route pour la  l'authentification des utilisateurs (connexion)
+// Route pour  l'authentification des utilisateurs (connexion)
 
 router.post('/login', login);
 

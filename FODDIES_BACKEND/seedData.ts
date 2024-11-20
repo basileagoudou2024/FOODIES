@@ -193,7 +193,7 @@ const usersData: UserData[] = [
     _id: new Types.ObjectId(),
     nom: 'Amary',
     prenom: 'Jean-jaurey',
-    email: 'jj@hotmail.com',
+    email: 'jj@gmail.com',
     password: 'jean2024',
     typeDeCompte: UserType.Client, 
     adresse: '789 avenue des courges, St-Lambert, Québec, Canada',
@@ -209,7 +209,7 @@ const usersData: UserData[] = [
     nom: 'Smith',
     prenom: 'Jane',
     email: 'jane.smith@gmail.com',
-    password: 'jane2023',
+    password: 'jean2024',
     typeDeCompte: UserType.Client ,
     adresse: '101 Rue de Berlin, Montreal E, H2K 8L5, Québec, Canada',
     isConfirmed: false,
@@ -223,7 +223,7 @@ const usersData: UserData[] = [
     _id: new Types.ObjectId(), // Génération automatique d'un ObjectId
     nom: " Godbout",
     prenom: "joanie",
-    email: "gjoanie@gmail",
+    email: "gjoanie@gmail.com",
     password: 'gj12345678', // Haché avec bcrypt
     typeDeCompte: UserType.Proprietaire,
     adresse: "405 mission catholique, Saint-Hyacinthe, Québec, Canada J2S 5M6",

@@ -12,27 +12,18 @@ const password = ref('');
 const errorMessage = ref('');
 
 const login = async () => {
-
   try {
-        await userStore.login({ email: email.value, password: password.value });
-  
-      } catch (error: any) {
+    await userStore.login({ email: email.value, password: password.value });
+  } catch (error: any) {
+    console.error("Erreur lors de la connexion :", error.message);
+    errorMessage.value = error.message || "Échec de la connexion.";
+  }
+};
 
-        console.error("Erreur lors de la connexion :", error.message);
-        errorMessage.value = error.message || "Échec de la connexion.";
-      };
-    };
-    
-
-  const goToCreateAccount = () => {
-      router.push('/register');
-      console.log("Redirection vers la page de création de compte...");
-    };
-  
-
-
-
-
+const goToCreateAccount = () => {
+  router.push('/register');
+  console.log("Redirection vers la page de création de compte...");
+};
 </script>
 
 <template>
@@ -141,5 +132,34 @@ button:hover {
 .error {
   color: red;
   text-align: center;
+}
+
+/* Media Queries pour les différents appareils */
+@media (max-width: 456px) {
+  .form-container {
+    width: 80vw;
+  }
+
+  .form-group {
+  margin-bottom: 40px;
+}
+}
+
+@media (max-width: 412px) {
+  .form-container {
+    width: 85vw;
+  }
+}
+
+@media (max-width: 395px) {
+  .form-container {
+    width: 90vw;
+  }
+}
+
+@media (max-width: 360px) {
+  .form-container {
+    width: 95vw;
+  }
 }
 </style>

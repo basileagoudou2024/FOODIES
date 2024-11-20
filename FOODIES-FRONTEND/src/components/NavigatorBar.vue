@@ -1,4 +1,4 @@
-<script setup lang="ts"> 
+<script setup lang="ts">
 import { useNavigatorStore } from '../stores/navigatorStore';
 import { storeToRefs } from 'pinia';
 import LogoComponent from './LogoComponent.vue';
@@ -31,8 +31,6 @@ const toggleMenu = () => {
     <UserProfile class="user-profile" />
   </div>
 </template>
-
-
 
 <style scoped>
 .navigator-bar {
@@ -107,6 +105,35 @@ const toggleMenu = () => {
 
   .user-profile {
     margin: 0; /* Réinitialiser le margin */
+  }
+}
+
+/* Media Queries pour les différents appareils */
+@media (max-width: 456px) {
+  .navigator-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 412px) {
+  .navigator-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 395px) {
+  .navigator-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 360px) {
+  .navigator-bar {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>
